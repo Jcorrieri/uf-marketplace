@@ -6,3 +6,5 @@ UF student marketplace platform project for CEN5035 - Software Engineering. Our 
 - Shakir Gamzaev (Frontend)
 - Venkata Nitchaya Reddy Konkala (Backend)
 - Jacomo Corrieri (Backend)
+
+Note: Roles may change throughout project development.
