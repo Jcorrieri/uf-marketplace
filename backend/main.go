@@ -16,7 +16,7 @@ var helloWorld = response{ ID: 1, Content: "Hello from the backend!" }
 
 func main() {
 	router := gin.Default()
-	router.GET("/", getDefault)
+	router.GET("/hello-world", getDefault)
 
 	router.Run("localhost:8080")
 }
