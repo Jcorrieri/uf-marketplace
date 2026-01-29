@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -13,13 +13,13 @@ export class App {
 
   ngOnInit(): void {
     fetch('/api/hello-world')
-      .then(response => response.json()) // or .json() if your API returns JSON
+      .then(response => response.json())
       .then(data => {
         this.apiResponse.set(data.content);
       })
       .catch(error => {
         console.error('API error:', error);
-        this.apiResponse.set('error!!!!');
+        this.apiResponse.set('Error fetching from backend');
       });
   }
 }

@@ -2,6 +2,10 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
 
+## API Routes 
+
+To fetch data from the backend, use ```/api/<endpoint>/...``` as your url.
+
 ## Development server
 
 To start a local development server, run:
