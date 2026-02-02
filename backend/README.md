@@ -9,6 +9,7 @@ Fetch 'hello world' from the /hello-world endpoint ```curl http://localhost:8080
 Technology Stack:
 - RestAPI: Gin framework
 - Database: SQLite with GORM
+- Auth: TBD
 
 Product Structure:
 ```
@@ -26,5 +27,3 @@ Product Structure:
 │   └── <model>_service.go
 └── test.db
 ```
-
-### Auth: TBD
