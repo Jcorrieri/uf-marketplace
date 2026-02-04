@@ -34,8 +34,6 @@ func (s *BookService) Create(ctx context.Context, book *models.Book) error {
 func (s *BookService) Delete(ctx context.Context, id uint) error {
 	// Deleting a record requires some additional processing. Gorm
 	// uses soft deletion by default (see https://gorm.io/docs/delete.html#Soft-Delete).
-	// If using soft deletion, we would need to address handling unique fields, as 
-	// a soft-deleted record can cause a unique constraint violation
 	rowsAffected, err := gorm.G[models.Book](s.db).Where("id = ?", id).Delete(ctx)
 
 	if err != nil {
