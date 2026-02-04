@@ -22,12 +22,11 @@ func main() {
 	// Create router
 	router := gin.Default()
 
-	// backwards compatibility hello-world route -- TODO delete
-	router.GET("/hello-world", bookHandler.HelloWorld)
 
 	// placeholder example routes -- TODO delete
 	router.GET("/books", bookHandler.GetBooks)
 	router.GET("/books/:id", bookHandler.GetBookById)
+	router.GET("/hello-world", bookHandler.HelloWorld)
 	router.POST("/books", bookHandler.AddBook)
 	router.DELETE("/books/:id", bookHandler.DeleteBook)
 
