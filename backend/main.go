@@ -23,7 +23,7 @@ func main() {
 	router := gin.Default()
 
 
-	// placeholder example routes -- TODO delete
+	// TODO: Replace + delete placeholder routes
 	router.GET("/books", bookHandler.GetBooks)
 	router.GET("/books/:id", bookHandler.GetBookById)
 	router.GET("/hello-world", bookHandler.HelloWorld)
