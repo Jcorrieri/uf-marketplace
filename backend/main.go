@@ -22,13 +22,20 @@ func main() {
 	// Create router
 	router := gin.Default()
 
+	// Grouping for cleaner logic
+	api := router.Group("/api")
+	{
+		// placeholder example routes -- TODO delete
+		api.GET("/hello-world", bookHandler.HelloWorld)
 
-	// placeholder example routes -- TODO delete
-	router.GET("/books", bookHandler.GetBooks)
-	router.GET("/books/:id", bookHandler.GetBookById)
-	router.GET("/hello-world", bookHandler.HelloWorld)
-	router.POST("/books", bookHandler.AddBook)
-	router.DELETE("/books/:id", bookHandler.DeleteBook)
+		books := api.Group("/books")
+		{
+			books.GET("", bookHandler.GetBooks)
+			books.GET("/:id", bookHandler.GetBookById)
+			books.POST("", bookHandler.AddBook)
+			books.DELETE("/:id", bookHandler.DeleteBook)
+		}
+	}
 
 	router.Run("localhost:8080")
 }
