@@ -1,21 +1,24 @@
 
 <div class="wrapper">
-    <div class="loginFormFlexContainer"> 
+    <div class="loginFormFlexContainer">
         <h1>Login</h1>
-        <app-text-field 
-            iconName="person" 
-            title="Username" 
+        <app-text-field
+            iconName="person"
+            title="Username"
             placeholderText="Enter your email"
             [isSecure]="false">
         </app-text-field>
-        <app-text-field 
-            iconName="lock" 
-            title="Password" 
+        <app-text-field
+            iconName="lock"
+            title="Password"
             placeholderText="Enter your password"
             [isSecure]="true"
             secureText="Forgot password?">
         </app-text-field>
     </div>
 </div>
+
+<!-- <h1>Hey angular</h1> -->
+<!-- <p>{{ apiResponse() }}</p> -->
 
 <router-outlet />

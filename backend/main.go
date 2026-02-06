@@ -1,26 +1,34 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+
+	"github.com/Jcorrieri/uf-marketplace/backend/database"
+	"github.com/Jcorrieri/uf-marketplace/backend/handlers"
+	"github.com/Jcorrieri/uf-marketplace/backend/services"
 )
 
-// temp struct -- remove later
-type response struct {
-	ID int `json:"id"`
-	Content string `json:"content"`
-}
-
-var helloWorld = response{ ID: 1, Content: "Hello from the backend!" }
 
 func main() {
+	// Instantiate database
+	db := database.Connect()
+
+	// Get services
+	bookService := services.NewBookService(db)	
+
+	// Set handlers
+	bookHandler := handlers.NewBookHandler(bookService)
+
+	// Create router
 	router := gin.Default()
-	router.GET("/hello-world", getDefault)
+
+
+	// placeholder example routes -- TODO delete
+	router.GET("/books", bookHandler.GetBooks)
+	router.GET("/books/:id", bookHandler.GetBookById)
+	router.GET("/hello-world", bookHandler.HelloWorld)
+	router.POST("/books", bookHandler.AddBook)
+	router.DELETE("/books/:id", bookHandler.DeleteBook)
 
 	router.Run("localhost:8080")
-}
-
-func getDefault(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, helloWorld)
 }
