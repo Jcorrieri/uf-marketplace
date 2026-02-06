@@ -1,0 +1,25 @@
+
+<div class="container">
+    <p>{{ title() }}</p>
+    <div class="icon-textField">
+        <span 
+            class="material-symbols-outlined"
+            [style.opacity]="text().length == 0 ? 0.46 : 1"> {{iconName()}} 
+        </span>
+        <input [type]="isSecure() ? 'password' : 'text' " 
+        [placeholder]="placeholderText()"
+        [value]="text()" 
+        (input)="onInput($event)">
+    </div>
+    
+    <div class="divideContainer">
+        <div id="divider"
+        [style.opacity]="text().length == 0 ? 0.46 : 1"></div>
+        
+        @if (isSecure()) {
+            <button class="secure-custom-text">{{secureText()}}</button>
+        }
+
+    </div>
+
+</div>

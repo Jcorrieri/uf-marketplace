@@ -1,0 +1,29 @@
+.wrapper {
+    width: 100%;
+    min-height: 100%;
+    background: linear-gradient(to bottom, #9a37f0bf, #4b00e0d3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginFormFlexContainer {
+    background: white;
+    flex-direction: column;
+    padding: 1rem;
+    border-radius: 15px;
+    align-items: center;
+    display: flex;
+    width: 40%;
+    min-width: 350px;
+    row-gap: 17px;
+}
+
+.loginFormFlexContainer p {
+    font-size: 14px;
+}
+
+app-text-field {
+    display: block;
+    margin-top: 20px;
+}
