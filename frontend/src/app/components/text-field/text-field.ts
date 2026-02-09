@@ -7,16 +7,16 @@ import { Component, input, model } from '@angular/core';
   styleUrl: './text-field.css',
 })
 export class TextField {
-    isSecure = input(false)
-    iconName = input.required<string>()
-    placeholderText = input("")
-    title = input("")
-    secureText = input("")
+  isSecure = input(false);
+  iconName = input.required<string>();
+  placeholderText = input('');
+  title = input('');
+  secureText = input('');
 
-    text = model("")
+  value = model('');
 
-    onInput(event: Event) {
-        const inputElement = event.target as HTMLInputElement;
-        this.text.set(inputElement.value);
-    }
+  onInput(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    this.value.set(inputElement.value);
+  }
 }

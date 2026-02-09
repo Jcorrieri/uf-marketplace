@@ -1,0 +1,20 @@
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 300px;
+    border: none;
+    background: linear-gradient(to right, rgb(243, 81, 213), rgb(51, 76, 234));
+    color: white;
+    font-weight: bold;
+    transition: transform 0.1s ease;
+    margin-top: 40px;
+}
+
+button:hover {
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(0.94);
+}

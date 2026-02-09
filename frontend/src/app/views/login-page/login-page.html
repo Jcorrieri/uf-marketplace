@@ -1,0 +1,27 @@
+
+<div class="wrapper">
+    <div class="loginFormFlexContainer">
+        <h1>Login</h1>
+        <app-text-field
+            iconName="person"
+            title="Username"
+            placeholderText="Enter your email"
+            [isSecure]="false"
+            [(value)]="userName">
+        </app-text-field>
+        <app-text-field
+            iconName="lock"    
+            title="Password"
+            placeholderText="Enter your password"
+            [isSecure]="true"
+            secureText="Forgot password?"
+            [(value)]="password">
+        </app-text-field>
+        <app-login-button></app-login-button>
+    </div>
+</div>
+
+<!-- <h1>Hey angular</h1> -->
+<!-- <p>{{ apiResponse() }}</p> -->
+
+<router-outlet />
