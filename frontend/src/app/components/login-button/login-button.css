@@ -1,20 +1,24 @@
 button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 300px;
-    border: none;
-    background: linear-gradient(to right, rgb(243, 81, 213), rgb(51, 76, 234));
-    color: white;
-    font-weight: bold;
-    transition: transform 0.1s ease;
-    margin-top: 40px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  background-color: #fa4616;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
 }
 
 button:hover {
-    opacity: 0.9;
-    cursor: pointer;
+  background-color: #e03d12;
 }
 
 button:active {
-    transform: scale(0.94);
+  transform: scale(0.97);
 }

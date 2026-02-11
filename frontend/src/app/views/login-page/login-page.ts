@@ -1,34 +1,26 @@
 import { Component, signal } from '@angular/core';
+import { LoginButton } from '../../components/login-button/login-button';
 
-import { TextField } from '../../components/text-field/text-field';
-import { RouterOutlet } from '@angular/router';
-import { LoginButton } from "../../components/login-button/login-button";
-
-
-//This is the main login page
-//username and password are signals that hold the username and password strings, which this view will get form its child views, namely, app-text-field components
 @Component({
   selector: 'app-login-page',
-  imports: [RouterOutlet, TextField, LoginButton],
+  imports: [LoginButton],
   templateUrl: './login-page.html',
   styleUrl: './login-page.css',
 })
 export class LoginPage {
-    protected readonly title = signal('UfMarketPlace');
-    userName = signal("")
-    password = signal("")
+  userName = signal('');
+  password = signal('');
+  showPassword = signal(false);
 
-    apiResponse = signal('');
+  onEmailInput(event: Event) {
+    this.userName.set((event.target as HTMLInputElement).value);
+  }
 
-  /* ngOnInit(): void {
-    fetch('/api/hello-world')
-      .then(response => response.json())
-      .then(data => {
-        this.apiResponse.set(data.content);
-      })
-      .catch(error => {
-        console.error('API error:', error);
-        this.apiResponse.set('Error fetching from backend');
-      });
-  } */
+  onPasswordInput(event: Event) {
+    this.password.set((event.target as HTMLInputElement).value);
+  }
+
+  togglePassword() {
+    this.showPassword.update((v) => !v);
+  }
 }
