@@ -20,6 +20,7 @@ type User struct {
 }
 
 // The actual JSON object returned by the API
+// NOTE: May add more later (private to display account details, public for profiles)
 type UserResponse struct {
 	ID uuid.UUID `json:"id"`
 	Username string `json:"username"`
