@@ -1,0 +1,76 @@
+<div class="login-wrapper">
+  <!-- Left side: form -->
+  <div class="login-left">
+    <div class="form-card">
+      <h2 class="form-title">Welcome Back</h2>
+      <p class="form-subtitle">Sign in to your UF MarketPlace account</p>
+
+      <!-- Email field -->
+      <div class="input-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <span class="material-symbols-outlined input-icon">mail</span>
+          <input
+            id="email"
+            type="email"
+            placeholder="yourname&#64;ufl.edu"
+            [value]="userName()"
+            (input)="onEmailInput($event)"
+          />
+        </div>
+      </div>
+
+      <!-- Password field -->
+      <div class="input-group">
+        <div class="label-row">
+          <label for="password">Password</label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+        <div class="input-wrapper">
+          <span class="material-symbols-outlined input-icon">lock</span>
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            placeholder="Enter your password"
+            [value]="password()"
+            (input)="onPasswordInput($event)"
+          />
+          <button type="button" class="toggle-pw" (click)="togglePassword()">
+            <span class="material-symbols-outlined">
+              {{ showPassword() ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <app-login-button></app-login-button>
+
+      <p class="signup-text">Don't have an account? <a href="#">Sign up</a></p>
+    </div>
+  </div>
+
+  <!-- Right side: hero -->
+  <div class="login-right">
+    <div class="hero-content">
+      <h1 class="hero-title">Buy &amp; Sell on<br />UF MarketPlace</h1>
+      <p class="hero-desc">
+        The trusted marketplace exclusively for University of Florida students. Connect securely
+        with fellow Gators to buy, sell, and trade textbooks, furniture, electronics, and more.
+      </p>
+      <div class="hero-features">
+        <div class="feature">
+          <span class="material-symbols-outlined feature-icon">verified_user</span>
+          <span>Verified UF Students Only</span>
+        </div>
+        <div class="feature">
+          <span class="material-symbols-outlined feature-icon">handshake</span>
+          <span>Secure Transactions</span>
+        </div>
+        <div class="feature">
+          <span class="material-symbols-outlined feature-icon">location_on</span>
+          <span>Campus Meetups</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
