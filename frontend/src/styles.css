@@ -11,3 +11,16 @@ body {
   font-family: 'Nunito', sans-serif;
   background-color: #fafafa;
 }
+
+/* Brand variables and global typography */
+:root {
+  --brand-primary: #fa4616;
+  --brand-accent: #0021a5;
+  --link-color: #1a73e8;
+  --brand-primary-dark: #e03d12;
+  --app-font: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  font-family: var(--app-font);
+}
