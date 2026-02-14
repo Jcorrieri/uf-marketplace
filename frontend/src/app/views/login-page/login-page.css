@@ -1,0 +1,211 @@
+/* ===== Layout ===== */
+:host {
+  display: block;
+}
+
+.login-wrapper {
+  display: flex;
+  min-height: calc(100vh - 70px);
+  margin-top: 70px;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ===== Left — form ===== */
+.login-left {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 32px;
+  background-color: #fff;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.form-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+}
+
+.form-subtitle {
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+}
+
+/* --- Input groups --- */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.forgot-link {
+  font-size: 0.82rem;
+  color: #fa4616;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f5f5f7;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 0 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input-wrapper:focus-within {
+  border-color: #fa4616;
+  box-shadow: 0 0 0 3px rgba(250, 70, 22, 0.1);
+  background: #fff;
+}
+
+.input-icon {
+  font-size: 20px;
+  color: #aaa;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.input-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  padding: 13px 0;
+  color: #1a1a2e;
+}
+
+.input-wrapper input::placeholder {
+  color: #bbb;
+}
+
+.toggle-pw {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  color: #aaa;
+}
+
+.toggle-pw:hover {
+  color: #666;
+}
+
+/* --- Button --- */
+app-login-button {
+  display: block;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.signup-text {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.signup-text a {
+  color: #fa4616;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Right — hero ===== */
+.login-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+  background: linear-gradient(135deg, #0021a5 0%, #fa4616 100%);
+  color: #fff;
+}
+
+.hero-content {
+  max-width: 460px;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 18px;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  opacity: 0.92;
+  margin-bottom: 36px;
+}
+
+.hero-features {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.feature-icon {
+  font-size: 26px;
+  opacity: 0.9;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .login-wrapper {
+    flex-direction: column;
+  }
+
+  .login-right {
+    padding: 40px 24px;
+  }
+
+  .hero-title {
+    font-size: 1.9rem;
+  }
+}

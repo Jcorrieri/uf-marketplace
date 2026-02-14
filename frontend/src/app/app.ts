@@ -1,25 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Navbar } from './components/navbar/navbar';
+import { LoginPage } from './views/login-page/login-page';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, Navbar, LoginPage],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-  protected readonly title = signal('UfMarketPlace');
-  apiResponse = signal('');
-
-  ngOnInit(): void {
-    fetch('/api/hello-world')
-      .then(response => response.json())
-      .then(data => {
-        this.apiResponse.set(data.content);
-      })
-      .catch(error => {
-        console.error('API error:', error);
-        this.apiResponse.set('Error fetching from backend');
-      });
-  }
-}
+export class App {}

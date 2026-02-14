@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: 'Nunito', sans-serif;
+  background-color: #fafafa;
+}
