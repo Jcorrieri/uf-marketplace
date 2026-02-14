@@ -32,7 +32,6 @@ func Connect() *gorm.DB {
 	// Create/update tables
 	err = db.AutoMigrate(
 		&models.User{},
-		&models.User{},
 	)
 
 	if err != nil {
