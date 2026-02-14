@@ -19,6 +19,7 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+copilot-instructions.md
 
 # Visual Studio Code
 .vscode/*
