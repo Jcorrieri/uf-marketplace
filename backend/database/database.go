@@ -51,7 +51,11 @@ func Connect() *gorm.DB {
 	fmt.Println("Database connection established")
 
 	// Create/update tables
-	err = db.AutoMigrate(&models.Book{})
+	err = db.AutoMigrate(
+		&models.Book{},
+		&models.User{},
+	)
+
 	if err != nil {
 		panic("Failed to automigrate")
 	}
