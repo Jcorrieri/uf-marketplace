@@ -75,7 +75,7 @@
   border-radius: 12px;
   font-family: var(--app-font, 'Segoe UI', sans-serif);
   font-weight: 700;
-  padding: 12px 16px;
+  padding: 26px 16px;
   background-color: var(--brand-primary, #fa4616) !important;
   color: #fff !important;
   border: none !important;
@@ -93,19 +93,7 @@
 .full-width {
   width: 100%;
 }
-.full-width .mat-form-field-flex {
-  background: #f5f5f7;
-  border-radius: 10px;
-  padding: 0 8px;
-}
 
-.mat-form-field .mat-icon {
-  color: #aaa;
-}
-
-.mat-form-field-appearance-outline .mat-form-field-flex.mat-focused {
-  box-shadow: 0 0 0 3px rgba(250, 70, 22, 0.08);
-}
 /* ===== Right — hero ===== */
 .login-right {
   flex: 1;

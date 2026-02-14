@@ -8,22 +8,22 @@
       <!-- Email field -->
       <div class="input-group">
         <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <mat-icon matPrefix>mail</mat-icon>
-            <input
-              matInput
-              id="email"
-              type="email"
-              placeholder="yourname@ufl.edu"
-              [formControl]="emailControl"
-            />
-            @if (emailControl.hasError('required')) {
-              <mat-error>Email is required</mat-error>
-            }
-            @if (emailControl.hasError('email')) {
-              <mat-error>Enter a valid email</mat-error>
-            }
-          </mat-form-field>
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
+          <input
+            matInput
+            id="email"
+            type="email"
+            placeholder="yourname@ufl.edu"
+            [formControl]="emailControl"
+          />
+          @if (emailControl.hasError('required')) {
+            <mat-error>Email is required</mat-error>
+          }
+          @if (emailControl.hasError('email')) {
+            <mat-error>Enter a valid email</mat-error>
+          }
+        </mat-form-field>
       </div>
 
       <!-- Password field -->
@@ -38,7 +38,7 @@
             placeholder="Enter your password"
             [formControl]="passwordControl"
           />
-          <button mat-icon-button matSuffix type="button" (click)="togglePassword($event)" aria-label="Toggle password">
+          <button matIconButton matSuffix type="button" (click)="togglePassword($event)" aria-label="Toggle password">
             <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
