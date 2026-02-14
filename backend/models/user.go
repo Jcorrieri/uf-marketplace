@@ -11,11 +11,11 @@ type User struct {
 	// Using UUID v7; See https://uuid7.com
 	ID uuid.UUID `gorm:"type:uuid;primaryKey"`
 	// use a partial index to handle issues when reusing unique fields from soft-deleted entities (https://sqlite.org/partialindex.html).
-	Username string `binding:"required" gorm:"uniqueIndex:idx_username_active,where:deleted_at IS NULL;size:100"`
-	Email string `binding:"required" gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255"`
-	PasswordHash string `binding:"required"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Username string `json:"username" binding:"required" gorm:"uniqueIndex:idx_username_active,where:deleted_at IS NULL;size:100"`
+	Email string `json:"email" binding:"required" gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255"`
+	Password string `json:"-" binding:"required"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
