@@ -14,10 +14,10 @@ func main() {
 	db := database.Connect()
 
 	// Get services
-	bookService := services.NewBookService(db)	
+	userService := services.NewUserService(db)	
 
 	// Set handlers
-	bookHandler := handlers.NewBookHandler(bookService)
+	userHandler := handlers.NewUserHandler(userService)
 
 	// Create router
 	router := gin.Default()
@@ -25,12 +25,12 @@ func main() {
 	// Grouping for cleaner logic
 	api := router.Group("/api")
 	{
-		books := api.Group("/books")
+		users := api.Group("/users")
 		{
-			books.GET("", bookHandler.GetBooks)
-			books.GET("/:id", bookHandler.GetBookById)
-			books.POST("", bookHandler.AddBook)
-			books.DELETE("/:id", bookHandler.DeleteBook)
+			users.GET("", userHandler.GetUsers)
+			users.GET("/:id", userHandler.GetUserById)
+			users.POST("", userHandler.AddUser)
+			users.DELETE("/:id", userHandler.DeleteUser)
 		}
 	}
 

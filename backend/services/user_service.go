@@ -2,7 +2,9 @@ package services
 
 import (
 	"context"
+
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
+	"github.com/google/uuid"
 
 	"gorm.io/gorm"
 )
@@ -10,31 +12,31 @@ import (
 // Define the service struct whose only dependency is the db connection.
 // Services will handle all database operations for each model (users, posts, etc.).
 // See https://gorm.io/docs/the_generics_way.html for generics API usage.
-type BookService struct {
+type UserService struct {
 	db *gorm.DB
 }
 
-func NewBookService(db *gorm.DB) *BookService {
-	return &BookService{db: db}
+func NewUserService(db *gorm.DB) *UserService {
+	return &UserService{db: db}
 }
 
-func (s *BookService) GetAll(ctx context.Context) ([]models.Book, error) {
+func (s *UserService) GetAll(ctx context.Context) ([]models.User, error) {
 	// Use gorm.G[model.<model>]()... to get built-in type safety
-	return gorm.G[models.Book](s.db).Find(ctx)
+	return gorm.G[models.User](s.db).Find(ctx)
 }
 
-func (s *BookService) Get(ctx context.Context, id uint) (models.Book, error) {
-	return gorm.G[models.Book](s.db).Where("id = ?", id).First(ctx)
+func (s *UserService) Get(ctx context.Context, id uuid.UUID) (models.User, error) {
+	return gorm.G[models.User](s.db).Where("id = ?", id).First(ctx)
 }
 
-func (s *BookService) Create(ctx context.Context, book *models.Book) error {
-	return gorm.G[models.Book](s.db).Create(ctx, book)
+func (s *UserService) Create(ctx context.Context, user *models.User) error {
+	return gorm.G[models.User](s.db).Create(ctx, user)
 }
 
-func (s *BookService) Delete(ctx context.Context, id uint) error {
+func (s *UserService) Delete(ctx context.Context, id uuid.UUID) error {
 	// Deleting a record requires some additional processing. Gorm
 	// uses soft deletion by default (see https://gorm.io/docs/delete.html#Soft-Delete).
-	rowsAffected, err := gorm.G[models.Book](s.db).Where("id = ?", id).Delete(ctx)
+	rowsAffected, err := gorm.G[models.User](s.db).Where("id = ?", id).Delete(ctx)
 
 	if err != nil {
 		return err
@@ -49,4 +51,5 @@ func (s *BookService) Delete(ctx context.Context, id uint) error {
 }
 
 // Other methods (PATCH, UPDATE, etc.)
+
 
