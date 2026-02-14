@@ -86,8 +86,3 @@ func (h *BookHandler) DeleteBook(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, nil)
 }
-
-// hello world temp
-func (h *BookHandler) HelloWorld(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, models.Book{Title: "Hello, World!", Author: "Backend", Content: "Hello from the backend!"})
-}

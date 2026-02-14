@@ -25,9 +25,6 @@ func main() {
 	// Grouping for cleaner logic
 	api := router.Group("/api")
 	{
-		// placeholder example routes -- TODO delete
-		api.GET("/hello-world", bookHandler.HelloWorld)
-
 		books := api.Group("/books")
 		{
 			books.GET("", bookHandler.GetBooks)
