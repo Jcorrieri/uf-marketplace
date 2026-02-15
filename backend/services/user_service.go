@@ -17,6 +17,7 @@ func NewUserService(db *gorm.DB) *UserService {
 		db: db,
 	}
 }
+
 func (s *UserService) GetByID(id uuid.UUID) (*models.User, error) {
 	var user models.User
 
