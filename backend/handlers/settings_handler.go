@@ -38,3 +38,26 @@ type UpdateSettingsInput struct {
 	FirstName string `json:"first_name" binding:"required"`
 	LastName  string `json:"last_name" binding:"required"`
 }
+
+func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
+	var input UpdateSettingsInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	user, err := h.userService.UpdateSettings(
+		dummyUserID,
+		input.Username,
+		input.FirstName,
+		input.LastName,
+	)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update settings"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user.GetResponse())
+}

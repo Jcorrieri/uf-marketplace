@@ -36,6 +36,8 @@ func main() {
 		settings := api.Group("/settings")
 		{
 			settings.GET("", settingsHandler.GetSettings)
+			settings.PUT("", settingsHandler.UpdateSettings)
+
 		}
 
 	}
