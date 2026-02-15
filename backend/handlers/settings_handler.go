@@ -32,3 +32,9 @@ func (h *SettingsHandler) GetSettings(c *gin.Context) {
 
 	c.JSON(http.StatusOK, user.GetResponse())
 }
+
+type UpdateSettingsInput struct {
+	Username  string `json:"username" binding:"required,min=3"`
+	FirstName string `json:"first_name" binding:"required"`
+	LastName  string `json:"last_name" binding:"required"`
+}
