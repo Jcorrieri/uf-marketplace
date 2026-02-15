@@ -8,16 +8,16 @@ import (
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
 )
 
-
 func main() {
 	// Instantiate database
 	db := database.Connect()
 
 	// Get services
-	bookService := services.NewBookService(db)	
+	bookService := services.NewBookService(db)
 
 	// Set handlers
 	bookHandler := handlers.NewBookHandler(bookService)
+	settingsHandler := handlers.NewSettingsHandler(userService)
 
 	// Create router
 	router := gin.Default()
@@ -32,6 +32,12 @@ func main() {
 			books.POST("", bookHandler.AddBook)
 			books.DELETE("/:id", bookHandler.DeleteBook)
 		}
+
+		settings := api.Group("/settings")
+		{
+			settings.GET("", settingsHandler.GetSettings)
+		}
+
 	}
 
 	router.Run("localhost:8080")
