@@ -54,24 +54,24 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 	c.JSON(http.StatusOK, user.GetResponse())
 }
 
-func (h *UserHandler) AddUser(c *gin.Context) {
-	var user models.User
-
-	// Use ShouldBind to customize error message
-	if err := c.ShouldBind(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
-		return
-	}
-
-	err := h.service.Create(c.Request.Context(), &user)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating user: " + err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, user.GetResponse())
-}
+// func (h *UserHandler) AddUser(c *gin.Context) {
+// 	var user models.User
+//
+// 	// Use ShouldBind to customize error message
+// 	if err := c.ShouldBind(&user); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+// 		return
+// 	}
+//
+// 	err := h.service.Create(c.Request.Context(), &user)
+//
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating user: " + err.Error()})
+// 		return
+// 	}
+//
+// 	c.JSON(http.StatusCreated, user.GetResponse())
+// }
 
 func (h *UserHandler) DeleteUser(c *gin.Context) {
 	idStr := c.Param("id")

@@ -38,7 +38,7 @@ func main() {
 		{
 			users.GET("", userHandler.GetUsers)
 			users.GET("/:id", userHandler.GetUserById)
-			users.POST("", userHandler.AddUser)
+			// users.POST("", userHandler.AddUser)
 			users.DELETE("/:id", userHandler.DeleteUser)
 		}
 	}
