@@ -14,10 +14,12 @@ func main() {
 	db := database.Connect()
 
 	// Get services
+	authService := services.NewAuthService(db)
 	userService := services.NewUserService(db)	
 
 	// Set handlers
 	userHandler := handlers.NewUserHandler(userService)
+	authHandler := handlers.NewAuthHandler(authService, userService)
 
 	// Create router
 	router := gin.Default()
@@ -25,6 +27,13 @@ func main() {
 	// Grouping for cleaner logic
 	api := router.Group("/api")
 	{
+		// Auth routes (public)
+		auth := api.Group("/auth")
+		{
+			auth.POST("/register", authHandler.Register)
+			// auth.POST("/login", handlers.Login)
+		}
+
 		users := api.Group("/users")
 		{
 			users.GET("", userHandler.GetUsers)

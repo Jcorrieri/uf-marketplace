@@ -51,7 +51,7 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, user.GetResponse())
 }
 
 func (h *UserHandler) AddUser(c *gin.Context) {
@@ -70,7 +70,7 @@ func (h *UserHandler) AddUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, user)
+	c.JSON(http.StatusCreated, user.GetResponse())
 }
 
 func (h *UserHandler) DeleteUser(c *gin.Context) {
