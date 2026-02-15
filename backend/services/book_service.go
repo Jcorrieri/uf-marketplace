@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
 
 	"gorm.io/gorm"
@@ -40,7 +41,7 @@ func (s *BookService) Delete(ctx context.Context, id uint) error {
 		return err
 	}
 
-    // No affected rows ⇒ no record existed; should return an error  	
+	// No affected rows ⇒ no record existed; should return an error
 	if rowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
@@ -49,4 +50,3 @@ func (s *BookService) Delete(ctx context.Context, id uint) error {
 }
 
 // Other methods (PATCH, UPDATE, etc.)
-

@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+
 	// "log"
 	// "os"
 
@@ -16,13 +17,13 @@ import (
 func SeedData(db *gorm.DB, ctx context.Context) {
 	books := []models.Book{
 		{
-			Title: "Hello, World!",
-			Author: "Backend, The",
+			Title:   "Hello, World!",
+			Author:  "Backend, The",
 			Content: "Hello from the backend!",
 		},
 		{
-			Title: "Percy Jackson and The Lightning Thief",
-			Author: "Rick Riordan",
+			Title:   "Percy Jackson and The Lightning Thief",
+			Author:  "Rick Riordan",
 			Content: "Greek gods and such ya know the big P Jackson.",
 		},
 	}
@@ -67,4 +68,3 @@ func Connect() *gorm.DB {
 
 	return db
 }
-

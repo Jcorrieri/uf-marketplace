@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/database"
 	"github.com/Jcorrieri/uf-marketplace/backend/handlers"
-	"github.com/Jcorrieri/uf-marketplace/backend/services"
 )
 
 func main() {
@@ -14,6 +14,7 @@ func main() {
 
 	// Get services
 	bookService := services.NewBookService(db)
+	userService := services.NewUserService(db)
 
 	// Set handlers
 	bookHandler := handlers.NewBookHandler(bookService)

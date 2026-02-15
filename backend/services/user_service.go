@@ -28,11 +28,15 @@ func (s *UserService) GetByID(id uuid.UUID) (*models.User, error) {
 	return &user, nil
 }
 
+type UpdateUserRequest struct {
+	Username  string
+	FirstName string
+	LastName  string
+}
+
 func (s *UserService) UpdateSettings(
 	id uuid.UUID,
-	username string,
-	firstName string,
-	lastName string,
+	req UpdateUserRequest,
 ) (*models.User, error) {
 
 	var user models.User
@@ -41,9 +45,10 @@ func (s *UserService) UpdateSettings(
 		return nil, err
 	}
 
-	user.Username = username
-	user.FirstName = firstName
-	user.LastName = lastName
+	user.Username = req.Username
+
+	user.FirstName = req.FirstName
+	user.LastName = req.LastName
 
 	if err := s.db.Save(&user).Error; err != nil {
 		return nil, err

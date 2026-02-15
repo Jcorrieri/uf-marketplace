@@ -26,7 +26,10 @@ var dummyUserID = uuid.MustParse("00000000-0000-0000-0000-000000000001")
 func (h *SettingsHandler) GetSettings(c *gin.Context) {
 	user, err := h.userService.GetByID(dummyUserID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+
 		return
 	}
 
@@ -43,19 +46,25 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 	var input UpdateSettingsInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Username, first name, and last name are required",
+		})
 		return
 	}
 
 	user, err := h.userService.UpdateSettings(
 		dummyUserID,
-		input.Username,
-		input.FirstName,
-		input.LastName,
+		services.UpdateUserRequest{
+			Username:  input.Username,
+			FirstName: input.FirstName,
+			LastName:  input.LastName,
+		},
 	)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update settings"})
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
 		return
 	}
 
