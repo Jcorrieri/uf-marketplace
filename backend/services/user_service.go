@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
-	"golang.org/x/crypto/bcrypt"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 
 	"gorm.io/gorm"
 )
@@ -32,9 +32,19 @@ func (s *UserService) GetByID(ctx context.Context, id uuid.UUID) (models.User, e
 	return gorm.G[models.User](s.db).Where("id = ?", id).First(ctx)
 }
 
+// GetByEmail returns a user by email
+func (s *UserService) GetByEmail(ctx context.Context, email string) (models.User, error) {
+	return gorm.G[models.User](s.db).Where("email = ?", email).First(ctx)
+}
+
+// CheckPassword compares the given password with the user's password hash
+func (s *UserService) CheckPassword(user models.User, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+}
+
 type CreateUserRequest struct {
 	Username  string
-	Email	  string
+	Email     string
 	FirstName string
 	LastName  string
 	Password  string
@@ -43,23 +53,23 @@ type CreateUserRequest struct {
 func (s *UserService) Create(ctx context.Context, request CreateUserRequest) (*models.User, error) {
 	// TODO: Make utility fn ?
 	hash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
 	user := models.User{
-		Username: request.Username,
-		Email: request.Email,
+		Username:     request.Username,
+		Email:        request.Email,
 		PasswordHash: string(hash),
-		FirstName: request.FirstName,
-		LastName: request.LastName,
+		FirstName:    request.FirstName,
+		LastName:     request.LastName,
 	}
 
 	// Throws error if user already exists
 	if err := gorm.G[models.User](s.db).Create(ctx, &user); err != nil {
 		return nil, err
 	}
-	
+
 	return &user, nil
 }
 
