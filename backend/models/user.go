@@ -11,20 +11,24 @@ type User struct {
 	// Using UUID v7; See https://uuid7.com
 	ID uuid.UUID `gorm:"type:uuid;primaryKey"`
 	// use a partial index to handle issues when reusing unique fields from soft-deleted entities (https://sqlite.org/partialindex.html).
-	Username string `json:"username" binding:"required" gorm:"uniqueIndex:idx_username_active,where:deleted_at IS NULL;size:100"`
-	Email string `json:"email" binding:"required" gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255"`
-	Password string `json:"-" binding:"required"`
+	Username string `json:"username" gorm:"uniqueIndex:idx_username_active,where:deleted_at IS NULL;size:100;not null"`
+	Email string `json:"email" gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255;not null"`
+	PasswordHash string `json:"-" gorm:"not null"`
+	FirstName string `json:"first_name" gorm:"not null"`
+	LastName string `json:"last_name" gorm:"not null"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // The actual JSON object returned by the API
-// NOTE: May add more later (private to display account details, public for profiles)
 type UserResponse struct {
-	ID uuid.UUID `json:"id"`
-	Username string `json:"username"`
-	Email string `json:"email"`
+	ID        uuid.UUID `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // NOTE: https://gorm.io/docs/hooks.html
@@ -36,8 +40,11 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 
 func (u *User) GetResponse() UserResponse {
 	return UserResponse{
-        ID:       u.ID,
-        Username: u.Username,
-        Email:    u.Email,
-    }
+   		ID:        u.ID,
+		Username:  u.Username,
+		Email:     u.Email,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		CreatedAt: u.CreatedAt,
+	}
 }

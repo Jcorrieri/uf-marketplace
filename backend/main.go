@@ -1,23 +1,25 @@
 package main
 
 import (
+	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/database"
 	"github.com/Jcorrieri/uf-marketplace/backend/handlers"
-	"github.com/Jcorrieri/uf-marketplace/backend/services"
 )
-
 
 func main() {
 	// Instantiate database
 	db := database.Connect()
 
 	// Get services
-	bookService := services.NewBookService(db)	
+	authService := services.NewAuthService(db)
+	userService := services.NewUserService(db)	
 
 	// Set handlers
-	bookHandler := handlers.NewBookHandler(bookService)
+	userHandler := handlers.NewUserHandler(userService)
+	authHandler := handlers.NewAuthHandler(authService, userService)
+	settingsHandler := handlers.NewSettingsHandler(userService)
 
 	// Create router
 	router := gin.Default()
@@ -25,13 +27,28 @@ func main() {
 	// Grouping for cleaner logic
 	api := router.Group("/api")
 	{
-		books := api.Group("/books")
+		// Auth routes (public)
+		auth := api.Group("/auth")
 		{
-			books.GET("", bookHandler.GetBooks)
-			books.GET("/:id", bookHandler.GetBookById)
-			books.POST("", bookHandler.AddBook)
-			books.DELETE("/:id", bookHandler.DeleteBook)
+			auth.POST("/register", authHandler.Register)
+			// auth.POST("/login", handlers.Login)
 		}
+
+		users := api.Group("/users")
+		{
+			users.GET("", userHandler.GetUsers)
+			users.GET("/:id", userHandler.GetUserById)
+			// users.POST("", userHandler.AddUser)
+			users.DELETE("/:id", userHandler.DeleteUser)
+		}
+
+		settings := api.Group("/settings")
+		{
+			settings.GET("", settingsHandler.GetSettings)
+			settings.PUT("", settingsHandler.UpdateSettings)
+
+		}
+
 	}
 
 	router.Run("localhost:8080")
