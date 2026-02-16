@@ -1,13 +1,12 @@
 package main
 
 import (
+	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/database"
 	"github.com/Jcorrieri/uf-marketplace/backend/handlers"
-	"github.com/Jcorrieri/uf-marketplace/backend/services"
 )
-
 
 func main() {
 	// Instantiate database
@@ -20,6 +19,7 @@ func main() {
 	// Set handlers
 	userHandler := handlers.NewUserHandler(userService)
 	authHandler := handlers.NewAuthHandler(authService, userService)
+	settingsHandler := handlers.NewSettingsHandler(userService)
 
 	// Create router
 	router := gin.Default()
@@ -41,6 +41,14 @@ func main() {
 			// users.POST("", userHandler.AddUser)
 			users.DELETE("/:id", userHandler.DeleteUser)
 		}
+
+		settings := api.Group("/settings")
+		{
+			settings.GET("", settingsHandler.GetSettings)
+			settings.PUT("", settingsHandler.UpdateSettings)
+
+		}
+
 	}
 
 	router.Run("localhost:8080")

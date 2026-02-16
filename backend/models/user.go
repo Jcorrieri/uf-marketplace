@@ -23,11 +23,11 @@ type User struct {
 
 // The actual JSON object returned by the API
 type UserResponse struct {
-	ID uuid.UUID `json:"id"`
-	Username string `json:"username"`
-	Email string `json:"email"`
-	FirstName string `json:"first_name"`
-	LastName string `json:"last_name"` 
+	ID        uuid.UUID `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -40,11 +40,11 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 
 func (u *User) GetResponse() UserResponse {
 	return UserResponse{
-        ID:       u.ID,
-        Username: u.Username,
-        Email:    u.Email,
+   		ID:        u.ID,
+		Username:  u.Username,
+		Email:     u.Email,
 		FirstName: u.FirstName,
-		LastName: u.LastName,
+		LastName:  u.LastName,
 		CreatedAt: u.CreatedAt,
-    }
+	}
 }

@@ -12,6 +12,8 @@ import (
 // Define the service struct whose only dependency is the db connection.
 // Services will handle all database operations for each model (users, posts, etc.).
 // See https://gorm.io/docs/the_generics_way.html for generics API usage.
+
+// UserService handles user-related database operations
 type UserService struct {
 	db *gorm.DB
 }
@@ -42,7 +44,7 @@ func (s *UserService) Delete(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 
-    // No affected rows ⇒ no record existed; should return an error  	
+	// No affected rows ⇒ no record existed; should return an error
 	if rowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
@@ -50,6 +52,31 @@ func (s *UserService) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-// Other methods (PATCH, UPDATE, etc.)
+type UpdateUserRequest struct {
+	Username  string
+	FirstName string
+	LastName  string
+}
 
+func (s *UserService) UpdateSettings(
+	id uuid.UUID,
+	req UpdateUserRequest,
+) (*models.User, error) {
 
+	var user models.User
+
+	if err := s.db.First(&user, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	user.Username = req.Username
+
+	user.FirstName = req.FirstName
+	user.LastName = req.LastName
+
+	if err := s.db.Save(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}

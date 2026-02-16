@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+
 	// "log"
 	// "os"
 
@@ -45,4 +46,3 @@ func Connect() *gorm.DB {
 
 	return db
 }
-
