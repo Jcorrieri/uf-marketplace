@@ -27,7 +27,7 @@ func (s *UserService) GetAll(ctx context.Context) ([]models.User, error) {
 	return gorm.G[models.User](s.db).Find(ctx)
 }
 
-func (s *UserService) Get(ctx context.Context, id uuid.UUID) (models.User, error) {
+func (s *UserService) GetByID(ctx context.Context, id uuid.UUID) (models.User, error) {
 	return gorm.G[models.User](s.db).Where("id = ?", id).First(ctx)
 }
 

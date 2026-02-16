@@ -24,7 +24,7 @@ func NewSettingsHandler(us *services.UserService) *SettingsHandler {
 var dummyUserID = uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 func (h *SettingsHandler) GetSettings(c *gin.Context) {
-	user, err := h.userService.GetByID(dummyUserID)
+	user, err := h.userService.GetByID(c.Request.Context(), dummyUserID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "User not found",

@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/Jcorrieri/uf-marketplace/backend/models"
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/google/uuid"
 
