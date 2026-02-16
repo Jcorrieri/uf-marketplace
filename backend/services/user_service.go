@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
+	"golang.org/x/crypto/bcrypt"
 	"github.com/google/uuid"
 
 	"gorm.io/gorm"
@@ -31,8 +32,35 @@ func (s *UserService) GetByID(ctx context.Context, id uuid.UUID) (models.User, e
 	return gorm.G[models.User](s.db).Where("id = ?", id).First(ctx)
 }
 
-func (s *UserService) Create(ctx context.Context, user *models.User) error {
-	return gorm.G[models.User](s.db).Create(ctx, user)
+type CreateUserRequest struct {
+	Username  string
+	Email	  string
+	FirstName string
+	LastName  string
+	Password  string
+}
+
+func (s *UserService) Create(ctx context.Context, request CreateUserRequest) (*models.User, error) {
+	// TODO: Make utility fn ?
+	hash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+    if err != nil {
+        return nil, err
+    }
+
+	user := models.User{
+		Username: request.Username,
+		Email: request.Email,
+		PasswordHash: string(hash),
+		FirstName: request.FirstName,
+		LastName: request.LastName,
+	}
+
+	// Throws error if user already exists
+	if err := gorm.G[models.User](s.db).Create(ctx, &user); err != nil {
+		return nil, err
+	}
+	
+	return &user, nil
 }
 
 func (s *UserService) Delete(ctx context.Context, id uuid.UUID) error {

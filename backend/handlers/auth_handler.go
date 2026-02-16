@@ -23,6 +23,7 @@ func NewAuthHandler(as *services.AuthService, us *services.UserService) *AuthHan
 
 // Ingestion structs
 type RegisterInput struct {
+	Username  string `json:"username" binding:"required" `
 	Email     string `json:"email" binding:"required,email"`
 	Password  string `json:"password" binding:"required,min=6"`
 	FirstName string `json:"first_name" binding:"required"`
@@ -36,8 +37,9 @@ type LoginInput struct {
 
 func (h *AuthHandler) Register(c *gin.Context) {
 	var input RegisterInput
-	if err := c.ShouldBind(&input); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user input"})
+		return
 	}
 
 	// Check if email is UF email (optional - for UF students only)
@@ -47,5 +49,18 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// Pass checking if user exists and password hashing to service layer
-	// h.userService.Create()
+	request := services.CreateUserRequest{
+			Email: 	   input.Email,
+			Username:  input.Username,
+			FirstName: input.FirstName,
+			LastName:  input.LastName,
+			Password:  input.Password,
+	};
+	user, err := h.userService.Create(c.Request.Context(), request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Creating Account"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, user.GetResponse())
 }

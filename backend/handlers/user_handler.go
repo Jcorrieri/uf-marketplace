@@ -41,6 +41,7 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
 	}
 
 	user, err := h.service.GetByID(c.Request.Context(), id)
@@ -78,6 +79,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
 	}
 	
 	err = h.service.Delete(c.Request.Context(), id)
