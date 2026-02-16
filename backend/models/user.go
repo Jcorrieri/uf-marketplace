@@ -9,16 +9,16 @@ import (
 
 type User struct {
 	// Using UUID v7; See https://uuid7.com
-	ID uuid.UUID `gorm:"type:uuid;primaryKey"`
+	ID           uuid.UUID      `gorm:"type:uuid;primaryKey"`
 	// use a partial index to handle issues when reusing unique fields from soft-deleted entities (https://sqlite.org/partialindex.html).
-	Username string `gorm:"uniqueIndex:idx_username_active,where:deleted_at IS NULL;size:100;not null"`
-	Email string `gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255;not null"`
-	PasswordHash string `json:"-" gorm:"not null"`
-	FirstName string `gorm:"not null"`
-	LastName string `gorm:"not null"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	Username     string         `gorm:"uniqueIndex:idx_username_active,where:deleted_at IS NULL;size:100;not null"`
+	Email        string         `gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255;not null"`
+	PasswordHash string         `json:"-" gorm:"not null"`
+	FirstName    string         `gorm:"not null"`
+	LastName     string         `gorm:"not null"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
 // The actual JSON object returned by the API
