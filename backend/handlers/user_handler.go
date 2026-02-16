@@ -43,7 +43,7 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 	}
 
-	user, err := h.service.Get(c.Request.Context(), id)
+	user, err := h.service.GetByID(c.Request.Context(), id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
