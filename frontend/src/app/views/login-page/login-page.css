@@ -3,7 +3,6 @@
   flex: 1;
   display: flex;
   height: calc(100vh - var(--navbar-height));
-  font-family: var(--app-font, 'Segoe UI', sans-serif);
 }
 
 /* ===== Left — form ===== */
@@ -93,24 +92,6 @@
 
 .full-width {
   width: 100%;
-}
-
-.signup-link {
-  display: inline-block;
-  background-color: transparent;
-  border: 2px solid #fa4616;
-  color: #fa4616;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 0.88rem;
-  margin-left: 4px;
-}
-
-.signup-link:hover {
-  background-color: #fa4616;
-  color: #fff !important;
-  text-decoration: none;
 }
 
 /* ===== Right — hero ===== */
