@@ -156,15 +156,12 @@ app-login-button {
   border-radius: 20px;
   font-weight: 700;
   font-size: 0.88rem;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
   margin-left: 4px;
 }
 
 .signup-link:hover {
   background-color: #fa4616;
-  color: #fff;
+  color: #fff !important;
   text-decoration: none;
 }
 
