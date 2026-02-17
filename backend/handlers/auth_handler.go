@@ -50,12 +50,12 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 	// Pass checking if user exists and password hashing to service layer
 	request := services.CreateUserRequest{
-			Email: 	   input.Email,
-			Username:  input.Username,
-			FirstName: input.FirstName,
-			LastName:  input.LastName,
-			Password:  input.Password,
-	};
+		Email:     input.Email,
+		Username:  input.Username,
+		FirstName: input.FirstName,
+		LastName:  input.LastName,
+		Password:  input.Password,
+	}
 	user, err := h.userService.Create(c.Request.Context(), request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Creating Account"})
@@ -63,4 +63,27 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, user.GetResponse())
+}
+
+// Simple login endpoint: checks email and password, returns success if correct
+func (h *AuthHandler) Login(c *gin.Context) {
+	var input LoginInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid login input"})
+		return
+	}
+
+	user, err := h.userService.GetByEmail(c.Request.Context(), input.Email)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+
+	err = h.userService.CheckPassword(user, input.Password)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }

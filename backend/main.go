@@ -14,7 +14,7 @@ func main() {
 
 	// Get services
 	authService := services.NewAuthService(db)
-	userService := services.NewUserService(db)	
+	userService := services.NewUserService(db)
 
 	// Set handlers
 	userHandler := handlers.NewUserHandler(userService)
@@ -31,6 +31,7 @@ func main() {
 		auth := api.Group("/auth")
 		{
 			auth.POST("/register", authHandler.Register)
+			auth.POST("/login", authHandler.Login)
 			// auth.POST("/login", handlers.Login)
 		}
 
