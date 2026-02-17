@@ -25,9 +25,3 @@ body {
 body {
   font-family: var(--app-font);
 }
-
-main {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - var(--navbar-height));
-}

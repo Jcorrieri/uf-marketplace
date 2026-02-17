@@ -1,15 +1,7 @@
-:host {
-  display: flex;
-  flex-direction: column;
-  flex: 1; /* Tells the component to grow to fill the <main> container */
-  width: 100%;
-  height: 100%;
-}
-
 /* ===== Layout ===== */
 .login-wrapper {
-  flex: 1;
   display: flex;
+  min-height: calc(100vh - var(--navbar-height)); /* Assuming 64px navbar height */
   font-family: var(--app-font, 'Segoe UI', sans-serif);
 }
 
