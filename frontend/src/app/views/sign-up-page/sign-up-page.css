@@ -1,13 +1,17 @@
 /* ===== Layout ===== */
-.login-wrapper {
-  flex: 1;
+:host {
+  display: block;
+}
+
+.signup-wrapper {
   display: flex;
-  height: calc(100vh - var(--navbar-height));
-  font-family: var(--app-font, 'Segoe UI', sans-serif);
+  min-height: calc(100vh - 70px);
+  margin-top: 70px;
+  font-family: 'Nunito', sans-serif;
 }
 
 /* ===== Left — form ===== */
-.login-left {
+.signup-left {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -34,68 +38,20 @@
   margin-bottom: 28px;
 }
 
-/* --- Input groups --- */
-.input-group {
-  margin-bottom: 20px;
-}
-
-.label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.forgot-link {
-  font-size: 0.88rem;
-  color: var(--link-color, #1a73e8);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.forgot-link:hover {
-  text-decoration: underline;
-}
-
-.forgot-row {
-  margin-top: 0;
-  margin-bottom: 6px;
-  margin-right: 0;
-  text-align: right;
-}
-
-.signup-text {
+.login-text {
   text-align: center;
-  margin-top: 18px;
+  margin-top: 22px;
   font-size: 0.9rem;
+  color: #666;
 }
 
-/* Style the inlined login button to match brand while staying Material-friendly */
-.login-btn {
-  width: 100%;
-  border-radius: 12px;
-  font-family: var(--app-font, 'Segoe UI', sans-serif);
+.login-text a {
+  color: #fa4616;
   font-weight: 700;
-  padding: 26px 16px;
-  background-color: var(--brand-primary, #fa4616) !important;
-  color: #fff !important;
-  border: none !important;
-  box-shadow: none !important;
+  text-decoration: none;
 }
 
-.login-btn[disabled] {
-  opacity: 0.6;
-}
-
-.login-btn.mat-flat-button:hover:not([disabled]) {
-  background-color: var(--brand-primary-dark, #e03d12) !important;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.signup-link {
+.login-link {
   display: inline-block;
   background-color: transparent;
   border: 2px solid #fa4616;
@@ -107,20 +63,20 @@
   margin-left: 4px;
 }
 
-.signup-link:hover {
+.login-link:hover {
   background-color: #fa4616;
   color: #fff !important;
   text-decoration: none;
 }
 
 /* ===== Right — hero ===== */
-.login-right {
+.signup-right {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 60px 40px;
-  background: linear-gradient(135deg, var(--brand-accent, #0021a5) 0%, var(--brand-primary, #fa4616) 100%);
+  background: linear-gradient(135deg, #0021a5 0%, #fa4616 100%);
   color: #fff;
 }
 
@@ -141,6 +97,7 @@
   opacity: 0.92;
   margin-bottom: 36px;
 }
+
 .hero-features {
   display: flex;
   flex-direction: column;
@@ -162,11 +119,11 @@
 
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .login-wrapper {
+  .signup-wrapper {
     flex-direction: column;
   }
 
-  .login-right {
+  .signup-right {
     padding: 40px 24px;
   }
 
