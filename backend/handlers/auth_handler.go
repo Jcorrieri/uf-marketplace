@@ -36,29 +36,28 @@ type LoginInput struct {
 }
 
 func (h *AuthHandler) Register(c *gin.Context) {
-	var input RegisterInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user input"})
+	var in RegisterInput
+	if err := c.ShouldBindJSON(&in); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		return
 	}
 
-	// Check if email is UF email (optional - for UF students only)
-	if !strings.HasSuffix(strings.ToLower(input.Email), "@ufl.edu") {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Must use a valid UF email (@ufl.edu)"})
+	if !strings.HasSuffix(strings.ToLower(in.Email), "@ufl.edu") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "must use @ufl.edu email"})
 		return
 	}
 
-	// Pass checking if user exists and password hashing to service layer
-	request := services.CreateUserRequest{
-		Email:     input.Email,
-		Username:  input.Username,
-		FirstName: input.FirstName,
-		LastName:  input.LastName,
-		Password:  input.Password,
+	req := services.CreateUserRequest{
+		Email:     in.Email,
+		Username:  in.Username,
+		FirstName: in.FirstName,
+		LastName:  in.LastName,
+		Password:  in.Password,
 	}
-	user, err := h.userService.Create(c.Request.Context(), request)
+
+	user, err := h.userService.Create(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Creating Account"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not create user"})
 		return
 	}
 
@@ -67,23 +66,38 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 // Simple login endpoint: checks email and password, returns success if correct
 func (h *AuthHandler) Login(c *gin.Context) {
-	var input LoginInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid login input"})
+	var in LoginInput
+	if err := c.ShouldBindJSON(&in); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		return
 	}
 
-	user, err := h.userService.GetByEmail(c.Request.Context(), input.Email)
+	user, err := h.userService.GetByEmail(c.Request.Context(), in.Email)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
 
-	err = h.userService.CheckPassword(user, input.Password)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+	if err := h.userService.CheckPassword(user, in.Password); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
+}
+
+// Logout endpoint: invalidates session on server (if implemented)
+// and clears any session cookie on the client.
+func (h *AuthHandler) Logout(c *gin.Context) {
+	token, _ := c.Cookie(services.SessionCookieName)
+	if token == "" {
+		auth := c.GetHeader("Authorization")
+		if strings.HasPrefix(strings.ToLower(auth), "bearer ") {
+			token = strings.TrimSpace(auth[7:])
+		}
+	}
+
+	_ = h.authService.Logout(c.Request.Context(), token)
+	c.SetCookie(services.SessionCookieName, "", -1, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "logout successful"})
 }
