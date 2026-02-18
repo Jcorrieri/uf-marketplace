@@ -130,6 +130,33 @@ app-login-button {
   margin-top: 30px;
 }
 
+/* Primary sign-in button styling (matches LoginButton component) */
+.primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  background-color: #fa4616;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+  margin-top: 30px;
+}
+
+.primary:hover {
+  background-color: #e03d12;
+}
+
+.primary:active {
+  transform: scale(0.97);
+}
+
 .signup-text {
   text-align: center;
   margin-top: 22px;

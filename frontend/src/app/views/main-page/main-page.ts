@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-page',
@@ -7,20 +8,21 @@ import { Component } from '@angular/core';
   styleUrl: './main-page.css',
 })
 export class MainPage {
+  constructor(private router: Router) {}
+
   // Minimal client-side logout: POST to backend logout endpoint,
-  // then clear local client state and navigate to login.
+  // then clear local client state and navigate to login (via Router).
   async logout() {
     try {
       await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (e) {
-      // ignore network errors; continue to clear client state
       console.error('logout request failed', e);
     }
 
-    // Clear any client-side stored auth (adjust key if you use a different one)
-    try { localStorage.removeItem('authToken'); } catch {}
+    // Clear stored access token
+    try { localStorage.removeItem('accessToken'); } catch {}
 
-    // Navigate to login page (adjust route as needed)
-    window.location.href = '/';
+    // Use Angular Router for navigation instead of window.location
+    this.router.navigate(['/']);
   }
 }

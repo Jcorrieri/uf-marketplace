@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // Set up handler injection
@@ -83,7 +86,28 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
+	// Issue a short-lived JWT access token for the client to use in
+	// Authorization: Bearer <token> headers. The secret is read from
+	// `JWT_SECRET` (fall back to a dev secret if unset).
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "dev-secret"
+	}
+
+	claims := jwt.MapClaims{
+		"sub":   user.ID.String(),
+		"email": user.Email,
+		"exp":   time.Now().Add(15 * time.Minute).Unix(),
+	}
+
+	tok := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	signed, err := tok.SignedString([]byte(secret))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"access_token": signed})
 }
 
 // Logout endpoint: invalidates session on server (if implemented)
