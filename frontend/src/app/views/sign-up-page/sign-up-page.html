@@ -5,6 +5,41 @@
       <h2 class="form-title">Create Account</h2>
       <p class="form-subtitle">Sign up for your UF MarketPlace account</p>
 
+      <!-- Email field -->
+      <div class="input-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <span class="material-symbols-outlined input-icon">mail</span>
+          <input
+            id="email"
+            type="email"
+            placeholder="yourname&#64;ufl.edu"
+            [value]="email()"
+            (input)="onEmailInput($event)"
+          />
+        </div>
+      </div>
+
+      <!-- Password field -->
+      <div class="input-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="material-symbols-outlined input-icon">lock</span>
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            placeholder="Enter your password"
+            [value]="password()"
+            (input)="onPasswordInput($event)"
+          />
+          <button type="button" class="toggle-pw" (click)="togglePassword()">
+            <span class="material-symbols-outlined">
+              {{ showPassword() ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
+      </div>
+
       <p class="login-text">
         Already registered? <a routerLink="/login" class="login-link">Login</a>
       </p>

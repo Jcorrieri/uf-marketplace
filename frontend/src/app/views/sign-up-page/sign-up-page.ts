@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -7,4 +7,20 @@ import { RouterLink } from '@angular/router';
   templateUrl: './sign-up-page.html',
   styleUrl: './sign-up-page.css',
 })
-export class SignUpPage {}
+export class SignUpPage {
+  email = signal('');
+  password = signal('');
+  showPassword = signal(false);
+
+  onEmailInput(event: Event) {
+    this.email.set((event.target as HTMLInputElement).value);
+  }
+
+  onPasswordInput(event: Event) {
+    this.password.set((event.target as HTMLInputElement).value);
+  }
+
+  togglePassword() {
+    this.showPassword.update((v) => !v);
+  }
+}
