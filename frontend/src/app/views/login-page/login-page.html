@@ -15,6 +15,7 @@
             type="email"
             placeholder="yourname&#64;ufl.edu"
             [value]="userName()"
+            autocomplete="email"
             (input)="onEmailInput($event)"
           />
         </div>
@@ -33,6 +34,7 @@
             [type]="showPassword() ? 'text' : 'password'"
             placeholder="Enter your password"
             [value]="password()"
+            autocomplete="current-password"
             (input)="onPasswordInput($event)"
           />
           <button type="button" class="toggle-pw" (click)="togglePassword()">

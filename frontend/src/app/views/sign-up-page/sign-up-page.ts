@@ -1,9 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-sign-up-page',
-  imports: [RouterLink],
+  imports: [RouterLink, NgIf],
   templateUrl: './sign-up-page.html',
   styleUrl: './sign-up-page.css',
 })

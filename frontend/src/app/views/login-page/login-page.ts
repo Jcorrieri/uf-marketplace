@@ -1,8 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
+  imports: [RouterLink],
   templateUrl: './login-page.html',
   styleUrl: './login-page.css',
 })
