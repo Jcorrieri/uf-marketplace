@@ -6,6 +6,7 @@ import (
 
 	"github.com/Jcorrieri/uf-marketplace/backend/database"
 	"github.com/Jcorrieri/uf-marketplace/backend/handlers"
+	"github.com/gin-contrib/cors"
 )
 
 func main() {
@@ -24,6 +25,12 @@ func main() {
 	// Create router
 	router := gin.Default()
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:4200"},
+		AllowMethods:  []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type"},
+		AllowCredentials: true,
+	}))
 	// Grouping for cleaner logic
 	api := router.Group("/api")
 	{
