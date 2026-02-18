@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Nunito', sans-serif;
+  row-gap: 24px;
+}
+
+.main-container h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+.logout-btn {
+  padding: 12px 36px;
+  border: 2px solid #fa4616;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #fa4616;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #fa4616;
+  color: #fff;
+}

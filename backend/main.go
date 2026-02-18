@@ -24,6 +24,7 @@ func main() {
 	// Create router
 	router := gin.Default()
 
+	
 	// Grouping for cleaner logic
 	api := router.Group("/api")
 	{
