@@ -86,6 +86,12 @@
         </div>
       </div>
 
+      <button class="signup-btn" (click)="onSignUp()">Sign Up</button>
+
+      @if (errorMessage()) {
+        <p class="error-text">{{ errorMessage() }}</p>
+      }
+
       <p class="login-text">
         Already registered? <a routerLink="/login" class="login-link">Login</a>
       </p>

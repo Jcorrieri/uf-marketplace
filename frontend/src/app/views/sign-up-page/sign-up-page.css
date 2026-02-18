@@ -114,6 +114,36 @@
   color: #666;
 }
 
+/* --- Sign Up button --- */
+.signup-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0021a5 0%, #fa4616 100%);
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.signup-btn:hover {
+  opacity: 0.9;
+}
+
+/* --- Error message --- */
+.error-text {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #d32f2f;
+}
+
 .login-text {
   text-align: center;
   margin-top: 22px;
