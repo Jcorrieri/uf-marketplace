@@ -5,6 +5,52 @@
       <h2 class="form-title">Create Account</h2>
       <p class="form-subtitle">Sign up for your UF MarketPlace account</p>
 
+      <!-- First Name & Last Name fields -->
+      <div class="input-row">
+        <div class="input-group">
+          <label for="firstName">First Name</label>
+          <div class="input-wrapper">
+            <span class="material-symbols-outlined input-icon">person</span>
+            <input
+              id="firstName"
+              type="text"
+              placeholder="First name"
+              [value]="firstName()"
+              (input)="onFirstNameInput($event)"
+            />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="lastName">Last Name</label>
+          <div class="input-wrapper">
+            <span class="material-symbols-outlined input-icon">person</span>
+            <input
+              id="lastName"
+              type="text"
+              placeholder="Last name"
+              [value]="lastName()"
+              (input)="onLastNameInput($event)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Username field -->
+      <div class="input-group">
+        <label for="username">Username</label>
+        <div class="input-wrapper">
+          <span class="material-symbols-outlined input-icon">person</span>
+          <input
+            id="username"
+            type="text"
+            placeholder="Choose a username"
+            [value]="username()"
+            (input)="onUsernameInput($event)"
+          />
+        </div>
+      </div>
+
       <!-- Email field -->
       <div class="input-group">
         <label for="email">Email</label>

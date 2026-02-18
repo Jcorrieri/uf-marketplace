@@ -39,6 +39,15 @@
 }
 
 /* --- Input groups --- */
+.input-row {
+  display: flex;
+  column-gap: 16px;
+}
+
+.input-row .input-group {
+  flex: 1;
+}
+
 .input-group {
   margin-bottom: 20px;
 }
