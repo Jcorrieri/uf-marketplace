@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { LoginButton } from '../../components/login-button/login-button';
 
 @Component({
   selector: 'app-login-page',
-  imports: [LoginButton],
+  imports: [LoginButton, RouterLink],
   templateUrl: './login-page.html',
   styleUrl: './login-page.css',
 })
