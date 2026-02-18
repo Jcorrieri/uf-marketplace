@@ -15,6 +15,7 @@
             type="email"
             placeholder="yourname&#64;ufl.edu"
             [value]="userName()"
+            autocomplete="email"
             (input)="onEmailInput($event)"
           />
         </div>
@@ -33,6 +34,7 @@
             [type]="showPassword() ? 'text' : 'password'"
             placeholder="Enter your password"
             [value]="password()"
+            autocomplete="current-password"
             (input)="onPasswordInput($event)"
           />
           <button type="button" class="toggle-pw" (click)="togglePassword()">
@@ -43,7 +45,7 @@
         </div>
       </div>
 
-      <app-login-button></app-login-button>
+      <button class="primary" (click)="login()">Sign in</button>
 
       <p class="signup-text">
         Don't have an account? <a routerLink="/sign-up" class="signup-link">Sign up</a>

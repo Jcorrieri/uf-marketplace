@@ -17,6 +17,7 @@
               placeholder="First name"
               [value]="firstName()"
               (input)="onFirstNameInput($event)"
+              autocomplete="given-name"
             />
           </div>
         </div>
@@ -31,6 +32,7 @@
               placeholder="Last name"
               [value]="lastName()"
               (input)="onLastNameInput($event)"
+              autocomplete="family-name"
             />
           </div>
         </div>
@@ -47,6 +49,7 @@
             placeholder="Choose a username"
             [value]="username()"
             (input)="onUsernameInput($event)"
+            autocomplete="username"
           />
         </div>
       </div>
@@ -62,6 +65,7 @@
             placeholder="yourname&#64;ufl.edu"
             [value]="email()"
             (input)="onEmailInput($event)"
+            autocomplete="email"
           />
         </div>
       </div>
@@ -77,6 +81,7 @@
             placeholder="Enter your password"
             [value]="password()"
             (input)="onPasswordInput($event)"
+            autocomplete="new-password"
           />
           <button type="button" class="toggle-pw" (click)="togglePassword()">
             <span class="material-symbols-outlined">
@@ -88,9 +93,7 @@
 
       <button class="signup-btn" (click)="onSignUp()">Sign Up</button>
 
-      @if (errorMessage()) {
-        <p class="error-text">{{ errorMessage() }}</p>
-      }
+      <p *ngIf="errorMessage()" class="error-text">{{ errorMessage() }}</p>
 
       <p class="login-text">
         Already registered? <a routerLink="/login" class="login-link">Login</a>

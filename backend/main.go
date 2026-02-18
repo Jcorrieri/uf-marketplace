@@ -24,7 +24,6 @@ func main() {
 	// Create router
 	router := gin.Default()
 
-	
 	// Grouping for cleaner logic
 	api := router.Group("/api")
 	{
@@ -33,6 +32,7 @@ func main() {
 		{
 			auth.POST("/register", authHandler.Register)
 			auth.POST("/login", authHandler.Login)
+			auth.POST("/logout", authHandler.Logout)
 			// auth.POST("/login", handlers.Login)
 		}
 
