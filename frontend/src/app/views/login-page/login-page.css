@@ -1,13 +1,8 @@
 /* ===== Layout ===== */
-:host {
-  display: block;
-}
-
 .login-wrapper {
+  flex: 1;
   display: flex;
-  min-height: calc(100vh - 70px);
-  margin-top: 70px;
-  font-family: 'Nunito', sans-serif;
+  height: calc(100vh - var(--navbar-height));
 }
 
 /* ===== Left — form ===== */
@@ -43,14 +38,6 @@
   margin-bottom: 20px;
 }
 
-.input-group label {
-  display: block;
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: #333;
-  margin-bottom: 6px;
-}
-
 .label-row {
   display: flex;
   justify-content: space-between;
@@ -59,8 +46,8 @@
 }
 
 .forgot-link {
-  font-size: 0.82rem;
-  color: #fa4616;
+  font-size: 0.88rem;
+  color: var(--link-color, #1a73e8);
   text-decoration: none;
   font-weight: 600;
 }
@@ -69,65 +56,11 @@
   text-decoration: underline;
 }
 
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  background: #f5f5f7;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  padding: 0 14px;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.input-wrapper:focus-within {
-  border-color: #fa4616;
-  box-shadow: 0 0 0 3px rgba(250, 70, 22, 0.1);
-  background: #fff;
-}
-
-.input-icon {
-  font-size: 20px;
-  color: #aaa;
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.input-wrapper input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.95rem;
-  padding: 13px 0;
-  color: #1a1a2e;
-}
-
-.input-wrapper input::placeholder {
-  color: #bbb;
-}
-
-.toggle-pw {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  color: #aaa;
-}
-
-.toggle-pw:hover {
-  color: #666;
-}
-
-/* --- Button --- */
-app-login-button {
-  display: block;
-  width: 100%;
-  margin-top: 30px;
+.forgot-row {
+  margin-top: 0;
+  margin-bottom: 6px;
+  margin-right: 0;
+  text-align: right;
 }
 
 /* Primary sign-in button styling (matches LoginButton component) */
@@ -159,37 +92,33 @@ app-login-button {
 
 .signup-text {
   text-align: center;
-  margin-top: 22px;
+  margin-top: 18px;
   font-size: 0.9rem;
-  color: #666;
 }
 
-.signup-text a {
-  color: #fa4616;
+/* Style the inlined login button to match brand while staying Material-friendly */
+.login-btn {
+  width: 100%;
+  border-radius: 12px;
+  font-family: var(--app-font, 'Segoe UI', sans-serif);
   font-weight: 700;
-  text-decoration: none;
-}
-
-.signup-text a:hover {
-  text-decoration: underline;
-}
-
-.signup-link {
-  display: inline-block;
-  background-color: transparent;
-  border: 2px solid #fa4616;
-  color: #fa4616;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 0.88rem;
-  margin-left: 4px;
-}
-
-.signup-link:hover {
-  background-color: #fa4616;
+  padding: 26px 16px;
+  background-color: var(--brand-primary, #fa4616) !important;
   color: #fff !important;
-  text-decoration: none;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.login-btn[disabled] {
+  opacity: 0.6;
+}
+
+.login-btn.mat-flat-button:hover:not([disabled]) {
+  background-color: var(--brand-primary-dark, #e03d12) !important;
+}
+
+.full-width {
+  width: 100%;
 }
 
 /* ===== Right — hero ===== */
@@ -199,7 +128,7 @@ app-login-button {
   justify-content: center;
   align-items: center;
   padding: 60px 40px;
-  background: linear-gradient(135deg, #0021a5 0%, #fa4616 100%);
+  background: linear-gradient(135deg, var(--brand-accent, #0021a5) 0%, var(--brand-primary, #fa4616) 100%);
   color: #fff;
 }
 
@@ -220,7 +149,6 @@ app-login-button {
   opacity: 0.92;
   margin-bottom: 36px;
 }
-
 .hero-features {
   display: flex;
   flex-direction: column;
