@@ -1,4 +1,8 @@
 /* ===== Layout ===== */
+:host {
+  display: block
+}
+
 .login-wrapper {
   flex: 1;
   display: flex;

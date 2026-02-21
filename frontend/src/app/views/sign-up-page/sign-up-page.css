@@ -1,6 +1,6 @@
-/* ===== Layout ===== */
 :host {
   display: block;
+  font-family: var(--app-font);
 }
 
 .signup-wrapper {
@@ -8,7 +8,6 @@
   min-height: calc(100vh - var(--navbar-height));
 }
 
-/* ===== Left — form ===== */
 .signup-left {
   flex: 1;
   display: flex;
@@ -36,110 +35,42 @@
   margin-bottom: 28px;
 }
 
-/* --- Input groups --- */
 .input-row {
   display: flex;
-  column-gap: 16px;
+  gap: 16px;
 }
 
-.input-row .input-group {
-  flex: 1;
-}
-
-.input-group {
-  margin-bottom: 20px;
-}
-
-.input-group label {
-  display: block;
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: #333;
-  margin-bottom: 6px;
-}
-
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  background: #f5f5f7;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  padding: 0 14px;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.input-wrapper:focus-within {
-  border-color: #fa4616;
-  box-shadow: 0 0 0 3px rgba(250, 70, 22, 0.1);
-  background: #fff;
-}
-
-.input-icon {
-  font-size: 20px;
-  color: #aaa;
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.input-wrapper input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.95rem;
-  padding: 13px 0;
-  color: #1a1a2e;
-}
-
-.input-wrapper input::placeholder {
-  color: #bbb;
-}
-
-.toggle-pw {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  color: #aaa;
-}
-
-.toggle-pw:hover {
-  color: #666;
-}
-
-/* --- Sign Up button --- */
-.signup-btn {
-  display: block;
+.full-width {
   width: 100%;
-  padding: 14px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #0021a5 0%, #fa4616 100%);
-  color: #fff;
-  font-family: 'Nunito', sans-serif;
-  font-size: 1rem;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+/* Updated Sign Up Button to match login-btn geometry and disabled state */
+.signup-btn {
+  width: 100%;
+  border-radius: 12px !important;
+  font-family: var(--app-font);
   font-weight: 700;
-  cursor: pointer;
+  padding: 26px 16px !important;
+  background-color: var(--brand-primary) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin-top: 20px;
   transition: opacity 0.2s ease;
 }
 
-.signup-btn:hover {
-  opacity: 0.9;
+/* Mirror the grayed-out effect from the login page */
+.signup-btn[disabled] {
+  opacity: 0.6;
 }
 
-/* --- Error message --- */
-.error-text {
-  text-align: center;
-  margin-top: 14px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #d32f2f;
+.signup-btn:hover:not([disabled]) {
+  filter: brightness(0.9);
 }
 
 .login-text {
@@ -149,65 +80,38 @@
   color: #666;
 }
 
-/* ===== Right — hero ===== */
+.login-link {
+  color: var(--link-color);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
 .signup-right {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 60px 40px;
-  background: linear-gradient(135deg, #0021a5 0%, #fa4616 100%);
+  background: linear-gradient(135deg, var(--brand-accent) 0%, var(--brand-primary) 100%);
   color: #fff;
 }
 
-.hero-content {
-  max-width: 460px;
-}
+.hero-content { max-width: 460px; }
+.hero-title { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 18px; }
+.hero-desc { font-size: 1.05rem; line-height: 1.7; opacity: 0.92; margin-bottom: 36px; }
+.hero-features { display: flex; flex-direction: column; row-gap: 16px; }
+.feature { display: flex; align-items: center; column-gap: 12px; font-size: 1.02rem; font-weight: 600; }
+.feature-icon { font-size: 26px; opacity: 0.9; }
 
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 18px;
-}
-
-.hero-desc {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  opacity: 0.92;
-  margin-bottom: 36px;
-}
-
-.hero-features {
-  display: flex;
-  flex-direction: column;
-  row-gap: 16px;
-}
-
-.feature {
-  display: flex;
-  align-items: center;
-  column-gap: 12px;
-  font-size: 1.02rem;
+.error-text {
+  color: #d32f2f;
+  text-align: center;
+  margin-top: 14px;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
-.feature-icon {
-  font-size: 26px;
-  opacity: 0.9;
-}
-
-/* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .signup-wrapper {
-    flex-direction: column;
-  }
-
-  .signup-right {
-    padding: 40px 24px;
-  }
-
-  .hero-title {
-    font-size: 1.9rem;
-  }
+  .signup-wrapper { flex-direction: column; }
+  .signup-right { padding: 40px 24px; }
 }

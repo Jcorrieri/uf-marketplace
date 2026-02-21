@@ -1,81 +1,76 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+
+// Angular Material Imports
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-sign-up-page',
-  imports: [RouterLink, NgIf],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterLink,
+    ReactiveFormsModule, // Changed from FormsModule to match login page pattern
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule
+  ],
   templateUrl: './sign-up-page.html',
   styleUrl: './sign-up-page.css',
 })
 export class SignUpPage {
   private router = inject(Router);
 
-  firstName = signal('');
-  lastName = signal('');
-  username = signal('');
-  email = signal('');
-  password = signal('');
   showPassword = signal(false);
   errorMessage = signal('');
 
-  onFirstNameInput(event: Event) {
-    this.firstName.set((event.target as HTMLInputElement).value);
-  }
-
-  onLastNameInput(event: Event) {
-    this.lastName.set((event.target as HTMLInputElement).value);
-  }
-
-  onUsernameInput(event: Event) {
-    this.username.set((event.target as HTMLInputElement).value);
-  }
-
-  onEmailInput(event: Event) {
-    this.email.set((event.target as HTMLInputElement).value);
-  }
-
-  onPasswordInput(event: Event) {
-    this.password.set((event.target as HTMLInputElement).value);
-  }
+  // Define form group with validators to control button state
+  signUpForm = new FormGroup({
+    firstName: new FormControl('', [Validators.required]),
+    lastName: new FormControl('', [Validators.required]),
+    username: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+  });
 
   togglePassword() {
     this.showPassword.update((v) => !v);
   }
 
-  //Call the backend code to create the user in backend database. upon successful completion of this function, the front end takes the user to the Main Page
   async onSignUp() {
-    this.errorMessage.set('');
+    if (this.signUpForm.invalid) return;
 
-    const body = {
-      username: this.username(),
-      email: this.email(),
-      password: this.password(),
-      first_name: this.firstName(),
-      last_name: this.lastName(),
-    };
+    this.errorMessage.set('');
+    const formValue = this.signUpForm.value;
 
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          username: formValue.username,
+          email: formValue.email,
+          password: formValue.password,
+          first_name: formValue.firstName,
+          last_name: formValue.lastName,
+        }),
       });
 
       if (!response.ok) {
-        try {
-          const errorBody = await response.json();
-          this.errorMessage.set(errorBody.error || `Registration failed (status ${response.status}).`);
-        } catch {
-          this.errorMessage.set(`Server returned an error (status ${response.status}).`);
-        }
+        const errorBody = await response.json().catch(() => ({}));
+        this.errorMessage.set(errorBody.error || `Error: ${response.status}`);
         return;
       }
 
-      await response.json();
       this.router.navigate(['/main']);
     } catch (err) {
-      this.errorMessage.set('Unable to reach the server. Make sure the backend is running and try again.');
+      this.errorMessage.set('Unable to reach the server.');
     }
   }
 }

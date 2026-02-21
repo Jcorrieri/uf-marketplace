@@ -1,97 +1,58 @@
 <div class="signup-wrapper">
-  <!-- Left side: form -->
   <div class="signup-left">
-    <div class="form-card">
+    <div class="form-card" [formGroup]="signUpForm">
       <h2 class="form-title">Create Account</h2>
       <p class="form-subtitle">Sign up for your UF MarketPlace account</p>
 
-      <!-- First Name & Last Name fields -->
       <div class="input-row">
-        <div class="input-group">
-          <label for="firstName">First Name</label>
-          <div class="input-wrapper">
-            <span class="material-symbols-outlined input-icon">person</span>
-            <input
-              id="firstName"
-              type="text"
-              placeholder="First name"
-              [value]="firstName()"
-              (input)="onFirstNameInput($event)"
-              autocomplete="given-name"
-            />
-          </div>
-        </div>
+        <mat-form-field appearance="outline">
+          <mat-label>First Name</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="firstName" placeholder="First name">
+          <mat-error *ngIf="signUpForm.get('firstName')?.hasError('required')">Required</mat-error>
+        </mat-form-field>
 
-        <div class="input-group">
-          <label for="lastName">Last Name</label>
-          <div class="input-wrapper">
-            <span class="material-symbols-outlined input-icon">person</span>
-            <input
-              id="lastName"
-              type="text"
-              placeholder="Last name"
-              [value]="lastName()"
-              (input)="onLastNameInput($event)"
-              autocomplete="family-name"
-            />
-          </div>
-        </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="lastName" placeholder="Last name">
+          <mat-error *ngIf="signUpForm.get('lastName')?.hasError('required')">Required</mat-error>
+        </mat-form-field>
       </div>
 
-      <!-- Username field -->
-      <div class="input-group">
-        <label for="username">Username</label>
-        <div class="input-wrapper">
-          <span class="material-symbols-outlined input-icon">person</span>
-          <input
-            id="username"
-            type="text"
-            placeholder="Choose a username"
-            [value]="username()"
-            (input)="onUsernameInput($event)"
-            autocomplete="username"
-          />
-        </div>
-      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Username</mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput formControlName="username" placeholder="Choose a username">
+        <mat-error *ngIf="signUpForm.get('username')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
 
-      <!-- Email field -->
-      <div class="input-group">
-        <label for="email">Email</label>
-        <div class="input-wrapper">
-          <span class="material-symbols-outlined input-icon">mail</span>
-          <input
-            id="email"
-            type="email"
-            placeholder="yourname&#64;ufl.edu"
-            [value]="email()"
-            (input)="onEmailInput($event)"
-            autocomplete="email"
-          />
-        </div>
-      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <mat-icon matPrefix>mail</mat-icon>
+        <input matInput type="email" formControlName="email" placeholder="yourname@ufl.edu">
+        <mat-error *ngIf="signUpForm.get('email')?.hasError('email')">Enter a valid email</mat-error>
+        <mat-error *ngIf="signUpForm.get('email')?.hasError('required')">Email is required</mat-error>
+      </mat-form-field>
 
-      <!-- Password field -->
-      <div class="input-group">
-        <label for="password">Password</label>
-        <div class="input-wrapper">
-          <span class="material-symbols-outlined input-icon">lock</span>
-          <input
-            id="password"
-            [type]="showPassword() ? 'text' : 'password'"
-            placeholder="Enter your password"
-            [value]="password()"
-            (input)="onPasswordInput($event)"
-            autocomplete="new-password"
-          />
-          <button type="button" class="toggle-pw" (click)="togglePassword()">
-            <span class="material-symbols-outlined">
-              {{ showPassword() ? 'visibility_off' : 'visibility' }}
-            </span>
-          </button>
-        </div>
-      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password">
+        <button mat-icon-button matSuffix (click)="togglePassword()" type="button">
+          <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="signUpForm.get('password')?.hasError('required')">Password is required</mat-error>
+      </mat-form-field>
 
-      <button class="signup-btn" (click)="onSignUp()">Sign Up</button>
+      <button
+        mat-flat-button
+        class="signup-btn"
+        [disabled]="signUpForm.invalid"
+        (click)="onSignUp()"
+      >
+        Sign Up
+      </button>
 
       <p *ngIf="errorMessage()" class="error-text">{{ errorMessage() }}</p>
 
@@ -101,25 +62,23 @@
     </div>
   </div>
 
-  <!-- Right side: hero -->
   <div class="signup-right">
     <div class="hero-content">
       <h1 class="hero-title">Join the Gator<br />MarketPlace</h1>
       <p class="hero-desc">
         Create your account to start buying and selling with fellow University of Florida students.
-        It only takes a minute to get started.
       </p>
       <div class="hero-features">
         <div class="feature">
-          <span class="material-symbols-outlined feature-icon">verified_user</span>
+          <mat-icon class="feature-icon">verified_user</mat-icon>
           <span>Verified UF Students Only</span>
         </div>
         <div class="feature">
-          <span class="material-symbols-outlined feature-icon">handshake</span>
+          <mat-icon class="feature-icon">handshake</mat-icon>
           <span>Secure Transactions</span>
         </div>
         <div class="feature">
-          <span class="material-symbols-outlined feature-icon">location_on</span>
+          <mat-icon class="feature-icon">location_on</mat-icon>
           <span>Campus Meetups</span>
         </div>
       </div>
