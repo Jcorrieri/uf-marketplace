@@ -7,45 +7,49 @@
 
       <!-- Email field -->
       <div class="input-group">
-        <label for="email">Email</label>
-        <div class="input-wrapper">
-          <span class="material-symbols-outlined input-icon">mail</span>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
           <input
+            matInput
             id="email"
             type="email"
-            placeholder="yourname&#64;ufl.edu"
-            [value]="userName()"
             autocomplete="email"
-            (input)="onEmailInput($event)"
+            placeholder="yourname@ufl.edu"
+            [formControl]="emailControl"
           />
-        </div>
+          @if (emailControl.hasError('required')) {
+            <mat-error>Email is required</mat-error>
+          }
+          @if (emailControl.hasError('email')) {
+            <mat-error>Enter a valid email</mat-error>
+          }
+        </mat-form-field>
       </div>
 
       <!-- Password field -->
       <div class="input-group">
-        <div class="label-row">
-          <label for="password">Password</label>
-          <a href="#" class="forgot-link">Forgot password?</a>
-        </div>
-        <div class="input-wrapper">
-          <span class="material-symbols-outlined input-icon">lock</span>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
           <input
+            matInput
             id="password"
             [type]="showPassword() ? 'text' : 'password'"
             placeholder="Enter your password"
-            [value]="password()"
             autocomplete="current-password"
-            (input)="onPasswordInput($event)"
+            [formControl]="passwordControl"
           />
-          <button type="button" class="toggle-pw" (click)="togglePassword()">
-            <span class="material-symbols-outlined">
-              {{ showPassword() ? 'visibility_off' : 'visibility' }}
-            </span>
+          <button matIconButton matSuffix type="button" (click)="togglePassword($event)" aria-label="Toggle password">
+            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
+        </mat-form-field>
+        <div class="forgot-row">
+          <a href="#" class="forgot-link">Forgot password?</a>
         </div>
       </div>
 
-      <button class="primary" (click)="login()">Sign in</button>
+      <button mat-flat-button color="primary" class="login-btn" type="button" [disabled]="loginForm.invalid" (click)="login()">Sign In</button>
 
       <p class="signup-text">
         Don't have an account? <a routerLink="/sign-up" class="signup-link">Sign up</a>
@@ -63,15 +67,15 @@
       </p>
       <div class="hero-features">
         <div class="feature">
-          <span class="material-symbols-outlined feature-icon">verified_user</span>
+          <mat-icon class="feature-icon">verified_user</mat-icon>
           <span>Verified UF Students Only</span>
         </div>
         <div class="feature">
-          <span class="material-symbols-outlined feature-icon">handshake</span>
+          <mat-icon class="feature-icon">handshake</mat-icon>
           <span>Secure Transactions</span>
         </div>
         <div class="feature">
-          <span class="material-symbols-outlined feature-icon">location_on</span>
+          <mat-icon class="feature-icon">location_on</mat-icon>
           <span>Campus Meetups</span>
         </div>
       </div>
