@@ -2,7 +2,12 @@ package services
 
 import (
 	"context"
+	"errors"
+	"os"
 
+	"github.com/Jcorrieri/uf-marketplace/backend/models"
+	"github.com/Jcorrieri/uf-marketplace/backend/utils"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -17,14 +22,32 @@ func NewAuthService(db *gorm.DB) *AuthService {
 	return &AuthService{db: db}
 }
 
-// SessionCookieName is the cookie name used for session tokens. Exported
-// so handlers and other packages can reference the canonical name.
-const SessionCookieName = "session"
+func (s *AuthService) Authenticate(ctx context.Context, email, password string) (*models.User, string, error) {
+	// Check if account exists w/ given email
+	user, err := gorm.G[models.User](s.db).Where("email = ?", email).First(ctx)
+	if err != nil {
+		return nil, "", err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+		return nil, "", err
+	}
+
+	// Generate a JWT token for the authenticated user
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		return nil, "", errors.New("JWT secret not set")
+	}
+
+	token, err := utils.GenerateToken(user.ID, secret)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return &user, token, nil
+}
 
 // Logout performs server-side logout for the supplied session token.
-// Current implementation is intentionally minimal (no persistent session
-// store). The method accepts the token to make future transitions to
-// token revocation or session DB deletions straightforward.
 func (s *AuthService) Logout(ctx context.Context, sessionToken string) error {
 	// If the application later implements server-side sessions or token
 	// blacklisting, revoke the token here (delete DB row / add to denylist).
