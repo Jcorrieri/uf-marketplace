@@ -16,12 +16,29 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
+.gator-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
 .search-field {
   flex: 1;
+  min-width: 0;
+}
+
+/* Remove the built-in subscript space that misaligns the flex row */
+::ng-deep .search-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.search-field .mdc-text-field--outlined {
+  margin-bottom: 0;
 }
 
 .logout-icon {
   color: #fa4616;
+  flex-shrink: 0;
 }
 
 /* ── Product grid ── */
