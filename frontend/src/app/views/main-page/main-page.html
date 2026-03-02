@@ -1,4 +1,42 @@
-<div class="main-container">
-  <h1>mainPage</h1>
-  <button class="logout-btn" (click)="logout()">Logout</button>
+<!-- Sticky search bar -->
+<div class="search-bar">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search products</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      matInput
+      type="text"
+      placeholder="Search by name or description…"
+      [(ngModel)]="searchQuery"
+    />
+    @if (searchQuery) {
+      <button matIconSuffix mat-icon-button (click)="searchQuery = ''" aria-label="Clear">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  <button mat-icon-button class="logout-icon" (click)="logout()" aria-label="Logout">
+    <mat-icon>logout</mat-icon>
+  </button>
+</div>
+
+<!-- Product list -->
+<div class="product-grid">
+  @for (product of filteredProducts; track product.id) {
+    <mat-card class="product-card">
+      <img mat-card-image [src]="product.image" [alt]="product.name" />
+      <mat-card-header>
+        <mat-card-title>{{ product.name }}</mat-card-title>
+        <mat-card-subtitle>{{ product.description }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="price">{{ product.price | currency }}</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (filteredProducts.length === 0) {
+    <p class="no-results">No products match your search.</p>
+  }
 </div>
