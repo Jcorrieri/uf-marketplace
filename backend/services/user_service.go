@@ -90,22 +90,33 @@ type UpdateUserRequest struct {
 }
 
 func (s *UserService) UpdateSettings(
+	ctx context.Context,
 	id uuid.UUID,
 	req UpdateUserRequest,
 ) (*models.User, error) {
 
-	var user models.User
+	updatedUser := models.User{
+		Username:  req.Username,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+	}
 
-	if err := s.db.First(&user, "id = ?", id).Error; err != nil {
+	rows, err := gorm.G[models.User](s.db).
+		Where("id = ?", id).
+		Select("Username", "FirstName", "LastName").
+		Updates(ctx, updatedUser)
+
+	if err != nil {
 		return nil, err
 	}
 
-	user.Username = req.Username
+	if rows == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
 
-	user.FirstName = req.FirstName
-	user.LastName = req.LastName
-
-	if err := s.db.Save(&user).Error; err != nil {
+	// Get updated user
+	user, err := gorm.G[models.User](s.db).Where("id = ?", id).First(ctx)
+	if err != nil {
 		return nil, err
 	}
 

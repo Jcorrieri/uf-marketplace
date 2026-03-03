@@ -3,24 +3,22 @@ package main
 import (
 	"os"
 
-	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/database"
 	"github.com/Jcorrieri/uf-marketplace/backend/handlers"
+	"github.com/Jcorrieri/uf-marketplace/backend/middleware"
+	"github.com/Jcorrieri/uf-marketplace/backend/services"
 )
 
 func main() {
-	// Instantiate database
 	db := database.Connect()
 
-	// Get session cookie name from environment
 	sessionName := os.Getenv("SESSION_COOKIE_NAME")
 	if sessionName == "" {
 		sessionName = "session_token"
 	}
 
-	// Get services
 	authService := services.NewAuthService(db)
 	userService := services.NewUserService(db)
 
@@ -28,13 +26,12 @@ func main() {
 	authHandler := handlers.NewAuthHandler(authService, userService, sessionName)
 	settingsHandler := handlers.NewSettingsHandler(userService)
 
-	// Create router
+	authMiddleware := middleware.AuthMiddleware(os.Getenv("JWT_SECRET"), sessionName)
+
 	router := gin.Default()
 
-	// Grouping for cleaner logic
 	api := router.Group("/api")
 
-	// Auth routes (public)
 	auth := api.Group("/auth")
 	{
 		auth.POST("/register", authHandler.Register)
@@ -42,7 +39,7 @@ func main() {
 		auth.POST("/logout", authHandler.Logout)
 	}
 
-	protected := api.Group("/").Use(middleware.AuthMiddleware())
+	protected := api.Group("/").Use(authMiddleware)
 	{
 		protected.GET("/profile", userHandler.GetUserById)
 		protected.DELETE("/profile", userHandler.DeleteUser)

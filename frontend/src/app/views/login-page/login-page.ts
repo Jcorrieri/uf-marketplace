@@ -62,7 +62,6 @@ export class LoginPage {
       }
 
       if (data.access_token) {
-        localStorage.setItem('accessToken', data.access_token);
         // Navigate to main page
         this.router.navigate(['/main']);
       } else {

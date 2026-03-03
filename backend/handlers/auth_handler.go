@@ -87,18 +87,18 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, user.GetResponse())
 }
 
-// Change to JWT
-// Logout endpoint: invalidates session on server (if implemented)
-// and clears any session cookie on the client.
+// Logout endpoint: invalidates JWT on client by clearing cookie
 func (h *AuthHandler) Logout(c *gin.Context) {
 	token, _ := c.Cookie(h.sessionCookieName)
 	if token == "" {
 		auth := c.GetHeader("Authorization")
 		if strings.HasPrefix(strings.ToLower(auth), "bearer ") {
-			token = strings.TrimSpace(auth[7:])
+			_, token, _ = strings.Cut(auth, " ")
+			token = strings.TrimSpace(token)
 		}
 	}
 
+	// Does nothing for now
 	if err := h.authService.Logout(c.Request.Context(), token); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not logout"})
 		return

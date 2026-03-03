@@ -20,7 +20,7 @@ func NewSettingsHandler(us *services.UserService) *SettingsHandler {
 	}
 }
 
-// TEMP: hardcoded user ID until auth exists
+// TEMP: hardcoded user ID until auth exists; TODO: Update
 var dummyUserID = uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 func (h *SettingsHandler) GetSettings(c *gin.Context) {
@@ -53,6 +53,7 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 	}
 
 	user, err := h.userService.UpdateSettings(
+		c.Request.Context(),
 		dummyUserID,
 		services.UpdateUserRequest{
 			Username:  input.Username,
