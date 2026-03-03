@@ -15,11 +15,11 @@ type AuthHandler struct {
 	sessionCookieName string
 }
 
-func NewAuthHandler(as *services.AuthService, us *services.UserService, cname string) *AuthHandler {
+func NewAuthHandler(as *services.AuthService, us *services.UserService, sessionCookieName string) *AuthHandler {
 	return &AuthHandler{
 		authService:       as,
 		userService:       us,
-		sessionCookieName: cname,
+		sessionCookieName: sessionCookieName,
 	}
 }
 
@@ -99,7 +99,11 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 		}
 	}
 
-	_ = h.authService.Logout(c.Request.Context(), token)
+	if err := h.authService.Logout(c.Request.Context(), token); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not logout"})
+		return
+	}
+
 	c.SetCookie(h.sessionCookieName, "", -1, "/", "", false, true)
 	c.JSON(http.StatusOK, gin.H{"message": "logout successful"})
 }
