@@ -57,16 +57,14 @@ export class LoginPage {
       const data = await res.json();
       if (!res.ok) {
         console.error('login failed', data);
+        
+        // TODO: remove temp alert
+        window.alert('Invalid email or password');
         // Optionally show UI error
         return;
       }
 
-      if (data.access_token) {
-        // Navigate to main page
-        this.router.navigate(['/main']);
-      } else {
-        console.error('no access_token in response', data);
-      }
+      this.router.navigate(['/main']);
     } catch (err) {
       console.error('network error during login', err);
     }

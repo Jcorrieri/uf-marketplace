@@ -19,9 +19,6 @@ export class MainPage {
       console.error('logout request failed', e);
     }
 
-    // Clear stored access token
-    try { localStorage.removeItem('accessToken'); } catch {}
-
     // Use Angular Router for navigation instead of window.location
     this.router.navigate(['/']);
   }

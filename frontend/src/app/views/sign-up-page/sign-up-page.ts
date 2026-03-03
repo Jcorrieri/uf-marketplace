@@ -68,7 +68,9 @@ export class SignUpPage {
         return;
       }
 
-      this.router.navigate(['/main']);
+      // NOTE: Set navigation to login page after successful sign-up for auth testing
+      this.router.navigate(['/login']);
+      // this.router.navigate(['/main']);
     } catch (err) {
       this.errorMessage.set('Unable to reach the server.');
     }

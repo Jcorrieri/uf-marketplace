@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/database"
 	"github.com/Jcorrieri/uf-marketplace/backend/handlers"
@@ -12,6 +14,11 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+
 	db := database.Connect()
 
 	sessionName := os.Getenv("SESSION_COOKIE_NAME")
