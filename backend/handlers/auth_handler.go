@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -75,6 +76,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	user, token, err := h.authService.Authenticate(c.Request.Context(), in.Email, in.Password)
 	if err != nil {
+		fmt.Println("Authentication error:", err) // TODO: replace with proper logging
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -104,6 +106,7 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 		return
 	}
 
+	// Make client clear cookie
 	c.SetCookie(h.sessionCookieName, "", -1, "/", "", false, true)
 	c.JSON(http.StatusOK, gin.H{"message": "logout successful"})
 }

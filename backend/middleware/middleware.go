@@ -9,7 +9,7 @@ func AuthMiddleware(secret, sessionCookieName string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie(sessionCookieName)
 		if err != nil {
-			c.AbortWithStatusJSON(401, gin.H{"error": "Please log in"})
+			c.AbortWithStatusJSON(401, gin.H{"error": "Forbidden"})
 			return
 		}
 
