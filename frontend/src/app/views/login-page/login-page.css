@@ -1,12 +1,12 @@
 /* ===== Layout ===== */
 :host {
-  display: block
+  display: block;
 }
 
 .login-wrapper {
   flex: 1;
   display: flex;
-  height: calc(100vh - var(--navbar-height));
+  height: 100vh;
 }
 
 /* ===== Left — form ===== */
@@ -132,7 +132,11 @@
   justify-content: center;
   align-items: center;
   padding: 60px 40px;
-  background: linear-gradient(135deg, var(--brand-accent, #0021a5) 0%, var(--brand-primary, #fa4616) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brand-accent, #0021a5) 0%,
+    var(--brand-primary, #fa4616) 100%
+  );
   color: #fff;
 }
 
