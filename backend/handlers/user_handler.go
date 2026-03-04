@@ -13,23 +13,38 @@ import (
 // Handlers will contain logic for the RestAPI endpoints, and interact
 // with service methods to execute db operations.
 type UserHandler struct {
-	service *services.UserService
+	userService *services.UserService
 }
 
 func NewUserHandler(s *services.UserService) *UserHandler {
-	return &UserHandler{service: s}
+	return &UserHandler{userService: s}
 }
 
-func (h *UserHandler) GetUserById(c *gin.Context) {
-	idStr := c.MustGet("userID").(string)
+func (h *UserHandler) GetCurrentUser(c *gin.Context) {
+	userID, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
+		return
+	}
 
-	id, err := uuid.Parse(idStr)
+	user, err := h.userService.GetByID(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user.GetResponse())
+}
+
+// GetUserById retrieves a user by their ID from the request context (i.e., seller profiles)
+func (h *UserHandler) GetUserById(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
 
-	user, err := h.service.GetByID(c.Request.Context(), id)
+	user, err := h.userService.GetByID(c.Request.Context(), id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -40,15 +55,13 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 }
 
 func (h *UserHandler) DeleteUser(c *gin.Context) {
-	idStr := c.MustGet("userID").(string)
-
-	id, err := uuid.Parse(idStr)
+	id, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
 
-	err = h.service.Delete(c.Request.Context(), id)
+	err = h.userService.Delete(c.Request.Context(), id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting user"})

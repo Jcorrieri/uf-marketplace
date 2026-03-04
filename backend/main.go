@@ -48,8 +48,10 @@ func main() {
 
 	protected := api.Group("/").Use(authMiddleware)
 	{
-		protected.GET("/profile", userHandler.GetUserById)
-		protected.DELETE("/profile", userHandler.DeleteUser)
+		protected.GET("/users/:id", userHandler.GetUserById)
+		protected.GET("/users/me", userHandler.GetCurrentUser)
+		protected.DELETE("/users/me", userHandler.DeleteUser)
+		// TODO: Add a PATCH endpoint for updating user profile info
 		// NOTE: settings will be updated w/ app preferences (TBD)
 		protected.GET("/settings", settingsHandler.GetSettings)
 		protected.PUT("/settings", settingsHandler.UpdateSettings)

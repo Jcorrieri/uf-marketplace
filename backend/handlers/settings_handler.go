@@ -8,7 +8,10 @@ import (
 	"github.com/google/uuid"
 )
 
-// SettingsHandler handles user settings endpoints
+// SettingsHandler handles user settings endpoints.
+// NOTE: that the settings are currently just user profile info,
+// TODO: Make a distinct model 'settings.go' of user preferences in the future.
+// User profile info will be a PATCH endpoint on the user model under /me.
 type SettingsHandler struct {
 	userService *services.UserService
 }
@@ -21,10 +24,12 @@ func NewSettingsHandler(us *services.UserService) *SettingsHandler {
 }
 
 // TEMP: hardcoded user ID until auth exists; TODO: Update
-// NOTE: In future, replace this with actual user ID from auth context (c.MustGet("userID"))
+// TODO: Replace this with actual user ID from auth context (c.MustGet("userID"))
+// TODO: Update with actual settings parameters (not user profile info)
 var dummyUserID = uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 func (h *SettingsHandler) GetSettings(c *gin.Context) {
+	// TODO: Get user id from auth ( uuid.Parse(c.MustGet("userID").(string)) )
 	user, err := h.userService.GetByID(c.Request.Context(), dummyUserID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -53,7 +58,7 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 		return
 	}
 
-	// NOTE: In future, replace this with actual user ID from auth context (c.MustGet("userID"))
+	// TODO: Get user id from auth ( uuid.Parse(c.MustGet("userID").(string)) )
 	user, err := h.userService.UpdateSettings(
 		c.Request.Context(),
 		dummyUserID,
