@@ -108,9 +108,8 @@ export class MainPage {
     } catch (e) {
       console.error('logout request failed', e);
     }
-    try {
-      localStorage.removeItem('accessToken');
-    } catch {}
+
+    // Use Angular Router for navigation instead of window.location
     this.router.navigate(['/']);
   }
 

@@ -13,38 +13,38 @@ import (
 // Handlers will contain logic for the RestAPI endpoints, and interact
 // with service methods to execute db operations.
 type UserHandler struct {
-	service *services.UserService
+	userService *services.UserService
 }
 
 func NewUserHandler(s *services.UserService) *UserHandler {
-	return &UserHandler{service: s}
+	return &UserHandler{userService: s}
 }
 
-func (h *UserHandler) GetUsers(c *gin.Context) {
-	// Pass just c.Request.Context() instead of the full request for
-	// better performance and cleaner separation of responsibilities.
-
-	// Call service method (see user_service.go)
-	users, err := h.service.GetAll(c.Request.Context())
-
+func (h *UserHandler) GetCurrentUser(c *gin.Context) {
+	userID, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching users"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
-	c.JSON(http.StatusOK, users)
+	user, err := h.userService.GetByID(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user.GetResponse())
 }
 
+// GetUserById retrieves a user by their ID from the request context (i.e., seller profiles)
 func (h *UserHandler) GetUserById(c *gin.Context) {
-	idStr := c.Param("id")
-
-	id, err := uuid.Parse(idStr)
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
 
-	user, err := h.service.GetByID(c.Request.Context(), id)
+	user, err := h.userService.GetByID(c.Request.Context(), id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -54,35 +54,14 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 	c.JSON(http.StatusOK, user.GetResponse())
 }
 
-// func (h *UserHandler) AddUser(c *gin.Context) {
-// 	var user models.User
-//
-// 	// Use ShouldBind to customize error message
-// 	if err := c.ShouldBind(&user); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
-// 		return
-// 	}
-//
-// 	err := h.service.Create(c.Request.Context(), &user)
-//
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating user: " + err.Error()})
-// 		return
-// 	}
-//
-// 	c.JSON(http.StatusCreated, user.GetResponse())
-// }
-
 func (h *UserHandler) DeleteUser(c *gin.Context) {
-	idStr := c.Param("id")
-
-	id, err := uuid.Parse(idStr)
+	id, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-	
-	err = h.service.Delete(c.Request.Context(), id)
+
+	err = h.userService.Delete(c.Request.Context(), id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting user"})
@@ -91,4 +70,3 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, nil)
 }
-

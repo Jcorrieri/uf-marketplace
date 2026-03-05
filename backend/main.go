@@ -1,56 +1,60 @@
 package main
 
 import (
-	"github.com/Jcorrieri/uf-marketplace/backend/services"
+	"fmt"
+	"os"
+
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/database"
 	"github.com/Jcorrieri/uf-marketplace/backend/handlers"
+	"github.com/Jcorrieri/uf-marketplace/backend/middleware"
+	"github.com/Jcorrieri/uf-marketplace/backend/services"
 )
 
 func main() {
-	// Instantiate database
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+
 	db := database.Connect()
 
-	// Get services
+	sessionName := os.Getenv("SESSION_COOKIE_NAME")
+	if sessionName == "" {
+		sessionName = "session_token"
+	}
+
 	authService := services.NewAuthService(db)
 	userService := services.NewUserService(db)
 
-	// Set handlers
 	userHandler := handlers.NewUserHandler(userService)
-	authHandler := handlers.NewAuthHandler(authService, userService)
+	authHandler := handlers.NewAuthHandler(authService, userService, sessionName)
 	settingsHandler := handlers.NewSettingsHandler(userService)
 
-	// Create router
+	authMiddleware := middleware.AuthMiddleware(os.Getenv("JWT_SECRET"), sessionName)
+
 	router := gin.Default()
 
-	// Grouping for cleaner logic
 	api := router.Group("/api")
+
+	auth := api.Group("/auth")
 	{
-		// Auth routes (public)
-		auth := api.Group("/auth")
-		{
-			auth.POST("/register", authHandler.Register)
-			auth.POST("/login", authHandler.Login)
-			auth.POST("/logout", authHandler.Logout)
-			// auth.POST("/login", handlers.Login)
-		}
+		auth.POST("/register", authHandler.Register)
+		auth.POST("/login", authHandler.Login)
+		auth.POST("/logout", authHandler.Logout)
+	}
 
-		users := api.Group("/users")
-		{
-			users.GET("", userHandler.GetUsers)
-			users.GET("/:id", userHandler.GetUserById)
-			// users.POST("", userHandler.AddUser)
-			users.DELETE("/:id", userHandler.DeleteUser)
-		}
-
-		settings := api.Group("/settings")
-		{
-			settings.GET("", settingsHandler.GetSettings)
-			settings.PUT("", settingsHandler.UpdateSettings)
-
-		}
-
+	protected := api.Group("/").Use(authMiddleware)
+	{
+		protected.GET("/users/:id", userHandler.GetUserById)
+		protected.GET("/users/me", userHandler.GetCurrentUser)
+		protected.DELETE("/users/me", userHandler.DeleteUser)
+		// TODO: Add a PATCH endpoint for updating user profile info
+		// NOTE: settings will be updated w/ app preferences (TBD)
+		protected.GET("/settings", settingsHandler.GetSettings)
+		protected.PUT("/settings", settingsHandler.UpdateSettings)
 	}
 
 	router.Run("localhost:8080")

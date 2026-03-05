@@ -9,14 +9,18 @@
           <mat-label>First Name</mat-label>
           <mat-icon matPrefix>person</mat-icon>
           <input matInput formControlName="firstName" placeholder="First name">
-          <mat-error *ngIf="signUpForm.get('firstName')?.hasError('required')">Required</mat-error>
+          @if (signUpForm.get('firstName')?.hasError('required')) {
+            <mat-error>Required</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Last Name</mat-label>
           <mat-icon matPrefix>person</mat-icon>
           <input matInput formControlName="lastName" placeholder="Last name">
-          <mat-error *ngIf="signUpForm.get('lastName')?.hasError('required')">Required</mat-error>
+          @if (signUpForm.get('lastName')?.hasError('required')) {
+            <mat-error>Required</mat-error>
+          }
         </mat-form-field>
       </div>
 
@@ -24,15 +28,21 @@
         <mat-label>Username</mat-label>
         <mat-icon matPrefix>person</mat-icon>
         <input matInput formControlName="username" placeholder="Choose a username">
-        <mat-error *ngIf="signUpForm.get('username')?.hasError('required')">Required</mat-error>
+        @if (signUpForm.get('username')?.hasError('required')) {
+          <mat-error>Required</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
         <mat-icon matPrefix>mail</mat-icon>
         <input matInput type="email" formControlName="email" placeholder="yourname@ufl.edu">
-        <mat-error *ngIf="signUpForm.get('email')?.hasError('email')">Enter a valid email</mat-error>
-        <mat-error *ngIf="signUpForm.get('email')?.hasError('required')">Email is required</mat-error>
+        @if (signUpForm.get('email')?.hasError('email')) {
+          <mat-error>Enter a valid email</mat-error>
+        }
+        @if (signUpForm.get('email')?.hasError('required')) {
+          <mat-error>Email is required</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
@@ -42,7 +52,9 @@
         <button mat-icon-button matSuffix (click)="togglePassword()" type="button">
           <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
-        <mat-error *ngIf="signUpForm.get('password')?.hasError('required')">Password is required</mat-error>
+        @if (signUpForm.get('password')?.hasError('required')) {
+          <mat-error>Password is required</mat-error>
+        }
       </mat-form-field>
 
       <button
@@ -54,7 +66,9 @@
         Sign Up
       </button>
 
-      <p *ngIf="errorMessage()" class="error-text">{{ errorMessage() }}</p>
+      @if (errorMessage()) {
+        <p class="error-text">{{ errorMessage() }}</p>
+      }
 
       <p class="login-text">
         Already registered? <a routerLink="/login" class="login-link">Login</a>

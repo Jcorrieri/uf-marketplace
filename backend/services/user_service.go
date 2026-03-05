@@ -32,14 +32,8 @@ func (s *UserService) GetByID(ctx context.Context, id uuid.UUID) (models.User, e
 	return gorm.G[models.User](s.db).Where("id = ?", id).First(ctx)
 }
 
-// GetByEmail returns a user by email
 func (s *UserService) GetByEmail(ctx context.Context, email string) (models.User, error) {
 	return gorm.G[models.User](s.db).Where("email = ?", email).First(ctx)
-}
-
-// CheckPassword compares the given password with the user's password hash
-func (s *UserService) CheckPassword(user models.User, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 }
 
 type CreateUserRequest struct {
@@ -51,7 +45,6 @@ type CreateUserRequest struct {
 }
 
 func (s *UserService) Create(ctx context.Context, request CreateUserRequest) (*models.User, error) {
-	// TODO: Make utility fn ?
 	hash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -97,22 +90,33 @@ type UpdateUserRequest struct {
 }
 
 func (s *UserService) UpdateSettings(
+	ctx context.Context,
 	id uuid.UUID,
 	req UpdateUserRequest,
 ) (*models.User, error) {
 
-	var user models.User
+	updatedUser := models.User{
+		Username:  req.Username,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+	}
 
-	if err := s.db.First(&user, "id = ?", id).Error; err != nil {
+	rows, err := gorm.G[models.User](s.db).
+		Where("id = ?", id).
+		Select("Username", "FirstName", "LastName").
+		Updates(ctx, updatedUser)
+
+	if err != nil {
 		return nil, err
 	}
 
-	user.Username = req.Username
+	if rows == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
 
-	user.FirstName = req.FirstName
-	user.LastName = req.LastName
-
-	if err := s.db.Save(&user).Error; err != nil {
+	// Get updated user
+	user, err := gorm.G[models.User](s.db).Where("id = ?", id).First(ctx)
+	if err != nil {
 		return nil, err
 	}
 
