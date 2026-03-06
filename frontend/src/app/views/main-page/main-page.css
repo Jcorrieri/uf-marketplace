@@ -9,6 +9,7 @@
   z-index: 50;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
   padding: 18px 32px;
   background-color: #ffffff;
@@ -17,6 +18,17 @@
 
 .header-left {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-text {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fa4616;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
 }
 
 .gator-icon {
@@ -29,10 +41,12 @@
   min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .search-field {
   width: 100%;
+  max-width: 480px;
 }
 
 /* Remove the subscript/hint wrapper so the field doesn't push taller */
@@ -53,25 +67,30 @@
   padding-bottom: 0 !important;
 }
 
-.logout-btn {
+.profile-btn {
   flex-shrink: 0;
-  padding: 8px 24px;
-  border: 2px solid #fa4616;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
   background-color: transparent;
-  color: #fa4616;
-  font-family: var(--app-font, 'Segoe UI', sans-serif);
-  font-size: 0.9rem;
-  font-weight: 700;
+  color: #555;
   cursor: pointer;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.logout-btn:hover {
-  background-color: #fa4616;
-  color: #fff;
+.profile-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #fa4616;
+}
+
+.profile-btn mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
 }
 
 /* ── Product grid ── */

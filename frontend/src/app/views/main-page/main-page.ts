@@ -102,15 +102,8 @@ export class MainPage {
 
   constructor(private router: Router) {}
 
-  async logout() {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    } catch (e) {
-      console.error('logout request failed', e);
-    }
-
-    // Use Angular Router for navigation instead of window.location
-    this.router.navigate(['/']);
+  goToProfile() {
+    this.router.navigate(['/profile']);
   }
 
   timeAgo(date: Date): string {

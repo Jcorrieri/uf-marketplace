@@ -21,6 +21,7 @@
       <rect x="34" y="40" width="3" height="4" rx="1" fill="#fff" />
       <rect x="40" y="39" width="3" height="4" rx="1" fill="#fff" />
     </svg>
+    <span class="brand-text">UF MarketPlace</span>
   </div>
 
   <div class="header-search">
@@ -30,7 +31,9 @@
     </mat-form-field>
   </div>
 
-  <button class="logout-btn" (click)="logout()">Logout</button>
+  <button class="profile-btn" (click)="goToProfile()" aria-label="User profile">
+    <mat-icon>account_circle</mat-icon>
+  </button>
 </header>
 
 <!-- Product grid -->
