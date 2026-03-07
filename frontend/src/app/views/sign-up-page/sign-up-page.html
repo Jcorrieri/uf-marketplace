@@ -25,15 +25,6 @@
       </div>
 
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Username</mat-label>
-        <mat-icon matPrefix>person</mat-icon>
-        <input matInput formControlName="username" placeholder="Choose a username">
-        @if (signUpForm.get('username')?.hasError('required')) {
-          <mat-error>Required</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
         <mat-icon matPrefix>mail</mat-icon>
         <input matInput type="email" formControlName="email" placeholder="yourname@ufl.edu">
@@ -54,6 +45,24 @@
         </button>
         @if (signUpForm.get('password')?.hasError('required')) {
           <mat-error>Password is required</mat-error>
+        }
+        @if (signUpForm.get('password')?.hasError('minlength')) {
+          <mat-error>Password must be at least 8 characters</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Confirm Password</mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="confirmPassword" [errorStateMatcher]="passwordMatcher">
+        <button mat-icon-button matSuffix (click)="togglePassword()" type="button">
+          <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (signUpForm.get('confirmPassword')?.hasError('required')) {
+          <mat-error>Please confirm your password</mat-error>
+        }
+        @if (signUpForm.hasError('passwordMismatch') && signUpForm.get('confirmPassword')?.dirty) {
+          <mat-error>Passwords must match</mat-error>
         }
       </mat-form-field>
 

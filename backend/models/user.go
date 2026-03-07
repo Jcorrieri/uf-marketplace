@@ -11,7 +11,6 @@ type User struct {
 	// Using UUID v7; See https://uuid7.com
 	ID           uuid.UUID      `gorm:"type:uuid;primaryKey"`
 	// use a partial index to handle issues when reusing unique fields from soft-deleted entities (https://sqlite.org/partialindex.html).
-	Username     string         `gorm:"uniqueIndex:idx_username_active,where:deleted_at IS NULL;size:100;not null"`
 	Email        string         `gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255;not null"`
 	PasswordHash string         `json:"-" gorm:"not null"`
 	FirstName    string         `gorm:"not null"`
@@ -24,7 +23,6 @@ type User struct {
 // The actual JSON object returned by the API
 type UserResponse struct {
 	ID        uuid.UUID `json:"id"`
-	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
@@ -41,7 +39,6 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 func (u *User) GetResponse() UserResponse {
 	return UserResponse{
 		ID:        u.ID,
-		Username:  u.Username,
 		Email:     u.Email,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
