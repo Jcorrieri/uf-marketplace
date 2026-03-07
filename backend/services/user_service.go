@@ -37,7 +37,6 @@ func (s *UserService) GetByEmail(ctx context.Context, email string) (models.User
 }
 
 type CreateUserRequest struct {
-	Username  string
 	Email     string
 	FirstName string
 	LastName  string
@@ -51,7 +50,6 @@ func (s *UserService) Create(ctx context.Context, request CreateUserRequest) (*m
 	}
 
 	user := models.User{
-		Username:     request.Username,
 		Email:        request.Email,
 		PasswordHash: string(hash),
 		FirstName:    request.FirstName,
@@ -84,7 +82,6 @@ func (s *UserService) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 type UpdateUserRequest struct {
-	Username  string
 	FirstName string
 	LastName  string
 }
@@ -96,14 +93,13 @@ func (s *UserService) UpdateSettings(
 ) (*models.User, error) {
 
 	updatedUser := models.User{
-		Username:  req.Username,
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 	}
 
 	rows, err := gorm.G[models.User](s.db).
 		Where("id = ?", id).
-		Select("Username", "FirstName", "LastName").
+		Select("FirstName", "LastName").
 		Updates(ctx, updatedUser)
 
 	if err != nil {

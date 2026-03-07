@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, ValidationErrors, FormGroupDirective } from '@angular/forms';
 
 // Angular Material Imports
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,18 +27,37 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class SignUpPage {
   private router = inject(Router);
+  matcher = {
+    isErrorState: (control: FormControl, form: FormGroupDirective): boolean => {
+      return !!(form?.hasError('passwordMismatch') && control.dirty);
+    }
+  };
 
   showPassword = signal(false);
   errorMessage = signal('');
 
   // Define form group with validators to control button state
-  signUpForm = new FormGroup({
-    firstName: new FormControl('', [Validators.required]),
-    lastName: new FormControl('', [Validators.required]),
-    username: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-  });
+  signUpForm = new FormGroup(
+    {
+      firstName: new FormControl('', [Validators.required]),
+      lastName: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+      confirmPassword: new FormControl('', [Validators.required]),
+    },
+    {
+      validators: (control: AbstractControl): ValidationErrors | null => {
+      const password = control.get('password');
+      const confirmPassword = control.get('confirmPassword');
+
+      if (!password || !confirmPassword || !confirmPassword.value) return null;
+
+      return password.value === confirmPassword.value
+        ? null
+        : { passwordMismatch: true };
+      }
+    }
+  );
 
   togglePassword() {
     this.showPassword.update((v) => !v);
@@ -54,7 +74,6 @@ export class SignUpPage {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username: formValue.username,
           email: formValue.email,
           password: formValue.password,
           first_name: formValue.firstName,

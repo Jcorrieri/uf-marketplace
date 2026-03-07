@@ -26,7 +26,6 @@ func NewAuthHandler(as *services.AuthService, us *services.UserService, sessionC
 
 // Ingestion structs
 type RegisterInput struct {
-	Username  string `json:"username" binding:"required" `
 	Email     string `json:"email" binding:"required,email"`
 	Password  string `json:"password" binding:"required,min=6"`
 	FirstName string `json:"first_name" binding:"required"`
@@ -50,15 +49,14 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	req := services.CreateUserRequest{
+	request := services.CreateUserRequest{
 		Email:     in.Email,
-		Username:  in.Username,
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
 		Password:  in.Password,
 	}
 
-	user, err := h.userService.Create(c.Request.Context(), req)
+	user, err := h.userService.Create(c.Request.Context(), request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not create user"})
 		return
