@@ -27,7 +27,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class SignUpPage {
   private router = inject(Router);
-  matcher = {
+  passwordMatcher = {
     isErrorState: (control: FormControl, form: FormGroupDirective): boolean => {
       return !!(form?.hasError('passwordMismatch') && control.dirty);
     }

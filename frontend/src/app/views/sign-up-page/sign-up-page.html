@@ -54,7 +54,7 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Confirm Password</mat-label>
         <mat-icon matPrefix>lock</mat-icon>
-        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="confirmPassword" [errorStateMatcher]="matcher">
+        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="confirmPassword" [errorStateMatcher]="passwordMatcher">
         <button mat-icon-button matSuffix (click)="togglePassword()" type="button">
           <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
