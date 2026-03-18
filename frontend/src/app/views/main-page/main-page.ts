@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -24,6 +24,32 @@ export interface Product {
 })
 export class MainPage {
   searchQuery = '';
+  menuOpen = false;
+
+  // TODO: Replace with real user data from auth service
+  currentUser = {
+    firstName: 'Pranav',
+    lastName: 'Kodihalli',
+  };
+
+  get initials(): string {
+    return (
+      this.currentUser.firstName[0] + this.currentUser.lastName[0]
+    ).toUpperCase();
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  // Close menu when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.avatar-wrapper')) {
+      this.menuOpen = false;
+    }
+  }
 
   products: Product[] = [
     {
@@ -100,16 +126,30 @@ export class MainPage {
     },
   ];
 
+  get filteredProducts(): Product[] {
+    const query = this.searchQuery.toLowerCase().trim();
+    if (!query) return this.products;
+    return this.products.filter(p =>
+      p.title.toLowerCase().includes(query) ||
+      p.description.toLowerCase().includes(query) ||
+      p.seller.toLowerCase().includes(query)
+    );
+  }
+
   constructor(private router: Router) {}
 
+  navigateTo(path: string) {
+    this.menuOpen = false;
+    this.router.navigate([path]);
+  }
+
   async logout() {
+    this.menuOpen = false;
     try {
       await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (e) {
       console.error('logout request failed', e);
     }
-
-    // Use Angular Router for navigation instead of window.location
     this.router.navigate(['/']);
   }
 
