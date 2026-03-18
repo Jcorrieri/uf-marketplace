@@ -100,6 +100,16 @@ export class MainPage {
     },
   ];
 
+  get filteredProducts(): Product[] {
+  const query = this.searchQuery.toLowerCase().trim();
+  if (!query) return this.products;
+  return this.products.filter(p =>
+    p.title.toLowerCase().includes(query) ||
+    p.description.toLowerCase().includes(query) ||
+    p.seller.toLowerCase().includes(query)
+  );
+}
+
   constructor(private router: Router) {}
 
   async logout() {
