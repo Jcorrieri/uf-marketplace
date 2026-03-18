@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth.service';
 
 export interface Product {
   id: number;
@@ -26,11 +27,9 @@ export class MainPage {
   searchQuery = '';
   menuOpen = false;
 
-  // TODO: Replace with real user data from auth service
-  currentUser = {
-    firstName: 'Pranav',
-    lastName: 'Kodihalli',
-  };
+  get currentUser() {
+  return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
+  }
 
   get initials(): string {
     return (
@@ -136,7 +135,7 @@ export class MainPage {
     );
   }
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   navigateTo(path: string) {
     this.menuOpen = false;
