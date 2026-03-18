@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-page',
@@ -34,7 +35,8 @@ export class LoginPage {
 
   showPassword = signal(false);
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
+
 
   togglePassword(event: MouseEvent) {
     this.showPassword.set(!this.showPassword());
@@ -64,6 +66,12 @@ export class LoginPage {
         return;
       }
 
+      this.authService.setUser({
+        id: data.id,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        email: data.email,
+      });
       this.router.navigate(['/main']);
     } catch (err) {
       console.error('network error during login', err);
