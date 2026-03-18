@@ -55,4 +55,10 @@
       </div>
     </div>
   }
+  @if (filteredProducts.length === 0) {
+  <div class="no-results">
+    <mat-icon>search_off</mat-icon>
+    <p>No items found for "{{ searchQuery }}"</p>
+  </div>
+}
 </main>
