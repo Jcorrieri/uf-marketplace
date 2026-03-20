@@ -209,6 +209,22 @@
   height: 16px;
 }
 
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 0;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.no-results mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+  color: #ccc;
+}
+
 /* ── Avatar & Dropdown ── */
 .avatar-wrapper {
   flex: 1; /* Matches the left side to keep search perfectly centered */

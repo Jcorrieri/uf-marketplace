@@ -63,7 +63,7 @@
 
 <!-- Product grid -->
 <main class="product-grid">
-  @for (product of products; track product.id) {
+  @for (product of filteredProducts; track product.id) {
     <div class="product-card">
       <img [src]="product.image" [alt]="product.title" class="product-image" />
       <div class="product-info">
@@ -83,4 +83,10 @@
       </div>
     </div>
   }
+  @if (filteredProducts.length === 0) {
+  <div class="no-results">
+    <mat-icon>search_off</mat-icon>
+    <p>No items found for "{{ searchQuery }}"</p>
+  </div>
+}
 </main>
