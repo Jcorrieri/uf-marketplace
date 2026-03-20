@@ -9,12 +9,13 @@ import (
 
 type User struct {
 	// Using UUID v7; See https://uuid7.com
-	ID           uuid.UUID      `gorm:"type:uuid;primaryKey"`
+	ID uuid.UUID `gorm:"type:uuid;primaryKey"`
 	// use a partial index to handle issues when reusing unique fields from soft-deleted entities (https://sqlite.org/partialindex.html).
-	Email        string         `gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255;not null"`
-	PasswordHash string         `json:"-" gorm:"not null"`
-	FirstName    string         `gorm:"not null"`
-	LastName     string         `gorm:"not null"`
+	Email        string `gorm:"uniqueIndex:idx_email_active,where:deleted_at IS NULL;size:255;not null"`
+	UFID         string `gorm:"size:20;index;not null;default:''"`
+	PasswordHash string `json:"-" gorm:"not null"`
+	FirstName    string `gorm:"not null"`
+	LastName     string `gorm:"not null"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
@@ -24,6 +25,7 @@ type User struct {
 type UserResponse struct {
 	ID        uuid.UUID `json:"id"`
 	Email     string    `json:"email"`
+	UFID      string    `json:"uf_id"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
 	CreatedAt time.Time `json:"created_at"`
@@ -40,6 +42,7 @@ func (u *User) GetResponse() UserResponse {
 	return UserResponse{
 		ID:        u.ID,
 		Email:     u.Email,
+		UFID:      u.UFID,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		CreatedAt: u.CreatedAt,
