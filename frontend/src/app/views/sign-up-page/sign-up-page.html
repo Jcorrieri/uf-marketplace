@@ -37,9 +37,18 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
+        <mat-label>UF ID</mat-label>
+        <mat-icon matPrefix>badge</mat-icon>
+        <input matInput type="text" formControlName="ufId" placeholder="Enter your UF ID">
+        @if (signUpForm.get('ufId')?.hasError('required')) {
+          <mat-error>UF ID is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Password</mat-label>
         <mat-icon matPrefix>lock</mat-icon>
-        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password">
+        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Create a password">
         <button mat-icon-button matSuffix (click)="togglePassword()" type="button">
           <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
@@ -54,7 +63,7 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Confirm Password</mat-label>
         <mat-icon matPrefix>lock</mat-icon>
-        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="confirmPassword" [errorStateMatcher]="passwordMatcher">
+        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="confirmPassword" [errorStateMatcher]="passwordMatcher" placeholder="Type password again">
         <button mat-icon-button matSuffix (click)="togglePassword()" type="button">
           <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>

@@ -54,3 +54,37 @@ func (s *AuthService) Logout(ctx context.Context, sessionToken string) error {
 	// For now, this is a no-op which keeps the service interface stable.
 	return nil
 }
+
+func (s *AuthService) VerifyAccountForPasswordReset(ctx context.Context, email, ufid string) (bool, error) {
+	_, err := gorm.G[models.User](s.db).Where("email = ? AND uf_id = ?", email, ufid).First(ctx)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (s *AuthService) ResetPassword(ctx context.Context, email, ufid, newPassword string) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	result := s.db.WithContext(ctx).
+		Model(&models.User{}).
+		Where("email = ? AND uf_id = ?", email, ufid).
+		Update("password_hash", string(hash))
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
+}

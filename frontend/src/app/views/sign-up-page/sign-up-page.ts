@@ -41,6 +41,7 @@ export class SignUpPage {
     {
       firstName: new FormControl('', [Validators.required]),
       lastName: new FormControl('', [Validators.required]),
+      ufId: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(8)]),
       confirmPassword: new FormControl('', [Validators.required]),
@@ -75,6 +76,7 @@ export class SignUpPage {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formValue.email,
+          uf_id: formValue.ufId,
           password: formValue.password,
           first_name: formValue.firstName,
           last_name: formValue.lastName,

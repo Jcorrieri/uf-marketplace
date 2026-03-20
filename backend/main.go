@@ -44,6 +44,8 @@ func main() {
 		auth.POST("/register", authHandler.Register)
 		auth.POST("/login", authHandler.Login)
 		auth.POST("/logout", authHandler.Logout)
+		auth.POST("/forgot-password/verify", authHandler.VerifyForgotPasswordAccount)
+		auth.POST("/forgot-password/reset", authHandler.ResetForgottenPassword)
 	}
 
 	protected := api.Group("/").Use(authMiddleware)

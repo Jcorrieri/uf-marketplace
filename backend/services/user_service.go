@@ -38,6 +38,7 @@ func (s *UserService) GetByEmail(ctx context.Context, email string) (models.User
 
 type CreateUserRequest struct {
 	Email     string
+	UFID      string
 	FirstName string
 	LastName  string
 	Password  string
@@ -51,6 +52,7 @@ func (s *UserService) Create(ctx context.Context, request CreateUserRequest) (*m
 
 	user := models.User{
 		Email:        request.Email,
+		UFID:         request.UFID,
 		PasswordHash: string(hash),
 		FirstName:    request.FirstName,
 		LastName:     request.LastName,
