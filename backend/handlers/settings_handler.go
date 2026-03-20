@@ -43,7 +43,6 @@ func (h *SettingsHandler) GetSettings(c *gin.Context) {
 }
 
 type UpdateSettingsInput struct {
-	Username  string `json:"username" binding:"required,min=3"`
 	FirstName string `json:"first_name" binding:"required"`
 	LastName  string `json:"last_name" binding:"required"`
 }
@@ -53,7 +52,7 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Username, first name, and last name are required",
+			"error": "First name, and last name are required",
 		})
 		return
 	}
@@ -63,7 +62,6 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 		c.Request.Context(),
 		dummyUserID,
 		services.UpdateUserRequest{
-			Username:  input.Username,
 			FirstName: input.FirstName,
 			LastName:  input.LastName,
 		},
