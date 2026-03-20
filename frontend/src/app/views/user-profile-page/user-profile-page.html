@@ -1,0 +1,39 @@
+<header class="profile-header">
+  <button class="back-btn" (click)="goBack()" aria-label="Back to marketplace">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h1 class="page-title">Account Settings</h1>
+</header>
+
+<main class="profile-content">
+  <section class="settings-section">
+    <h2 class="section-title">Profile</h2>
+    <div class="setting-row">
+      <mat-icon class="setting-icon">account_circle</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label">Profile Picture</span>
+        <span class="setting-hint">Update your profile photo</span>
+      </div>
+      <mat-icon class="setting-arrow">chevron_right</mat-icon>
+    </div>
+  </section>
+
+  <section class="settings-section">
+    <h2 class="section-title">Security</h2>
+    <div class="setting-row">
+      <mat-icon class="setting-icon">lock</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label">Change Password</span>
+        <span class="setting-hint">Update your account password</span>
+      </div>
+      <mat-icon class="setting-arrow">chevron_right</mat-icon>
+    </div>
+  </section>
+
+  <section class="settings-section">
+    <button class="logout-btn" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      Logout
+    </button>
+  </section>
+</main>
