@@ -7,10 +7,8 @@ import (
 	"time"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/middleware"
-	"github.com/Jcorrieri/uf-marketplace/backend/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 )
 
 func TestMiddleware_TableDriven(t *testing.T) {
@@ -21,16 +19,6 @@ func TestMiddleware_TableDriven(t *testing.T) {
 		providedSecret  string
 		expectedStatus	int
 		expectedBody	string
-	}
-
-	testID, err := uuid.NewV7(); 
-	if err != nil {
-		t.Fatal("Failed to generate uuid.")
-	}
-
-	validToken, err := utils.GenerateToken(testID, "correct_secret")
-	if err != nil {
-		t.Fatal("Failed to generate valid token.")
 	}
 
 	tests := []testCase{
@@ -71,7 +59,12 @@ func TestMiddleware_TableDriven(t *testing.T) {
 		{
 			name: 		"Valid Token",
 			cookieName: "session_token",
-			cookieValue: func() string { return validToken },
+			cookieValue: func() string { 
+				claims := jwt.RegisteredClaims{Subject: "user123"}
+				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+				s, _ := token.SignedString([]byte("correct_secret"))
+				return s
+			},
 			providedSecret: "correct_secret",
 			expectedStatus: 200,
 			expectedBody: ``,
@@ -97,7 +90,6 @@ func TestMiddleware_TableDriven(t *testing.T) {
 
 			r.ServeHTTP(w, req)
 
-			// 3. Assertions
 			if w.Code != tc.expectedStatus {
 				t.Errorf("expected status %d, got %d", tc.expectedStatus, w.Code)
 			}
