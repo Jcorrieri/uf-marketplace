@@ -19,7 +19,7 @@ func main() {
 		fmt.Println("Error loading .env file")
 	}
 
-	db := database.Connect()
+	db := database.Connect(os.Getenv("DB_NAME"))
 
 	sessionName := os.Getenv("SESSION_COOKIE_NAME")
 	if sessionName == "" {

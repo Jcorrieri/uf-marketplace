@@ -18,13 +18,13 @@ func SeedData(db *gorm.DB, ctx context.Context) {
 	fmt.Println("Successfully seeded database.")
 }
 
-func Connect() *gorm.DB {
+func Connect(dbName string) *gorm.DB {
 	ctx := context.Background()
 
 	// Connect to db
 	fmt.Println("Attempting database connection...")
 
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
