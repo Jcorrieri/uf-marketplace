@@ -15,7 +15,7 @@ func TestMiddleware_TableDriven(t *testing.T) {
 	type testCase struct {
 		name			string
 		cookieName		string
-		cookieValue		func() string
+		cookieValue		string
 		providedSecret  string
 		expectedStatus	int
 		expectedBody	string
@@ -25,7 +25,7 @@ func TestMiddleware_TableDriven(t *testing.T) {
 		{
 			name: "Missing Cookie",
 			cookieName: "wrong_name",
-			cookieValue: func() string { return "any" },
+			cookieValue: func() string { return "any" }(),
 			providedSecret: "correct_secret",
 			expectedStatus: 401,
 			expectedBody: `{"error":"Forbidden"}`,
@@ -38,7 +38,7 @@ func TestMiddleware_TableDriven(t *testing.T) {
 				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 				s, _ := token.SignedString([]byte("correct_secret"))
 				return s
-			},
+			}(),
 			providedSecret: "correct_secret",
 			expectedStatus: 401,
 			expectedBody:   `{"error":"Session invalid or expired"}`,
@@ -51,7 +51,7 @@ func TestMiddleware_TableDriven(t *testing.T) {
 				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 				s, _ := token.SignedString([]byte("WRONG-SECRET"))
 				return s
-			},
+			}(),
 			providedSecret: "correct-secret",
 			expectedStatus: 401,
 			expectedBody:   `{"error":"Session invalid or expired"}`,
@@ -64,7 +64,7 @@ func TestMiddleware_TableDriven(t *testing.T) {
 				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 				s, _ := token.SignedString([]byte("correct_secret"))
 				return s
-			},
+			}(),
 			providedSecret: "correct_secret",
 			expectedStatus: 200,
 			expectedBody: ``,
@@ -85,7 +85,7 @@ func TestMiddleware_TableDriven(t *testing.T) {
 			req, _ := http.NewRequest("GET", "/test", nil)
 			req.AddCookie(&http.Cookie{
 				Name:  tc.cookieName,
-				Value: tc.cookieValue(),
+				Value: tc.cookieValue,
 			})
 
 			r.ServeHTTP(w, req)
