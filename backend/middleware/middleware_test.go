@@ -4,61 +4,106 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/middleware"
 	"github.com/Jcorrieri/uf-marketplace/backend/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 )
 
-var (
-	secret = "test_secret"
-	sessionCookieName = "test_cookie"
-	middlewareFunction = middleware.AuthMiddleware(secret, sessionCookieName)
-)
-
-func TestMiddlewareSetsID(t *testing.T) {
-	// Set up gin
-	gin.SetMode(gin.TestMode)
-	testClient := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(testClient)
-
-	// Create JWT
-	expectedID, err := uuid.NewV7()
-	if err != nil {
-		t.Error("Failed to create user ID")
+func TestMiddleware_TableDriven(t *testing.T) {
+	type testCase struct {
+		name			string
+		cookieName		string
+		cookieValue		func() string
+		providedSecret  string
+		expectedStatus	int
+		expectedBody	string
 	}
 
-	token, err := utils.GenerateToken(expectedID, secret) 
+	testID, err := uuid.NewV7(); 
 	if err != nil {
-		t.Error("Failed to generate token")
+		t.Fatal("Failed to generate uuid.")
 	}
 
-	// Create request w/ cookie and token
-	req, _ := http.NewRequest("GET", "/", nil)
-	req.AddCookie(&http.Cookie{
-		Name: sessionCookieName,
-		Value: token,
-	})
-	c.Request = req
-
-	middlewareFunction(c)
-
-	// Evaluate 
-	val, exists := c.Get("userID")
-
-	assert.True(t, exists, "userID must exist in context")
-
-	parsedVal, err := uuid.Parse(val.(string))
+	validToken, err := utils.GenerateToken(testID, "correct_secret")
 	if err != nil {
-		t.Error("Failed to parse uuid from context")
+		t.Fatal("Failed to generate valid token.")
 	}
 
-	assert.Equal(t, expectedID, parsedVal)
+	tests := []testCase{
+		{
+			name: "Missing Cookie",
+			cookieName: "wrong_name",
+			cookieValue: func() string { return "any" },
+			providedSecret: "correct_secret",
+			expectedStatus: 401,
+			expectedBody: `{"error":"Forbidden"}`,
+		},
+		{
+			name:       "Expired Token",
+			cookieName: "session_token",
+			cookieValue: func() string {
+				claims := jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(-1 * time.Hour))}
+				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+				s, _ := token.SignedString([]byte("correct_secret"))
+				return s
+			},
+			providedSecret: "correct_secret",
+			expectedStatus: 401,
+			expectedBody:   `{"error":"Session invalid or expired"}`,
+		},
+		{
+			name:       "Invalid Secret",
+			cookieName: "session_token",
+			cookieValue: func() string {
+				claims := jwt.RegisteredClaims{Subject: "user123"}
+				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+				s, _ := token.SignedString([]byte("WRONG-SECRET"))
+				return s
+			},
+			providedSecret: "correct-secret",
+			expectedStatus: 401,
+			expectedBody:   `{"error":"Session invalid or expired"}`,
+		},
+		{
+			name: 		"Valid Token",
+			cookieName: "session_token",
+			cookieValue: func() string { return validToken },
+			providedSecret: "correct_secret",
+			expectedStatus: 200,
+			expectedBody: ``,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			gin.SetMode(gin.TestMode)
+			w := httptest.NewRecorder()
+			r := gin.New()
+
+			r.Use(middleware.AuthMiddleware(tc.providedSecret, "session_token"))
+			r.GET("/test", func(c *gin.Context) {
+				c.Status(200)
+			})
+
+			req, _ := http.NewRequest("GET", "/test", nil)
+			req.AddCookie(&http.Cookie{
+				Name:  tc.cookieName,
+				Value: tc.cookieValue(),
+			})
+
+			r.ServeHTTP(w, req)
+
+			// 3. Assertions
+			if w.Code != tc.expectedStatus {
+				t.Errorf("expected status %d, got %d", tc.expectedStatus, w.Code)
+			}
+			if w.Body.String() != tc.expectedBody {
+				t.Errorf("expected body %s, got %s", tc.expectedBody, w.Body.String())
+			}
+		})
+	}
 }
-
-func TestMiddleWareReachesHandlers(t *testing.T) {
-	
-}
-
