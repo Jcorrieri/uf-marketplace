@@ -3,27 +3,36 @@
 ## Setup 
 In the backend directory containing the go.mod file, start the http server with ```go run .```.
 
-Fetch 'hello world' from the /hello-world endpoint ```curl http://localhost:8080/hello-world```.
-
 ## Project Structure
 Technology Stack:
 - RestAPI: Gin framework
 - Database: SQLite with GORM
-- Auth: TBD
+- Auth: JWTs with HttpOnly cookies.
 
 Product Structure:
+
 ```
 .
-├── database/
+├── README.md
+├── database
 │   └── database.go
 ├── go.mod
 ├── go.sum
-├── handlers/               // API endpoint logic
-│   └── <model>_handler.go
+├── handlers
+│   ├── auth_handler.go
+│   ├── settings_handler.go
+│   └── user_handler.go
 ├── main.go
-├── models/
-│   └── <model>.go
-├── services/               // Database operations
-│   └── <model>_service.go
-└── test.db
+├── middleware
+│   ├── middleware.go
+│   └── middleware_test.go
+├── models
+│   ├── user.go
+│   └── user_test.go
+├── services
+│   ├── auth_service.go
+│   └── user_service.go
+├── test.db
+└── utils
+    └── jwt.go
 ```
