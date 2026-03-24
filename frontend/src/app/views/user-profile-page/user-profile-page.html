@@ -6,8 +6,60 @@
 </header>
 
 <main class="profile-content">
+  <!-- User card -->
+  @if (user) {
+    <section class="user-card">
+      <div class="avatar-circle">{{ initials }}</div>
+      <div class="user-details">
+        <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+        <span class="user-email">{{ user.email }}</span>
+      </div>
+    </section>
+  }
+
+  <!-- Profile section -->
   <section class="settings-section">
     <h2 class="section-title">Profile</h2>
+
+    <!-- Edit Name -->
+    <div class="setting-row" (click)="startEditName()">
+      <mat-icon class="setting-icon">badge</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label">Name</span>
+        <span class="setting-hint">{{ user?.firstName }} {{ user?.lastName }}</span>
+      </div>
+      <mat-icon class="setting-arrow">chevron_right</mat-icon>
+    </div>
+
+    @if (editingName()) {
+      <div class="edit-panel">
+        <mat-form-field appearance="outline" class="edit-field">
+          <mat-label>First Name</mat-label>
+          <input matInput [(ngModel)]="editFirstName" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="edit-field">
+          <mat-label>Last Name</mat-label>
+          <input matInput [(ngModel)]="editLastName" />
+        </mat-form-field>
+        @if (errorMsg()) {
+          <p class="edit-error">{{ errorMsg() }}</p>
+        }
+        <div class="edit-actions">
+          <button mat-stroked-button (click)="cancelEditName()">Cancel</button>
+          <button
+            mat-flat-button
+            color="primary"
+            class="save-btn"
+            [disabled]="saving()"
+            (click)="saveName()"
+          >
+            {{ saving() ? 'Saving…' : 'Save' }}
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Profile Picture (placeholder) -->
     <div class="setting-row">
       <mat-icon class="setting-icon">account_circle</mat-icon>
       <div class="setting-info">
@@ -16,8 +68,18 @@
       </div>
       <mat-icon class="setting-arrow">chevron_right</mat-icon>
     </div>
+
+    <!-- Email (read-only) -->
+    <div class="setting-row">
+      <mat-icon class="setting-icon">mail</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label">Email</span>
+        <span class="setting-hint">{{ user?.email }}</span>
+      </div>
+    </div>
   </section>
 
+  <!-- Security -->
   <section class="settings-section">
     <h2 class="section-title">Security</h2>
     <div class="setting-row">
@@ -30,6 +92,7 @@
     </div>
   </section>
 
+  <!-- Logout -->
   <section class="settings-section">
     <button class="logout-btn" (click)="logout()">
       <mat-icon>logout</mat-icon>

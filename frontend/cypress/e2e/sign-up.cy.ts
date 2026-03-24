@@ -1,10 +1,10 @@
-// Helper: Angular Material's outline labels overlap inputs,
-// so we need {force: true} to bypass the coverage check.
-function matType(formControlName: string, value: string) {
-  cy.get(`input[formControlName="${formControlName}"]`).type(value, { force: true });
-}
-
 describe('Sign Up Page', () => {
+  // Helper: Angular Material's outline labels overlap inputs,
+  // so we need {force: true} to bypass the coverage check.
+  function matType(formControlName: string, value: string) {
+    cy.get(`input[formControlName="${formControlName}"]`).type(value, { force: true });
+  }
+
   beforeEach(() => {
     cy.visit('/sign-up');
   });
