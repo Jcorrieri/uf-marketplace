@@ -134,3 +134,81 @@
 .logout-btn:hover {
   background-color: rgba(211, 47, 47, 0.06);
 }
+
+/* ── User card ── */
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 24px 20px;
+  margin-bottom: 16px;
+}
+
+.avatar-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fa4616, #0021a5);
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.user-email {
+  font-size: 0.88rem;
+  color: #888;
+}
+
+/* ── Edit panel ── */
+.edit-panel {
+  padding: 16px 20px;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+}
+
+.edit-field {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.edit-error {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin: 0 0 8px;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.save-btn {
+  background-color: #fa4616 !important;
+  color: #fff !important;
+}
+
+.save-btn[disabled] {
+  opacity: 0.6;
+}
