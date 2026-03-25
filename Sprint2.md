@@ -24,70 +24,275 @@
 - Frontend: Merged search/filter feature work.
 
 ## Frontend Work
-### Cypress Test
-- Status: Not found in repo yet.
-- Planned: Add a simple UI interaction test (e.g., open login page and type into email/password fields).
+### Cypress E2E Tests
+- Framework: Cypress 15.12.0 (Electron 138, headless).
+- Summary: End-to-end tests covering the Login and Sign-Up pages — form display, validation, disabled-state logic, API mocking, and navigation.
+- Tests (22 total: 16 login, 6 sign-up):
+  - Login page
+    - [frontend/cypress/e2e/login.cy.ts](frontend/cypress/e2e/login.cy.ts)
+    - Tests:
+      - should display the login form with all expected elements
+        - Details: Visits `/login`, asserts "Welcome Back" heading, email/password inputs, Sign In button, forgot-password text, and sign-up link exist.
+      - should display the hero section on the right
+        - Details: Asserts marketing copy ("Buy & Sell on", "Verified UF Students Only", "Secure Transactions", "Campus Meetups") is visible.
+      - should keep Sign In button disabled when both fields are empty
+        - Details: Asserts button is disabled with no input.
+      - should keep Sign In button disabled when only email is filled
+        - Details: Types a valid email; button remains disabled without a password.
+      - should keep Sign In button disabled when only password is filled
+        - Details: Types a password; button remains disabled without an email.
+      - should keep Sign In button disabled for an invalid email format
+        - Details: Types `not-an-email` for email and a password; button stays disabled.
+      - should keep Sign In button disabled for email missing domain
+        - Details: Types `user@` for email and a password; button stays disabled.
+      - should show "Email is required" error when email is touched and left empty
+        - Details: Focuses then blurs email input; expects "Email is required" message.
+      - should show "Enter a valid email" error for a malformed email
+        - Details: Types `bad-email` and blurs; expects "Enter a valid email" message.
+      - should enable Sign In button with valid email and password
+        - Details: Types `user@ufl.edu` and a password; button becomes enabled.
+      - should enable Sign In button with any valid email (not just @ufl.edu)
+        - Details: Types `user@gmail.com` and a password; button becomes enabled.
+      - should toggle password visibility when the eye icon is clicked
+        - Details: Verifies input type flips between "password" and "text" on toggle clicks.
+      - should redirect to /main on successful login
+        - Details: Intercepts `POST /api/auth/login` (200) and `GET /api/users/me` (200); fills form, clicks Sign In, asserts URL includes `/main`.
+      - should show an alert when login fails with invalid credentials
+        - Details: Intercepts `POST /api/auth/login` (401); expects `window.alert` with "Invalid email or password".
+      - should show an alert when the server returns a 500 error
+        - Details: Intercepts `POST /api/auth/login` (500); expects `window.alert` with "Invalid email or password".
+      - should navigate to the sign-up page when "Sign up" link is clicked
+        - Details: Clicks the sign-up link; asserts URL includes `/sign-up`.
+    - Code:
+      ```ts
+      describe('Login Page', () => {
+        function matType(selector: string, value: string) {
+          cy.get(selector).type(value, { force: true });
+        }
 
-### Unit Tests
-- Framework: Angular TestBed (default Angular CLI testing).
-- Summary: Basic component creation and smoke checks for app, navbar, login, and signup views.
-- Tests (1:1 to function ratio target):
-  - App component
-    - [frontend/src/app/app.spec.ts](frontend/src/app/app.spec.ts)
-    - Tests:
-      - should create the app
-        - Details: Instantiates `App` via `TestBed` and asserts the component instance is truthy.
-      - should render title
-        - Details: Waits for component stability, queries `h1`, and checks title text contains `Hello, UfMarketPlace`.
-    - Code:
-      ```ts
-      it('should create the app', () => {
-        const fixture = TestBed.createComponent(App);
-        const app = fixture.componentInstance;
-        expect(app).toBeTruthy();
-      });
+        beforeEach(() => {
+          cy.visit('/login');
+        });
 
-      it('should render title', async () => {
-        const fixture = TestBed.createComponent(App);
-        await fixture.whenStable();
-        const compiled = fixture.nativeElement as HTMLElement;
-        expect(compiled.querySelector('h1')?.textContent)
-          .toContain('Hello, UfMarketPlace');
+        it('should display the login form with all expected elements', () => {
+          cy.contains('Welcome Back').should('be.visible');
+          cy.get('input#email').should('exist');
+          cy.get('input#password').should('exist');
+          cy.get('button.login-btn').should('exist').and('contain.text', 'Sign In');
+          cy.contains('Forgot password?').should('be.visible');
+          cy.contains("Don't have an account?").should('be.visible');
+          cy.get('a.signup-link').should('have.attr', 'href', '/sign-up');
+        });
+
+        it('should display the hero section on the right', () => {
+          cy.contains('Buy & Sell on').should('be.visible');
+          cy.contains('Verified UF Students Only').should('be.visible');
+          cy.contains('Secure Transactions').should('be.visible');
+          cy.contains('Campus Meetups').should('be.visible');
+        });
+
+        it('should keep Sign In button disabled when both fields are empty', () => {
+          cy.get('button.login-btn').should('be.disabled');
+        });
+
+        it('should keep Sign In button disabled when only email is filled', () => {
+          matType('input#email', 'user@ufl.edu');
+          cy.get('button.login-btn').should('be.disabled');
+        });
+
+        it('should keep Sign In button disabled when only password is filled', () => {
+          matType('input#password', 'password123');
+          cy.get('button.login-btn').should('be.disabled');
+        });
+
+        it('should keep Sign In button disabled for an invalid email format', () => {
+          matType('input#email', 'not-an-email');
+          matType('input#password', 'password123');
+          cy.get('button.login-btn').should('be.disabled');
+        });
+
+        it('should keep Sign In button disabled for email missing domain', () => {
+          matType('input#email', 'user@');
+          matType('input#password', 'password123');
+          cy.get('button.login-btn').should('be.disabled');
+        });
+
+        it('should show "Email is required" error when email is touched and left empty', () => {
+          cy.get('input#email').focus().blur();
+          cy.contains('Email is required').should('be.visible');
+        });
+
+        it('should show "Enter a valid email" error for a malformed email', () => {
+          matType('input#email', 'bad-email');
+          cy.get('input#email').blur();
+          cy.contains('Enter a valid email').should('be.visible');
+        });
+
+        it('should enable Sign In button with valid email and password', () => {
+          matType('input#email', 'user@ufl.edu');
+          matType('input#password', 'password123');
+          cy.get('button.login-btn').should('not.be.disabled');
+        });
+
+        it('should enable Sign In button with any valid email (not just @ufl.edu)', () => {
+          matType('input#email', 'user@gmail.com');
+          matType('input#password', 'somepassword');
+          cy.get('button.login-btn').should('not.be.disabled');
+        });
+
+        it('should toggle password visibility when the eye icon is clicked', () => {
+          matType('input#password', 'secret123');
+          cy.get('input#password').should('have.attr', 'type', 'password');
+          cy.get('input#password')
+            .parents('mat-form-field')
+            .find('button[matIconButton], button[matsuffix], button[matSuffix]')
+            .click({ force: true });
+          cy.get('input#password').should('have.attr', 'type', 'text');
+          cy.get('input#password')
+            .parents('mat-form-field')
+            .find('button[matIconButton], button[matsuffix], button[matSuffix]')
+            .click({ force: true });
+          cy.get('input#password').should('have.attr', 'type', 'password');
+        });
+
+        it('should redirect to /main on successful login', () => {
+          cy.intercept('POST', '/api/auth/login', {
+            statusCode: 200,
+            body: { id: 'abc-123', first_name: 'Test', last_name: 'User', email: 'testuser@ufl.edu' },
+          }).as('loginRequest');
+          cy.intercept('GET', '/api/users/me', {
+            statusCode: 200,
+            body: { id: 'abc-123', first_name: 'Test', last_name: 'User', email: 'testuser@ufl.edu' },
+          }).as('meRequest');
+          matType('input#email', 'testuser@ufl.edu');
+          matType('input#password', 'ValidPass123');
+          cy.get('button.login-btn').should('not.be.disabled');
+          cy.get('button.login-btn').click();
+          cy.wait('@loginRequest');
+          cy.url().should('include', '/main');
+        });
+
+        it('should show an alert when login fails with invalid credentials', () => {
+          cy.intercept('POST', '/api/auth/login', {
+            statusCode: 401,
+            body: { error: 'invalid credentials' },
+          }).as('loginFail');
+          matType('input#email', 'testuser@ufl.edu');
+          matType('input#password', 'wrongpassword');
+          cy.get('button.login-btn').click();
+          cy.on('window:alert', (alertText) => {
+            expect(alertText).to.equal('Invalid email or password');
+          });
+          cy.wait('@loginFail');
+        });
+
+        it('should show an alert when the server returns a 500 error', () => {
+          cy.intercept('POST', '/api/auth/login', {
+            statusCode: 500,
+            body: { error: 'internal server error' },
+          }).as('loginServerError');
+          matType('input#email', 'testuser@ufl.edu');
+          matType('input#password', 'password123');
+          cy.get('button.login-btn').click();
+          cy.on('window:alert', (alertText) => {
+            expect(alertText).to.equal('Invalid email or password');
+          });
+          cy.wait('@loginServerError');
+        });
+
+        it('should navigate to the sign-up page when "Sign up" link is clicked', () => {
+          cy.get('a.signup-link').click();
+          cy.url().should('include', '/sign-up');
+        });
       });
       ```
-  - Navbar component
-    - [frontend/src/app/components/navbar/navbar.spec.ts](frontend/src/app/components/navbar/navbar.spec.ts)
+    - Result: PASS (16 passing, 0 failing — 7s)
+  - Sign-up page
+    - [frontend/cypress/e2e/sign-up.cy.ts](frontend/cypress/e2e/sign-up.cy.ts)
     - Tests:
-      - should create
-        - Details: Creates `Navbar` component and asserts the instance exists after change detection.
+      - should display the sign-up form
+        - Details: Visits `/sign-up`, asserts "Create Account" heading and all five form inputs (firstName, lastName, email, password, confirmPassword) exist.
+      - should keep Sign Up button disabled when password is too short
+        - Details: Fills all fields with a short password (`short`); button stays disabled.
+      - should show minlength error when password is too short
+        - Details: Types `short` into password and blurs; expects "Password must be at least 8 characters".
+      - should keep Sign Up button disabled when passwords do not match
+        - Details: Fills valid inputs but mismatched passwords; button stays disabled.
+      - should show error when registering with an already taken email
+        - Details: Intercepts `POST /api/auth/register` (500); fills form, clicks Sign Up, expects "could not create user" message.
+      - should enable Sign Up button with valid inputs
+        - Details: Fills all fields with valid data; button becomes enabled.
     - Code:
       ```ts
-      it('should create', () => {
-        expect(component).toBeTruthy();
+      describe('Sign Up Page', () => {
+        function matType(formControlName: string, value: string) {
+          cy.get(`input[formControlName="${formControlName}"]`).type(value, { force: true });
+        }
+
+        beforeEach(() => {
+          cy.visit('/sign-up');
+        });
+
+        it('should display the sign-up form', () => {
+          cy.contains('Create Account').should('be.visible');
+          cy.get('input[formControlName="firstName"]').should('exist');
+          cy.get('input[formControlName="lastName"]').should('exist');
+          cy.get('input[formControlName="email"]').should('exist');
+          cy.get('input[formControlName="password"]').should('exist');
+          cy.get('input[formControlName="confirmPassword"]').should('exist');
+        });
+
+        it('should keep Sign Up button disabled when password is too short', () => {
+          matType('firstName', 'Test');
+          matType('lastName', 'User');
+          matType('email', 'testuser@ufl.edu');
+          matType('password', 'short');
+          matType('confirmPassword', 'short');
+          cy.get('button.signup-btn').should('be.disabled');
+        });
+
+        it('should show minlength error when password is too short', () => {
+          cy.get('input[formControlName="password"]').type('short', { force: true });
+          cy.get('input[formControlName="password"]').blur();
+          cy.contains('Password must be at least 8 characters').should('be.visible');
+        });
+
+        it('should keep Sign Up button disabled when passwords do not match', () => {
+          matType('firstName', 'Test');
+          matType('lastName', 'User');
+          matType('email', 'testuser@ufl.edu');
+          matType('password', 'ValidPass123');
+          matType('confirmPassword', 'Different123');
+          cy.get('button.signup-btn').should('be.disabled');
+        });
+
+        it('should show error when registering with an already taken email', () => {
+          cy.intercept('POST', '/api/auth/register', {
+            statusCode: 500,
+            body: { error: 'could not create user' },
+          }).as('registerRequest');
+          matType('firstName', 'Test');
+          matType('lastName', 'User');
+          matType('email', 'user1@ufl.edu');
+          matType('password', 'password123');
+          matType('confirmPassword', 'password123');
+          cy.get('button.signup-btn').should('not.be.disabled');
+          cy.get('button.signup-btn').click();
+          cy.wait('@registerRequest');
+          cy.contains('could not create user').should('be.visible');
+        });
+
+        it('should enable Sign Up button with valid inputs', () => {
+          matType('firstName', 'Test');
+          matType('lastName', 'User');
+          matType('email', 'newuser@ufl.edu');
+          matType('password', 'StrongPass1');
+          matType('confirmPassword', 'StrongPass1');
+          cy.get('button.signup-btn').should('not.be.disabled');
+        });
       });
       ```
-  - Login page component
-    - [frontend/src/app/views/login-page/login-page.spec.ts](frontend/src/app/views/login-page/login-page.spec.ts)
-    - Tests:
-      - should create
-        - Details: Builds the `LoginPage` component and verifies it instantiates without errors.
-    - Code:
-      ```ts
-      it('should create', () => {
-        expect(component).toBeTruthy();
-      });
-      ```
-  - Sign-up page component
-    - [frontend/src/app/views/sign-up-page/sign-up-page.spec.ts](frontend/src/app/views/sign-up-page/sign-up-page.spec.ts)
-    - Tests:
-      - should create
-        - Details: Builds the `SignUpPage` component and checks that the instance is created.
-    - Code:
-      ```ts
-      it('should create', () => {
-        expect(component).toBeTruthy();
-      });
-      ```
+    - Result: PASS (6 passing, 0 failing — 5s)
 
 ## Backend Work
 ### API Documentation
@@ -551,8 +756,7 @@ Authentication endpoints are public. User and settings endpoints require a valid
     - `404` user not found
 
 ## Test Results
-- Frontend unit tests: Not run in this session.
-- Frontend Cypress test: Not run in this session (no spec found).
+- Frontend Cypress tests: PASS (22 tests total — 16 login + 6 sign-up, 0 failed).
 - Backend unit tests: PASS (12 tests, 0 failed).
 
 ## Notes / Risks
