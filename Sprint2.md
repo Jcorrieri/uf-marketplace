@@ -758,15 +758,3 @@ Authentication endpoints are public. User and settings endpoints require a valid
 ## Test Results
 - Frontend Cypress tests: PASS (22 tests total — 16 login + 6 sign-up, 0 failed).
 - Backend unit tests: PASS (12 tests, 0 failed).
-
-## Notes / Risks
-- TODO
-
-## Submission Links
-- GitHub link: TODO
-- Video link(s): TODO
-
-## Presentation Outline
-- Member 1: TODO
-- Member 2: TODO
-- Member 3: TODO
