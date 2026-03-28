@@ -65,7 +65,7 @@
 <main class="product-grid">
   @for (product of filteredProducts; track product.id) {
     <div class="product-card">
-      <img [src]="product.image" [alt]="product.title" class="product-image" />
+      <img [src]="product.image_url" [alt]="product.title" class="product-image" />
       <div class="product-info">
         <h3 class="product-title">{{ product.title }}</h3>
         <p class="product-description">{{ product.description }}</p>
@@ -73,11 +73,11 @@
         <div class="product-meta">
           <span class="product-seller">
             <mat-icon class="meta-icon">person</mat-icon>
-            {{ product.seller }}
+            {{ product.seller_id }}
           </span>
           <span class="product-time">
             <mat-icon class="meta-icon">schedule</mat-icon>
-            {{ timeAgo(product.postedAt) }}
+            //{{ timeAgo(product.postedAt) }}
           </span>
         </div>
       </div>
