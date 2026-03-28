@@ -37,6 +37,18 @@ func main() {
 
 	router := gin.Default()
 
+	router.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "http://localhost:4200")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
+
 	api := router.Group("/api")
 
 	auth := api.Group("/auth")
@@ -57,10 +69,10 @@ func main() {
 		protected.PUT("/settings", settingsHandler.UpdateSettings)
 	}
 
-	//listingHandler := handlers.NewListingHandler(db)
+	listingHandler := handlers.NewListingHandler(db)
 
-	//api.GET("/listings", listingHandler.GetListings)
-	//api.POST("/listings", listingHandler.CreateListing)
+	api.GET("/listings", listingHandler.GetListings)
+	api.POST("/listings", listingHandler.CreateListing)
 
 	router.Run("localhost:8080")
 }

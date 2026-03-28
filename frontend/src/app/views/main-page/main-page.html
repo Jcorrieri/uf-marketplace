@@ -27,7 +27,7 @@
   <div class="header-search">
     <mat-form-field class="search-field" appearance="outline">
       <mat-icon matPrefix>search</mat-icon>
-      <input matInput placeholder="Search marketplace..." [(ngModel)]="searchQuery" />
+      <input matInput placeholder="Search marketplace..." [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
     </mat-form-field>
   </div>
 
@@ -74,10 +74,6 @@
           <span class="product-seller">
             <mat-icon class="meta-icon">person</mat-icon>
             {{ product.seller_id }}
-          </span>
-          <span class="product-time">
-            <mat-icon class="meta-icon">schedule</mat-icon>
-            //{{ timeAgo(product.postedAt) }}
           </span>
         </div>
       </div>
