@@ -69,7 +69,8 @@ func main() {
 		protected.PUT("/settings", settingsHandler.UpdateSettings)
 	}
 
-	listingHandler := handlers.NewListingHandler(db)
+	listingService := services.NewListingService(db)
+	listingHandler := handlers.NewListingHandler(listingService)
 
 	api.GET("/listings", listingHandler.GetListings)
 	api.POST("/listings", listingHandler.CreateListing)

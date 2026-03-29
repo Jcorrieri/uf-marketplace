@@ -4,23 +4,22 @@ import (
 	"net/http"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
+	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type ListingHandler struct {
-	DB *gorm.DB
+	listingService *services.ListingService
 }
 
-func NewListingHandler(db *gorm.DB) *ListingHandler {
-	return &ListingHandler{DB: db}
+func NewListingHandler(s *services.ListingService) *ListingHandler {
+	return &ListingHandler{listingService: s}
 }
 
 // GET /api/listings
 func (h *ListingHandler) GetListings(c *gin.Context) {
-	var listings []models.Listing
-	result := h.DB.Find(&listings)
-	if result.Error != nil {
+	listings, err := h.listingService.GetAll(c.Request.Context())
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch listings"})
 		return
 	}
@@ -34,6 +33,9 @@ func (h *ListingHandler) CreateListing(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	h.DB.Create(&listing)
+	if err := h.listingService.Create(c.Request.Context(), &listing); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create listing"})
+		return
+	}
 	c.JSON(http.StatusCreated, listing)
 }
