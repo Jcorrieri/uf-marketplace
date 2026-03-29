@@ -53,7 +53,13 @@ export class MainPage implements OnInit  {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-  ngOnInit() {
+  async ngOnInit() {
+    try {
+      await this.authService.loadUser();
+    } catch {
+      // user load failed, continue anyway
+    }
+
     this.http.get<Product[]>('http://localhost:8080/api/listings')
       .subscribe({
         next: data => {
@@ -90,10 +96,11 @@ export class MainPage implements OnInit  {
   async logout() {
     this.menuOpen = false;
     try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch('http://localhost:8080/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (e) {
       console.error('logout request failed', e);
     }
+    this.authService.clearUser();
     this.router.navigate(['/']);
   }
 

@@ -11,20 +11,27 @@ export interface CurrentUser {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly storageKey = 'current_user';
   private user: CurrentUser | null = null;
 
-  constructor() {
-    // Load user from localStorage on startup
-    const stored = localStorage.getItem(this.storageKey);
-    if (stored) {
-      this.user = JSON.parse(stored);
+  async loadUser(): Promise<void> {
+    try {
+      const res = await fetch('http://localhost:8080/api/users/me', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        this.user = {
+          id: data.id,
+          firstName: data.first_name,
+          lastName: data.last_name,
+          email: data.email
+        };
+      }
+    } catch {
+      this.user = null;
     }
   }
 
   setUser(user: CurrentUser) {
     this.user = user;
-    localStorage.setItem(this.storageKey, JSON.stringify(user));
   }
 
   getUser(): CurrentUser | null {
@@ -33,6 +40,5 @@ export class AuthService {
 
   clearUser() {
     this.user = null;
-    localStorage.removeItem(this.storageKey);
   }
 }
