@@ -27,7 +27,12 @@
   <div class="header-search">
     <mat-form-field class="search-field" appearance="outline">
       <mat-icon matPrefix>search</mat-icon>
-      <input matInput placeholder="Search marketplace..." [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
+      <input
+        matInput
+        placeholder="Search marketplace..."
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearch()"
+      />
     </mat-form-field>
   </div>
 
@@ -73,16 +78,16 @@
         <div class="product-meta">
           <span class="product-seller">
             <mat-icon class="meta-icon">person</mat-icon>
-            {{ product.seller_id }}
+            {{ product.seller_name }}
           </span>
         </div>
       </div>
     </div>
   }
   @if (filteredProducts.length === 0) {
-  <div class="no-results">
-    <mat-icon>search_off</mat-icon>
-    <p>No items found for "{{ searchQuery }}"</p>
-  </div>
-}
+    <div class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <p>No items found for "{{ searchQuery }}"</p>
+    </div>
+  }
 </main>

@@ -19,12 +19,24 @@ func NewListingHandler(db *gorm.DB) *ListingHandler {
 // GET /api/listings
 func (h *ListingHandler) GetListings(c *gin.Context) {
 	var listings []models.Listing
-	result := h.DB.Find(&listings)
+	result := h.DB.Preload("Seller").Find(&listings)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch listings"})
 		return
 	}
-	c.JSON(http.StatusOK, listings)
+
+	var response []models.ListingResponse
+	for _, l := range listings {
+		response = append(response, models.ListingResponse{
+			ID:          l.ID,
+			Title:       l.Title,
+			Description: l.Description,
+			Price:       l.Price,
+			ImageURL:    l.ImageURL,
+			SellerName:  l.Seller.FirstName + " " + l.Seller.LastName,
+		})
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 // POST /api/listings
