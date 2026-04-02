@@ -15,7 +15,7 @@ export class AuthService {
 
   async loadUser(): Promise<void> {
     try {
-      const res = await fetch('http://localhost:8080/api/users/me', { credentials: 'include' });
+      const res = await fetch('/api/users/me', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         this.user = {

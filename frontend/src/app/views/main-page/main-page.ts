@@ -60,7 +60,7 @@ export class MainPage implements OnInit  {
       // user load failed, continue anyway
     }
 
-    this.http.get<Product[]>('http://localhost:8080/api/listings')
+    this.http.get<Product[]>('/api/listings')
       .subscribe({
         next: data => {
           this.products = data;
@@ -96,7 +96,7 @@ export class MainPage implements OnInit  {
   async logout() {
     this.menuOpen = false;
     try {
-      await fetch('http://localhost:8080/api/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (e) {
       console.error('logout request failed', e);
     }
