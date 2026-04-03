@@ -83,7 +83,7 @@ export class UserProfilePage implements OnInit {
     this.saving.set(true);
     this.errorMsg.set('');
     try {
-      const res = await fetch('/api/settings', {
+      const res = await fetch('/api/users/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

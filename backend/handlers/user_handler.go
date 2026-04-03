@@ -70,3 +70,44 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, nil)
 }
+
+type UpdateUserRequest struct {
+	FirstName string `json:"first_name" binding:"required"`
+	LastName  string `json:"last_name" binding:"required"`
+}
+
+func (h *UserHandler) UpdateSettings(c *gin.Context) {
+	var input UpdateUserRequest
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "First name, and last name are required",
+		})
+		return
+	}
+
+	id, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	// TODO: Get user id from auth ( uuid.Parse(c.MustGet("userID").(string)) )
+	user, err := h.userService.Update(
+		c.Request.Context(),
+		id,
+		services.UpdateUserRequest{
+			FirstName: input.FirstName,
+			LastName:  input.LastName,
+		},
+	)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, user.GetResponse())
+}

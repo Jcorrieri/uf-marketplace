@@ -735,13 +735,7 @@ Authentication endpoints are public. User and settings endpoints require a valid
   - Errors:
     - `400` invalid ID
     - `500` error deleting user
-
-### Settings
-- GET /settings
-  - Purpose: Get current user settings (currently returns user profile info).
-  - Response: `200 OK` (UserResponse)
-  - Notes: Uses a temporary hardcoded user ID in the handler.
-- PUT /settings
+- PUT /users/me
   - Purpose: Update profile settings (first/last name only).
   - Request body:
     ```json
