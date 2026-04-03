@@ -92,7 +92,6 @@ func (h *UserHandler) UpdateSettings(c *gin.Context) {
 		return
 	}
 
-	// TODO: Get user id from auth ( uuid.Parse(c.MustGet("userID").(string)) )
 	user, err := h.userService.Update(
 		c.Request.Context(),
 		id,
