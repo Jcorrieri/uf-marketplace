@@ -23,6 +23,10 @@ func (h *ListingHandler) GetListings(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch listings"})
 		return
 	}
+
+	var response []models.ListingResponse
+	for _, l := range listings { response = append(response, l.GetResponse())}
+
 	c.JSON(http.StatusOK, listings)
 }
 
