@@ -57,5 +57,11 @@ func main() {
 		protected.PUT("/settings", settingsHandler.UpdateSettings)
 	}
 
+	listingService := services.NewListingService(db)
+	listingHandler := handlers.NewListingHandler(listingService)
+
+	api.GET("/listings", listingHandler.GetListings)
+	api.POST("/listings", listingHandler.CreateListing)
+
 	router.Run("localhost:8080")
 }
