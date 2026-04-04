@@ -13,7 +13,39 @@ import (
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
 )
 
+func RegisterAuthRoutes(
+	router *gin.RouterGroup,
+	authHandler *handlers.AuthHandler,
+	authService *services.AuthService,
+) {
+	router.POST("/register", authHandler.Register)
+	router.POST("/login", authHandler.Login)
+	router.POST("/logout", authHandler.Logout)
+}
+
+func RegisterUserRoutes(
+	router *gin.RouterGroup,
+	userHandler *handlers.UserHandler,
+	userService *services.UserService,
+) {
+	router.GET("/users/:id", userHandler.GetUserById)
+	router.GET("/users/me", userHandler.GetCurrentUser)
+	router.DELETE("/users/me", userHandler.DeleteUser)
+	router.PUT("/users/me", userHandler.UpdateSettings)
+}
+
+func RegisterListingsRoutes(
+	public *gin.RouterGroup,
+	protected *gin.RouterGroup,
+	listingHandler *handlers.ListingHandler,
+	listingService *services.ListingService,
+) {
+	public.GET("/listings", listingHandler.GetListings)
+	protected.POST("/listings", listingHandler.CreateListing)
+}
+
 func main() {
+	// Setup
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error loading .env file")
@@ -26,42 +58,30 @@ func main() {
 		sessionName = "session_token"
 	}
 
+	// Services
 	authService := services.NewAuthService(db)
 	userService := services.NewUserService(db)
-
-	userHandler := handlers.NewUserHandler(userService)
-	authHandler := handlers.NewAuthHandler(authService, userService, sessionName)
-	settingsHandler := handlers.NewSettingsHandler(userService)
-
-	authMiddleware := middleware.AuthMiddleware(os.Getenv("JWT_SECRET"), sessionName)
-
-	router := gin.Default()
-
-	api := router.Group("/api")
-
-	auth := api.Group("/auth")
-	{
-		auth.POST("/register", authHandler.Register)
-		auth.POST("/login", authHandler.Login)
-		auth.POST("/logout", authHandler.Logout)
-	}
-
-	protected := api.Group("/").Use(authMiddleware)
-	{
-		protected.GET("/users/:id", userHandler.GetUserById)
-		protected.GET("/users/me", userHandler.GetCurrentUser)
-		protected.DELETE("/users/me", userHandler.DeleteUser)
-		// TODO: Add a PATCH endpoint for updating user profile info
-		// NOTE: settings will be updated w/ app preferences (TBD)
-		protected.GET("/settings", settingsHandler.GetSettings)
-		protected.PUT("/settings", settingsHandler.UpdateSettings)
-	}
-
 	listingService := services.NewListingService(db)
+
+	// Handlers
+	authHandler := handlers.NewAuthHandler(authService, userService, sessionName)
+	userHandler := handlers.NewUserHandler(userService)
 	listingHandler := handlers.NewListingHandler(listingService)
 
-	api.GET("/listings", listingHandler.GetListings)
-	api.POST("/listings", listingHandler.CreateListing)
+	// Middleware
+	authMiddleware := middleware.AuthMiddleware(os.Getenv("JWT_SECRET"), sessionName)
+
+	// Routes
+	router := gin.Default()
+	api := router.Group("/api") 
+
+	auth := api.Group("/auth")
+	protected := api.Group("/")
+	protected.Use(authMiddleware)
+
+	RegisterAuthRoutes(auth, authHandler, authService)
+	RegisterUserRoutes(protected, userHandler, userService)
+	RegisterListingsRoutes(api, protected, listingHandler, listingService)
 
 	router.Run("localhost:8080")
 }

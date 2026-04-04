@@ -86,7 +86,7 @@ type UpdateUserRequest struct {
 	LastName  string
 }
 
-func (s *UserService) UpdateSettings(
+func (s *UserService) Update(
 	ctx context.Context,
 	id uuid.UUID,
 	req UpdateUserRequest,
