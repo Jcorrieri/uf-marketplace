@@ -16,7 +16,7 @@ func NewListingService(db *gorm.DB) *ListingService {
 }
 
 func (s *ListingService) GetAll(ctx context.Context) ([]models.Listing, error) {
-	return gorm.G[models.Listing](s.db).Find(ctx)
+	return gorm.G[models.Listing](s.db).Preload("Seller", nil).Find(ctx)
 }
 
 func (s *ListingService) Create(ctx context.Context, listing *models.Listing) error {

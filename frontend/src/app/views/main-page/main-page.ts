@@ -14,7 +14,7 @@ export interface Product {
   title: string;
   description: string;
   price: number;
-  seller_id: number;
+  seller_name: string;
 }
 
 @Component({
@@ -84,7 +84,7 @@ export class MainPage implements OnInit  {
       p.description.toLowerCase().includes(query)
     );
   }
-  
+
 
   constructor(private router: Router, private authService: AuthService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
