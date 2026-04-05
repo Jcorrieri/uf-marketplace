@@ -59,6 +59,7 @@ func Connect(dbName string) *gorm.DB {
 	}
 
 	shouldSeedStr := os.Getenv("SHOULD_SEED")
+
 	shouldSeed, err := strconv.ParseBool(shouldSeedStr)
 	if err != nil {
 		panic("Failed to parse SHOULD_SEED env variable.")

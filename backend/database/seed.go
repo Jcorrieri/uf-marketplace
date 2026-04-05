@@ -26,7 +26,7 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 		  	Title: "Mountain Bike",
 		  	Description: "Trek mountain bike, barely used. Includes lock and helmet.",
 		  	Price: 220,
-		  	SellerID: ids[1],
+		  	SellerID: ids[3],
 		},
 		{
 		  	ID: 3,
@@ -169,7 +169,7 @@ func SeedUsers(db *gorm.DB, ctx context.Context) ([]*models.User, error) {
 	for _, user := range userRequests {
 		user, err := userService.Create(ctx, user)
 		if err != nil {
-			continue
+			return nil, err
 		}
 		users = append(users, user)
 	}

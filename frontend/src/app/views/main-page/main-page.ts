@@ -72,19 +72,28 @@ export class MainPage implements OnInit  {
         }
       });
   }
+
   // search functionality
-  onSearch() {
+  search() {
     const query = this.searchQuery.toLowerCase().trim();
+    const key = "title"; // Hardcoded for now but leaves flexibility for later
+
     if (!query) {
       this.filteredProducts = this.products;
       return;
     }
-    this.filteredProducts = this.products.filter(p =>
-      p.title.toLowerCase().includes(query) ||
-      p.description.toLowerCase().includes(query)
-    );
-  }
 
+    this.http.get<Product[]>('/api/listings', {
+      params: {
+        key: key,
+        query: query
+      }
+    })
+    .subscribe(results => {
+        this.filteredProducts = results;
+        this.cdr.detectChanges();
+    });
+  }
 
   constructor(private router: Router, private authService: AuthService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
