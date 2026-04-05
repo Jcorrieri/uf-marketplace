@@ -25,9 +25,9 @@ func (h *ListingHandler) GetListings(c *gin.Context) {
 	}
 
 	var response []models.ListingResponse
-	for _, l := range listings { response = append(response, l.GetResponse())}
+	for _, l := range listings { response = append(response, l.GetResponse()) }
 
-	c.JSON(http.StatusOK, listings)
+	c.JSON(http.StatusOK, response)
 }
 
 // POST /api/listings

@@ -3,11 +3,14 @@ package database
 import (
 	"context"
 	"fmt"
+	"os"
+	"strconv"
 
 	// "log"
 	// "os"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
+	"github.com/google/uuid"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -15,6 +18,21 @@ import (
 
 // Create some starter data for testing
 func SeedData(db *gorm.DB, ctx context.Context) {
+	users, err := SeedUsers(db, ctx)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	ids := []uuid.UUID{}
+	for _, user := range users {
+		ids = append(ids, user.ID)
+	}
+
+	if err := SeedListings(db, ctx, ids); err != nil {
+		panic("Error seeding listings.")
+	}
+		
 	fmt.Println("Successfully seeded database.")
 }
 
@@ -40,7 +58,12 @@ func Connect(dbName string) *gorm.DB {
 		panic("Failed to automigrate")
 	}
 
-	shouldSeed := false // replace with env variable for dev mode
+	shouldSeedStr := os.Getenv("SHOULD_SEED")
+	shouldSeed, err := strconv.ParseBool(shouldSeedStr)
+	if err != nil {
+		panic("Failed to parse SHOULD_SEED env variable.")
+	}
+
 	if shouldSeed {
 		SeedData(db, ctx)
 	}
