@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
@@ -18,15 +19,28 @@ func NewListingHandler(s *services.ListingService) *ListingHandler {
 
 // GET /api/listings
 func (h *ListingHandler) GetListings(c *gin.Context) {
+	limit, err := strconv.Atoi(c.Query("limit"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit parameter."})
+		return
+	}
+
+	cursor64, err := strconv.ParseUint(c.Query("cursor"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid cursor parameter."})
+		return
+	}
+
+	cursor := uint(cursor64) // ParseUint returns uint64, but listings ID is of type uint
+
 	var listings []models.Listing
-	var err error
 
 	key, exists := c.GetQuery("key")
-	if exists {
+	if exists && key != "" {
 		query := c.Query("query")
-		listings, err = h.listingService.Search(c.Request.Context(), key, query)
+		listings, err = h.listingService.Search(c.Request.Context(), key, query, limit, cursor)
 	} else {
-		listings, err = h.listingService.GetAll(c.Request.Context())
+		listings, err = h.listingService.GetAll(c.Request.Context(), limit, cursor)
 	}
 
 	if err != nil {

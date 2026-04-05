@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit, ChangeDetectorRef} from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -26,9 +27,11 @@ export interface Product {
 export class MainPage implements OnInit  {
   searchQuery = '';
   menuOpen = false;
+  limit = 20;
+  cursor = 999; // Should be updated when loading (happens inside fetchListings)
 
   get currentUser() {
-  return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
+    return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
   }
 
   get initials(): string {
@@ -50,6 +53,26 @@ export class MainPage implements OnInit  {
     }
   }
 
+  // Shared by OnInit and Search
+  async fetchListings(key: string, query: string) {
+    const results = await firstValueFrom(
+      this.http.get<Product[]>('/api/listings', {
+        params: {
+          key: key,
+          query: query,
+          limit: this.limit,
+          cursor: this.cursor
+        }
+      })
+    );
+
+    this.filteredProducts = results;
+    this.cdr.detectChanges();
+    this.cursor = results[results.length - 1].id;
+
+    return results;
+  }
+
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
@@ -60,39 +83,24 @@ export class MainPage implements OnInit  {
       // user load failed, continue anyway
     }
 
-    this.http.get<Product[]>('/api/listings')
-      .subscribe({
-        next: data => {
-          this.products = data;
-          this.filteredProducts = data;
-          this.cdr.detectChanges();
-        },
-        error: err => {
-          console.error('Failed to load listings:', err);
-        }
-      });
+    const results = await this.fetchListings("", "");
+
+    this.products = results;
   }
 
   // search functionality
-  search() {
+  async search() {
     const query = this.searchQuery.toLowerCase().trim();
     const key = "title"; // Hardcoded for now but leaves flexibility for later
+
+    this.cursor = 999 // Reset cursor upon new search
 
     if (!query) {
       this.filteredProducts = this.products;
       return;
     }
 
-    this.http.get<Product[]>('/api/listings', {
-      params: {
-        key: key,
-        query: query
-      }
-    })
-    .subscribe(results => {
-        this.filteredProducts = results;
-        this.cdr.detectChanges();
-    });
+    await this.fetchListings(key, query);
   }
 
   constructor(private router: Router, private authService: AuthService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
