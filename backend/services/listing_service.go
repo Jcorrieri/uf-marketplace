@@ -19,22 +19,22 @@ func NewListingService(db *gorm.DB) *ListingService {
 func (s *ListingService) Search(
 	ctx context.Context,
 	key string,
-	title string,
+	query string,
 	limit int,
 	cursor uint,
 ) ([]models.Listing, error) {
 
-	query := gorm.G[models.Listing](s.db).
+	queryObj := gorm.G[models.Listing](s.db).
 		Preload("Seller", nil).
-		Where(key+" LIKE ?", "%"+title+"%").
+		Where(key+" LIKE ?", "%"+query+"%").
 		Order("id DESC").
 		Limit(limit)
 	
 	if cursor > 0 {
-		query.Where("id < ?", cursor)
+		queryObj.Where("id < ?", cursor)
 	}
 
-	return query.Find(ctx)
+	return queryObj.Find(ctx)
 }
 
 // User CURSOR to track last returned listing by ID
@@ -44,16 +44,16 @@ func (s *ListingService) GetAll(
 	cursor uint,
 ) ([]models.Listing, error) {
 
-	query := gorm.G[models.Listing](s.db).
+	queryObj := gorm.G[models.Listing](s.db).
 		Preload("Seller", nil).
 		Order("id DESC").
 		Limit(limit)
 	
 	if cursor > 0 {
-		query.Where("id < ?", cursor)
+		queryObj.Where("id < ?", cursor)
 	}
 
-	return query.Find(ctx)
+	return queryObj.Find(ctx)
 }
 
 func (s *ListingService) Create(ctx context.Context, listing *models.Listing) error {
