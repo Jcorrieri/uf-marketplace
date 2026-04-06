@@ -28,7 +28,7 @@ export class MainPage implements OnInit  {
   searchQuery = '';
   menuOpen = false;
   limit = 20;
-  cursor = 999; // Should be updated when loading (happens inside fetchListings)
+  cursor = 0; // Should be updated when loading (happens inside fetchListings)
 
   get currentUser() {
     return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
@@ -93,7 +93,7 @@ export class MainPage implements OnInit  {
     const query = this.searchQuery.toLowerCase().trim();
     const key = "title"; // Hardcoded for now but leaves flexibility for later
 
-    this.cursor = 999 // Reset cursor upon new search
+    this.cursor = 0; // Reset cursor upon new search
 
     if (!query) {
       this.filteredProducts = this.products;
