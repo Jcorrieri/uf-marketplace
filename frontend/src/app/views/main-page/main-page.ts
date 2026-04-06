@@ -18,6 +18,13 @@ export interface Product {
   seller_name: string;
 }
 
+export interface ProductRequest {
+  key: string;
+  query: string;
+  limit: number;
+  cursor: number;
+}
+
 @Component({
   selector: 'app-main-page',
   imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
@@ -27,8 +34,6 @@ export interface Product {
 export class MainPage implements OnInit  {
   searchQuery = '';
   menuOpen = false;
-  limit = 20;
-  cursor = 0; // Should be updated when loading (happens inside fetchListings)
 
   get currentUser() {
     return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
@@ -54,27 +59,33 @@ export class MainPage implements OnInit  {
   }
 
   // Shared by OnInit and Search
-  async fetchListings(key: string, query: string) {
+  async fetchListings(request: ProductRequest) {
     const results = await firstValueFrom(
       this.http.get<Product[]>('/api/listings', {
         params: {
-          key: key,
-          query: query,
-          limit: this.limit,
-          cursor: this.cursor
+          key: request.key,
+          query: request.query,
+          limit: request.limit,
+          cursor: request.cursor
         }
       })
     );
 
     this.filteredProducts = results;
     this.cdr.detectChanges();
-    this.cursor = results[results.length - 1].id;
+    request.cursor = results[results.length - 1].id;
 
     return results;
   }
 
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  productRequest: ProductRequest = {
+    key: '',
+    query: '',
+    limit: 20,
+    cursor: 0
+  };
 
   async ngOnInit() {
     try {
@@ -83,7 +94,7 @@ export class MainPage implements OnInit  {
       // user load failed, continue anyway
     }
 
-    const results = await this.fetchListings("", "");
+    const results = await this.fetchListings(this.productRequest);
 
     this.products = results;
   }
@@ -93,14 +104,19 @@ export class MainPage implements OnInit  {
     const query = this.searchQuery.toLowerCase().trim();
     const key = "title"; // Hardcoded for now but leaves flexibility for later
 
-    this.cursor = 0; // Reset cursor upon new search
+    const request = this.productRequest
+    request.key = key;
+    request.query = query;
+    request.cursor = 0; // Reset cursor upon new search
 
+    // TODO: Maybe remove caching and just query the API every time? Not that expensive.
     if (!query) {
+      request.cursor = this.products[this.products.length - 1].id; // Use cached id for cursor here
       this.filteredProducts = this.products;
       return;
     }
 
-    await this.fetchListings(key, query);
+    await this.fetchListings(request);
   }
 
   constructor(private router: Router, private authService: AuthService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
