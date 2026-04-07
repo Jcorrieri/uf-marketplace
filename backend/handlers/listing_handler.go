@@ -6,6 +6,7 @@ import (
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type ListingHandler struct {
@@ -25,7 +26,9 @@ func (h *ListingHandler) GetListings(c *gin.Context) {
 	}
 
 	var response []models.ListingResponse
-	for _, l := range listings { response = append(response, l.GetResponse()) }
+	for _, l := range listings {
+		response = append(response, l.GetResponse())
+	}
 
 	c.JSON(http.StatusOK, response)
 }
@@ -37,6 +40,20 @@ func (h *ListingHandler) CreateListing(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	userIDStr, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	sellerID, err := uuid.Parse(userIDStr.(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	listing.SellerID = sellerID
+
 	if err := h.listingService.Create(c.Request.Context(), &listing); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create listing"})
 		return

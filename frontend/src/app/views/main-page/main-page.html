@@ -79,10 +79,57 @@
       </div>
     </div>
   }
-  @if (filteredProducts.length === 0) {
+  @if (filteredProducts?.length === 0) {
   <div class="no-results">
     <mat-icon>search_off</mat-icon>
     <p>No items found for "{{ searchQuery }}"</p>
   </div>
 }
 </main>
+
+<!-- FAB Add Button -->
+<button class="fab-btn" (click)="openAddModal()">
+  <mat-icon>add</mat-icon>
+</button>
+
+<!-- Add Listing Modal -->
+@if (showAddModal) {
+  <div class="modal-overlay" (click)="closeAddModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Create Listing</h2>
+        <button class="modal-close" (click)="closeAddModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput [(ngModel)]="newListing.title" placeholder="What are you selling?" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput [(ngModel)]="newListing.description" rows="3" placeholder="Describe your item..."></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Price</mat-label>
+          <span matPrefix>$&nbsp;</span>
+          <input matInput type="number" [(ngModel)]="newListing.price" placeholder="0.00" min="0" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Image URL </mat-label>
+          <input matInput [(ngModel)]="newListing.image_url" placeholder="https://..." />
+        </mat-form-field>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeAddModal()">Cancel</button>
+        <button class="btn-submit" (click)="addListing()">Post Listing</button>
+      </div>
+    </div>
+  </div>
+}

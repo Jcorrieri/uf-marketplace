@@ -53,6 +53,11 @@ export class MainPage implements OnInit  {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
+  showAddModal = false;
+  newListing: { title: string; description: string; price: number | null; image_url: string } = 
+  { title: '', description: '', price: null, image_url: '' };
+
+
   async ngOnInit() {
     try {
       await this.authService.loadUser();
@@ -84,6 +89,39 @@ export class MainPage implements OnInit  {
       p.description.toLowerCase().includes(query)
     );
   }
+
+openAddModal() {
+  this.showAddModal = true;
+}
+
+closeAddModal() {
+  this.showAddModal = false;
+  this.newListing = { title: '', description: '', price: null, image_url: ''};
+}
+
+addListing() {
+  const { title, description, price, image_url } = this.newListing;
+  if (!title.trim() || !description.trim() || price === null || !image_url.trim()) {
+    alert('Please fill in all fields before posting.');
+    return;
+  }
+  this.http.post<Product>('/api/listings', this.newListing, { withCredentials: true })
+    .subscribe({
+      next: (_) => {  
+        this.closeAddModal();                                      
+        this.http.get<Product[]>('/api/listings').subscribe({  
+          next: data => {
+            this.products = data ?? [];
+            this.filteredProducts = data ?? [];
+            this.cdr.detectChanges();
+          },
+        });
+      },
+      error: (err) => {
+        console.error('Failed to create listing:', err);
+      }
+    });
+}
 
 
   constructor(private router: Router, private authService: AuthService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
