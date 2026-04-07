@@ -338,6 +338,12 @@
   transform: scale(1.08);
 }
 
+/*nav bar logo*/
+.gator-icon {
+  width: auto;
+  height: 44px;
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
