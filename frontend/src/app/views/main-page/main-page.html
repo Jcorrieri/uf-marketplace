@@ -115,8 +115,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Price</mat-label>
-          <span matPrefix>$&nbsp;</span>
+          <mat-label>Price ($)</mat-label>
           <input matInput type="number" [(ngModel)]="newListing.price" placeholder="0.00" min="0" />
         </mat-form-field>
 
@@ -134,6 +133,13 @@
           <span>{{ uploadedFileName || 'Upload from your device' }}</span>
           <input #fileInput type="file" accept="image/*" style="display:none" (change)="onFileUpload($event)" />
         </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeAddModal()">Cancel</button>
+        <button class="btn-submit" (click)="addListing()">Post Listing</button>
+      </div>
+
     </div>
   </div>
 }

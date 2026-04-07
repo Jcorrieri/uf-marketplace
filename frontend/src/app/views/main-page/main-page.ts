@@ -57,6 +57,8 @@ export class MainPage implements OnInit  {
   newListing: { title: string; description: string; price: number | null; image_url: string } = 
   { title: '', description: '', price: null, image_url: '' };
 
+  uploadedFileName = '';
+
 
   async ngOnInit() {
     try {
@@ -97,6 +99,7 @@ openAddModal() {
 closeAddModal() {
   this.showAddModal = false;
   this.newListing = { title: '', description: '', price: null, image_url: ''};
+  this.uploadedFileName = '';
 }
 
 addListing() {
@@ -121,6 +124,18 @@ addListing() {
         console.error('Failed to create listing:', err);
       }
     });
+}
+
+onFileUpload(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  this.uploadedFileName = file.name;
+  const reader = new FileReader();
+  reader.onload = () => {
+    this.newListing.image_url = reader.result as string;
+    this.cdr.detectChanges();
+  };
+  reader.readAsDataURL(file);
 }
 
 
