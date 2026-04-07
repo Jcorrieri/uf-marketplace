@@ -120,20 +120,16 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Image URL</mat-label>
-          <input matInput [(ngModel)]="newListing.image_url" placeholder="https://..." />
-        </mat-form-field>
-
-        <div class="upload-divider">
-          <span>or</span>
-        </div>
-
-        <div class="upload-area" (click)="fileInput.click()">
-          <mat-icon>upload</mat-icon>
-          <span>{{ uploadedFileName || 'Upload from your device' }}</span>
+          <mat-label>Image</mat-label>
+          <input matInput [(ngModel)]="imageUrlInput" placeholder="Paste URL or upload..." 
+            (ngModelChange)="newListing.image_url = imageUrlInput; uploadedFileName = ''" />
+          <button matSuffix mat-icon-button (click)="fileInput.click()" type="button">
+            <mat-icon>upload</mat-icon>
+          </button>
+          <mat-hint *ngIf="uploadedFileName">{{ uploadedFileName }}</mat-hint>
           <input #fileInput type="file" accept="image/*" style="display:none" (change)="onFileUpload($event)" />
-        </div>
-      </div>
+       </mat-form-field>
+       </div>
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeAddModal()">Cancel</button>

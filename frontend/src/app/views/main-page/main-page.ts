@@ -7,6 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface Product {
   id: number;
@@ -19,7 +21,7 @@ export interface Product {
 
 @Component({
   selector: 'app-main-page',
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule],
   templateUrl: './main-page.html',
   styleUrl: './main-page.css',
 })
@@ -58,6 +60,7 @@ export class MainPage implements OnInit  {
   { title: '', description: '', price: null, image_url: '' };
 
   uploadedFileName = '';
+  imageUrlInput = '';
 
 
   async ngOnInit() {
@@ -100,6 +103,7 @@ closeAddModal() {
   this.showAddModal = false;
   this.newListing = { title: '', description: '', price: null, image_url: ''};
   this.uploadedFileName = '';
+  this.imageUrlInput = '';
 }
 
 addListing() {
