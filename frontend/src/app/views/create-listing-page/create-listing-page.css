@@ -143,7 +143,9 @@
   color: #888;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .add-image-btn:hover {

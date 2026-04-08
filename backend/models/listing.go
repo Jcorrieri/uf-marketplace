@@ -8,22 +8,22 @@ import (
 )
 
 type Listing struct {
-	ID          uint      	   `json:"id" gorm:"primaryKey"`
-	Title       string    	   `json:"title"`
-	Description string    	   `json:"description"`
-	Price       float64   	   `json:"price"`
-	SellerID    uuid.UUID 	   `json:"seller_id" gorm:"type:uuid,index"`
-	Seller      User      	   `json:"-" gorm:"foreignKey:SellerID"`
+	ID          uint           `json:"id" gorm:"primaryKey"`
+	Title       string         `json:"title"`
+	Description string         `json:"description"`
+	Price       float64        `json:"price"`
+	SellerID    uuid.UUID      `json:"seller_id" gorm:"type:uuid,index"`
+	Seller      User           `json:"-" gorm:"foreignKey:SellerID"`
 	Images      []ListingImage `json:"images" gorm:"foreignKey:ListingID"`
-	CreatedAt   time.Time 	   `gorm:"index"`
+	CreatedAt   time.Time      `gorm:"index"`
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
 type ListingImage struct {
-	ID        uint           `json:"id" gorm:"primaryKey"`
-	ListingID uint           `json:"listing_id" gorm:"index"`
-	Data      []byte         `json:"-" gorm:"type:blob;not null"`
+	ID        uint   `json:"id" gorm:"primaryKey"`
+	ListingID uint   `json:"listing_id" gorm:"index"`
+	Data      []byte `json:"-" gorm:"type:blob;not null"`
 	CreatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }

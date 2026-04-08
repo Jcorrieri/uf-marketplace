@@ -32,7 +32,7 @@ func SeedData(db *gorm.DB, ctx context.Context) {
 	if err := SeedListings(db, ctx, ids); err != nil {
 		panic("Error seeding listings.")
 	}
-		
+
 	fmt.Println("Successfully seeded database.")
 }
 

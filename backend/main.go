@@ -76,7 +76,7 @@ func main() {
 
 	// Routes
 	router := gin.Default()
-	api := router.Group("/api") 
+	api := router.Group("/api")
 
 	auth := api.Group("/auth")
 	protected := api.Group("/")

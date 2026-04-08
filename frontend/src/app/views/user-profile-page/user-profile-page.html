@@ -5,13 +5,23 @@
   <h1 class="page-title">Account Settings</h1>
 </header>
 
-<input #profileImageInput type="file" accept="image/jpeg,image/png" style="display:none" (change)="onProfileImageSelected($event)" />
+<input
+  #profileImageInput
+  type="file"
+  accept="image/jpeg,image/png"
+  style="display: none"
+  (change)="onProfileImageSelected($event)"
+/>
 
 <main class="profile-content">
   <!-- User card with clickable avatar for image upload -->
   @if (user) {
     <section class="user-card">
-      <div class="avatar-circle clickable" (click)="onAvatarClick()" title="Click to change profile picture">
+      <div
+        class="avatar-circle clickable"
+        (click)="onAvatarClick()"
+        title="Click to change profile picture"
+      >
         @if (profileImageUrl) {
           <img [src]="profileImageUrl" alt="Profile" class="avatar-img" />
         } @else {
@@ -41,7 +51,9 @@
       <mat-icon class="setting-icon">account_circle</mat-icon>
       <div class="setting-info">
         <span class="setting-label">Profile Picture</span>
-        <span class="setting-hint">{{ saving() ? 'Uploading…' : 'Click to update your profile photo' }}</span>
+        <span class="setting-hint">{{
+          saving() ? 'Uploading…' : 'Click to update your profile photo'
+        }}</span>
       </div>
       <mat-icon class="setting-arrow">chevron_right</mat-icon>
     </div>

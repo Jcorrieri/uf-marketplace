@@ -24,7 +24,14 @@
           <span>Add Photos</span>
         </button>
       </div>
-      <input #imageInput type="file" accept="image/jpeg,image/png" multiple style="display:none" (change)="onImagesSelected($event)" />
+      <input
+        #imageInput
+        type="file"
+        accept="image/jpeg,image/png"
+        multiple
+        style="display: none"
+        (change)="onImagesSelected($event)"
+      />
     </div>
   </section>
 
@@ -39,7 +46,13 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Description</mat-label>
-      <textarea matInput [(ngModel)]="description" rows="5" placeholder="Describe your item — condition, brand, size, etc." maxlength="2000"></textarea>
+      <textarea
+        matInput
+        [(ngModel)]="description"
+        rows="5"
+        placeholder="Describe your item — condition, brand, size, etc."
+        maxlength="2000"
+      ></textarea>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -53,11 +66,7 @@
   }
 
   <!-- Submit button -->
-  <button
-    class="submit-btn"
-    [disabled]="submitting()"
-    (click)="submitListing()"
-  >
+  <button class="submit-btn" [disabled]="submitting()" (click)="submitListing()">
     <mat-icon>storefront</mat-icon>
     {{ submitting() ? 'Posting…' : 'Post Listing' }}
   </button>

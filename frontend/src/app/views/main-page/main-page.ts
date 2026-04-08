@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ChangeDetectorRef} from '@angular/core';
+import { Component, HostListener, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -22,22 +22,28 @@ export interface Product {
 
 @Component({
   selector: 'app-main-page',
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+  ],
   templateUrl: './main-page.html',
   styleUrl: './main-page.css',
 })
-export class MainPage implements OnInit  {
+export class MainPage implements OnInit {
   searchQuery = '';
   menuOpen = false;
 
   get currentUser() {
-  return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
+    return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
   }
 
   get initials(): string {
-    return (
-      this.currentUser.firstName[0] + this.currentUser.lastName[0]
-    ).toUpperCase();
+    return (this.currentUser.firstName[0] + this.currentUser.lastName[0]).toUpperCase();
   }
 
   toggleMenu() {
@@ -56,7 +62,6 @@ export class MainPage implements OnInit  {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-
   async ngOnInit() {
     try {
       await this.authService.loadUser();
@@ -64,17 +69,16 @@ export class MainPage implements OnInit  {
       // user load failed, continue anyway
     }
 
-    this.http.get<Product[]>('/api/listings')
-      .subscribe({
-        next: data => {
-          this.products = data;
-          this.filteredProducts = data;
-          this.cdr.detectChanges();
-        },
-        error: err => {
-          console.error('Failed to load listings:', err);
-        }
-      });
+    this.http.get<Product[]>('/api/listings').subscribe({
+      next: (data) => {
+        this.products = data;
+        this.filteredProducts = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load listings:', err);
+      },
+    });
   }
   // search functionality
   onSearch() {
@@ -83,18 +87,21 @@ export class MainPage implements OnInit  {
       this.filteredProducts = this.products;
       return;
     }
-    this.filteredProducts = this.products.filter(p =>
-      p.title.toLowerCase().includes(query) ||
-      p.description.toLowerCase().includes(query)
+    this.filteredProducts = this.products.filter(
+      (p) => p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query),
     );
   }
 
-openAddModal() {
-  this.router.navigate(['/create-listing']);
-}
+  openAddModal() {
+    this.router.navigate(['/create-listing']);
+  }
 
-
-  constructor(private router: Router, private authService: AuthService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   navigateTo(path: string) {
     this.menuOpen = false;
