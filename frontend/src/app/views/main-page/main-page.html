@@ -27,7 +27,7 @@
   <div class="header-search">
     <mat-form-field class="search-field" appearance="outline">
       <mat-icon matPrefix>search</mat-icon>
-      <input matInput placeholder="Search marketplace..." [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
+      <input matInput placeholder="Search marketplace..." [(ngModel)]="searchQuery" (keyup.enter)="search()" />
     </mat-form-field>
   </div>
 
@@ -79,7 +79,7 @@
       </div>
     </div>
   }
-  @if (filteredProducts.length === 0) {
+  @if (filteredProducts == null || filteredProducts.length === 0) {
   <div class="no-results">
     <mat-icon>search_off</mat-icon>
     <p>No items found for "{{ searchQuery }}"</p>

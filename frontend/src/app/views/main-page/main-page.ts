@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit, ChangeDetectorRef} from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,6 +18,13 @@ export interface Product {
   seller_name: string;
 }
 
+export interface ProductRequest {
+  key: string;
+  query: string;
+  limit: number;
+  cursor: number;
+}
+
 @Component({
   selector: 'app-main-page',
   imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
@@ -28,7 +36,7 @@ export class MainPage implements OnInit  {
   menuOpen = false;
 
   get currentUser() {
-  return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
+    return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
   }
 
   get initials(): string {
@@ -50,8 +58,34 @@ export class MainPage implements OnInit  {
     }
   }
 
+  // Shared by OnInit and Search
+  async fetchListings(request: ProductRequest) {
+    const results = await firstValueFrom(
+      this.http.get<Product[]>('/api/listings', {
+        params: {
+          key: request.key,
+          query: request.query,
+          limit: request.limit,
+          cursor: request.cursor
+        }
+      })
+    );
+
+    this.filteredProducts = results;
+    this.cdr.detectChanges();
+    request.cursor = results[results.length - 1].id;
+
+    return results;
+  }
+
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  productRequest: ProductRequest = {
+    key: '',
+    query: '',
+    limit: 20,
+    cursor: 0
+  };
 
   async ngOnInit() {
     try {
@@ -60,31 +94,30 @@ export class MainPage implements OnInit  {
       // user load failed, continue anyway
     }
 
-    this.http.get<Product[]>('/api/listings')
-      .subscribe({
-        next: data => {
-          this.products = data;
-          this.filteredProducts = data;
-          this.cdr.detectChanges();
-        },
-        error: err => {
-          console.error('Failed to load listings:', err);
-        }
-      });
+    const results = await this.fetchListings(this.productRequest);
+
+    this.products = results;
   }
+
   // search functionality
-  onSearch() {
+  async search() {
     const query = this.searchQuery.toLowerCase().trim();
+    const key = "title"; // Hardcoded for now but leaves flexibility for later
+
+    const request = this.productRequest
+    request.key = key;
+    request.query = query;
+    request.cursor = 0; // Reset cursor upon new search
+
+    // TODO: Maybe remove caching and just query the API every time? Not that expensive.
     if (!query) {
+      request.cursor = this.products[this.products.length - 1].id; // Use cached id for cursor here
       this.filteredProducts = this.products;
       return;
     }
-    this.filteredProducts = this.products.filter(p =>
-      p.title.toLowerCase().includes(query) ||
-      p.description.toLowerCase().includes(query)
-    );
-  }
 
+    await this.fetchListings(request);
+  }
 
   constructor(private router: Router, private authService: AuthService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
