@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -32,6 +32,7 @@ export class UserProfilePage implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -54,9 +55,11 @@ export class UserProfilePage implements OnInit {
         if (data.has_profile_image) {
           this.profileImageUrl = `/api/users/${data.id}/profile-image?t=${Date.now()}`;
         }
+        this.cdr.detectChanges();
       }
     } catch {
       this.user = this.authService.getUser();
+      this.cdr.detectChanges();
     }
   }
 
@@ -110,6 +113,7 @@ export class UserProfilePage implements OnInit {
       this.errorMsg.set('Unable to reach the server.');
     } finally {
       this.saving.set(false);
+      this.cdr.detectChanges();
     }
   }
 
