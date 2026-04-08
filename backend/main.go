@@ -29,9 +29,11 @@ func RegisterUserRoutes(
 	userService *services.UserService,
 ) {
 	router.GET("/users/:id", userHandler.GetUserById)
+	router.GET("/users/:id/profile-image", userHandler.GetProfileImage)
 	router.GET("/users/me", userHandler.GetCurrentUser)
 	router.DELETE("/users/me", userHandler.DeleteUser)
 	router.PUT("/users/me", userHandler.UpdateSettings)
+	router.PUT("/users/me/profile-image", userHandler.UploadProfileImage)
 }
 
 func RegisterListingsRoutes(
@@ -41,6 +43,7 @@ func RegisterListingsRoutes(
 	listingService *services.ListingService,
 ) {
 	public.GET("/listings", listingHandler.GetListings)
+	public.GET("/listings/images/:imageId", listingHandler.GetListingImage)
 	protected.POST("/listings", listingHandler.CreateListing)
 }
 

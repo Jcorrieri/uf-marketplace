@@ -154,6 +154,22 @@
   display: block;
 }
 
+.product-image-placeholder {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  color: #ccc;
+}
+
+.product-image-placeholder mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
 .product-info {
   padding: 14px 16px 18px;
   display: flex;

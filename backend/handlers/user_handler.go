@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
@@ -109,4 +110,69 @@ func (h *UserHandler) UpdateSettings(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user.GetResponse())
+}
+
+// PUT /api/users/me/profile-image
+func (h *UserHandler) UploadProfileImage(c *gin.Context) {
+	id, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	file, header, err := c.Request.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No image provided"})
+		return
+	}
+	defer file.Close()
+
+	// Limit to 5MB
+	if header.Size > 5*1024*1024 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Image must be under 5MB"})
+		return
+	}
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read image"})
+		return
+	}
+
+	// Validate content type
+	contentType := http.DetectContentType(data)
+	if contentType != "image/jpeg" && contentType != "image/png" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only JPEG and PNG images are allowed"})
+		return
+	}
+
+	if err := h.userService.UpdateProfileImage(c.Request.Context(), id, data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Profile image updated"})
+}
+
+// GET /api/users/:id/profile-image
+func (h *UserHandler) GetProfileImage(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	user, err := h.userService.GetByID(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	if len(user.ProfileImage) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No profile image"})
+		return
+	}
+
+	contentType := http.DetectContentType(user.ProfileImage)
+	c.Data(http.StatusOK, contentType, user.ProfileImage)
 }

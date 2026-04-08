@@ -14,7 +14,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 	listings := []*models.Listing{
 		{
 			ID: 1,
-			ImageURL: "https://picsum.photos/seed/desk/400/300",
 		  	Title: "Standing Desk",
 			Description: "Adjustable standing desk, great condition. Perfect for studying.",
 		  	Price: 85,
@@ -22,7 +21,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 		},
 		{
 		  	ID: 2,
-		  	ImageURL: "https://picsum.photos/seed/bike/400/300",
 		  	Title: "Mountain Bike",
 		  	Description: "Trek mountain bike, barely used. Includes lock and helmet.",
 		  	Price: 220,
@@ -30,7 +28,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 		},
 		{
 		  	ID: 3,
-		  	ImageURL: "https://picsum.photos/seed/textbook/400/300",
 		  	Title: "Organic Chemistry Textbook",
 		  	Description: "8th edition, no highlights. ISBN 978-0134042282.",
 		  	Price: 45,
@@ -38,7 +35,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 		},
 		{
 		  	ID: 4,
-		  	ImageURL: "https://picsum.photos/seed/monitor/400/300",
 		  	Title: "27\" Monitor",
 		  	Description: "Dell 27\" 1440p IPS monitor. Comes with HDMI cable.",
 		  	Price: 150,
@@ -46,7 +42,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 		},
 		{
 		  	ID: 5,
-		  	ImageURL: "https://picsum.photos/seed/couch/400/300",
 		  	Title: "Futon Couch",
 		  	Description: "Foldable futon, dark grey. Great for dorm rooms.",
 		  	Price: 60,
@@ -54,7 +49,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 		},
 		{
 		  	ID: 6,
-		  	ImageURL: "https://picsum.photos/seed/guitar/400/300",
 		  	Title: "Acoustic Guitar",
 		  	Description: "Yamaha FG800, excellent sound. Includes gig bag and tuner.",
 		  	Price: 130,
@@ -62,7 +56,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 		},
 		{
 		  	ID: 7,
-		  	ImageURL: "https://picsum.photos/seed/lamp/400/300",
 		  	Title: "Desk Lamp",
 		  	Description: "LED desk lamp with USB charging port. 3 brightness levels.",
 		  	Price: 18,
@@ -70,7 +63,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) (error){
 		},
 		{
 		  	ID: 8,
-		  	ImageURL: "https://picsum.photos/seed/backpack/400/300",
 		  	Title: "North Face Backpack",
 		  	Description: "Black Borealis backpack, very spacious. Minor wear.",
 		  	Price: 40,

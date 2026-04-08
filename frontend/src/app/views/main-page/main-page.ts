@@ -12,7 +12,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface Product {
   id: number;
-  image_url: string;
+  image_count: number;
+  first_image_id: number | null;
   title: string;
   description: string;
   price: number;
@@ -55,13 +56,6 @@ export class MainPage implements OnInit  {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
-  showAddModal = false;
-  newListing: { title: string; description: string; price: number | null; image_url: string } = 
-  { title: '', description: '', price: null, image_url: '' };
-
-  uploadedFileName = '';
-  imageUrlInput = '';
-
 
   async ngOnInit() {
     try {
@@ -96,50 +90,7 @@ export class MainPage implements OnInit  {
   }
 
 openAddModal() {
-  this.showAddModal = true;
-}
-
-closeAddModal() {
-  this.showAddModal = false;
-  this.newListing = { title: '', description: '', price: null, image_url: ''};
-  this.uploadedFileName = '';
-  this.imageUrlInput = '';
-}
-
-addListing() {
-  const { title, description, price, image_url } = this.newListing;
-  if (!title.trim() || !description.trim() || price === null || !image_url.trim()) {
-    alert('Please fill in all fields before posting.');
-    return;
-  }
-  this.http.post<Product>('/api/listings', this.newListing, { withCredentials: true })
-    .subscribe({
-      next: (_) => {  
-        this.closeAddModal();                                      
-        this.http.get<Product[]>('/api/listings').subscribe({  
-          next: data => {
-            this.products = data ?? [];
-            this.filteredProducts = data ?? [];
-            this.cdr.detectChanges();
-          },
-        });
-      },
-      error: (err) => {
-        console.error('Failed to create listing:', err);
-      }
-    });
-}
-
-onFileUpload(event: Event) {
-  const file = (event.target as HTMLInputElement).files?.[0];
-  if (!file) return;
-  this.uploadedFileName = file.name;
-  const reader = new FileReader();
-  reader.onload = () => {
-    this.newListing.image_url = reader.result as string;
-    this.cdr.detectChanges();
-  };
-  reader.readAsDataURL(file);
+  this.router.navigate(['/create-listing']);
 }
 
 

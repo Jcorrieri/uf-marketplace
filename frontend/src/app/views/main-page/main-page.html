@@ -46,7 +46,13 @@
 <main class="product-grid">
   @for (product of filteredProducts; track product.id) {
     <div class="product-card">
-      <img [src]="product.image_url" [alt]="product.title" class="product-image" />
+      @if (product.first_image_id) {
+        <img [src]="'/api/listings/images/' + product.first_image_id" [alt]="product.title" class="product-image" />
+      } @else {
+        <div class="product-image-placeholder">
+          <mat-icon>image</mat-icon>
+        </div>
+      }
       <div class="product-info">
         <h3 class="product-title">{{ product.title }}</h3>
         <p class="product-description">{{ product.description }}</p>
@@ -72,51 +78,3 @@
 <button class="fab-btn" (click)="openAddModal()">
   <mat-icon>add</mat-icon>
 </button>
-
-<!-- Add Listing Modal -->
-@if (showAddModal) {
-  <div class="modal-overlay" (click)="closeAddModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Create Listing</h2>
-        <button class="modal-close" (click)="closeAddModal()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Title</mat-label>
-          <input matInput [(ngModel)]="newListing.title" placeholder="What are you selling?" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput [(ngModel)]="newListing.description" rows="3" placeholder="Describe your item..."></textarea>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Price ($)</mat-label>
-          <input matInput type="number" [(ngModel)]="newListing.price" placeholder="0.00" min="0" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Image</mat-label>
-          <input matInput [(ngModel)]="imageUrlInput" placeholder="Paste URL or upload..." 
-            (ngModelChange)="newListing.image_url = imageUrlInput; uploadedFileName = ''" />
-          <button matSuffix mat-icon-button (click)="fileInput.click()" type="button">
-            <mat-icon>upload</mat-icon>
-          </button>
-          <mat-hint *ngIf="uploadedFileName">{{ uploadedFileName }}</mat-hint>
-          <input #fileInput type="file" accept="image/*" style="display:none" (change)="onFileUpload($event)" />
-       </mat-form-field>
-       </div>
-
-      <div class="modal-footer">
-        <button class="btn-cancel" (click)="closeAddModal()">Cancel</button>
-        <button class="btn-submit" (click)="addListing()">Post Listing</button>
-      </div>
-
-    </div>
-  </div>
-}
