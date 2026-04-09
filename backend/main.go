@@ -28,6 +28,8 @@ func RegisterUserRoutes(
 	userHandler *handlers.UserHandler,
 	userService *services.UserService,
 ) {
+	protected.GET("/users/:id/profile-image", userHandler.GetProfileImage)
+	protected.PUT("/users/me/profile-image", userHandler.UploadProfileImage)
 	protected.GET("/users/:id", userHandler.GetUserById)
 	protected.GET("/users/me", userHandler.GetCurrentUser)
 	protected.DELETE("/users/me", userHandler.DeleteUser)
@@ -41,6 +43,7 @@ func RegisterListingsRoutes(
 	listingService *services.ListingService,
 ) {
 	public.GET("/listings", listingHandler.GetListings)
+	public.GET("/listings/images/:imageId", listingHandler.GetListingImage)
 	protected.POST("/listings", listingHandler.CreateListing)
 }
 
@@ -73,7 +76,7 @@ func main() {
 
 	// Routes
 	router := gin.Default()
-	api := router.Group("/api") 
+	api := router.Group("/api")
 
 	auth := api.Group("/auth")
 	protected := api.Group("/")

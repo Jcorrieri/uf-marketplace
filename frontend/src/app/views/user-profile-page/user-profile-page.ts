@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -22,16 +22,17 @@ import { AuthService, CurrentUser } from '../../services/auth.service';
   styleUrl: './user-profile-page.css',
 })
 export class UserProfilePage implements OnInit {
+  @ViewChild('profileImageInput') profileImageInput!: ElementRef<HTMLInputElement>;
+
   user: CurrentUser | null = null;
-  editingName = signal(false);
-  editFirstName = '';
-  editLastName = '';
   saving = signal(false);
   errorMsg = signal('');
+  profileImageUrl: string | null = null;
 
   constructor(
     private router: Router,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -51,10 +52,14 @@ export class UserProfilePage implements OnInit {
         };
         this.authService.setUser(u);
         this.user = u;
+        if (data.has_profile_image) {
+          this.profileImageUrl = `/api/users/${data.id}/profile-image?t=${Date.now()}`;
+        }
+        this.cdr.detectChanges();
       }
     } catch {
-      // fall back to cached user
       this.user = this.authService.getUser();
+      this.cdr.detectChanges();
     }
   }
 
@@ -63,59 +68,61 @@ export class UserProfilePage implements OnInit {
     return ((this.user.firstName?.[0] ?? '') + (this.user.lastName?.[0] ?? '')).toUpperCase();
   }
 
-  startEditName() {
-    this.editFirstName = this.user?.firstName ?? '';
-    this.editLastName = this.user?.lastName ?? '';
-    this.errorMsg.set('');
-    this.editingName.set(true);
+  onAvatarClick() {
+    this.profileImageInput.nativeElement.click();
   }
 
-  cancelEditName() {
-    this.editingName.set(false);
-    this.errorMsg.set('');
-  }
+  async onProfileImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
 
-  async saveName() {
-    if (!this.editFirstName.trim() || !this.editLastName.trim()) {
-      this.errorMsg.set('First and last name are required.');
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+      this.errorMsg.set('Only JPEG and PNG images are allowed.');
       return;
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.errorMsg.set('Image must be under 5MB.');
+      return;
+    }
+
     this.saving.set(true);
     this.errorMsg.set('');
+
     try {
-      const res = await fetch('/api/users/me', {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const res = await fetch('/api/users/me/profile-image', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          first_name: this.editFirstName.trim(),
-          last_name: this.editLastName.trim(),
-        }),
+        body: formData,
       });
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        this.errorMsg.set(body.error || 'Failed to update name.');
+        this.errorMsg.set(body.error || 'Failed to upload image.');
         return;
       }
-      const data = await res.json();
-      const updated: CurrentUser = {
-        id: data.id,
-        firstName: data.first_name,
-        lastName: data.last_name,
-        email: data.email,
-      };
-      this.authService.setUser(updated);
-      this.user = updated;
-      this.editingName.set(false);
+
+      // Refresh the image
+      if (this.user) {
+        this.profileImageUrl = `/api/users/${this.user.id}/profile-image?t=${Date.now()}`;
+      }
     } catch {
       this.errorMsg.set('Unable to reach the server.');
     } finally {
       this.saving.set(false);
+      this.cdr.detectChanges();
     }
   }
 
   goBack() {
     this.router.navigate(['/main']);
+  }
+
+  goToCreateListing() {
+    this.router.navigate(['/create-listing']);
   }
 
   async logout() {

@@ -1,26 +1,7 @@
 <!-- Sticky header -->
 <header class="main-header">
   <div class="header-left">
-    <svg class="gator-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="32" cy="34" rx="28" ry="22" fill="#fa4616" />
-      <ellipse cx="20" cy="26" rx="6" ry="7" fill="#0021a5" />
-      <ellipse cx="44" cy="26" rx="6" ry="7" fill="#0021a5" />
-      <ellipse cx="20" cy="25" rx="3" ry="3.5" fill="#fff" />
-      <ellipse cx="44" cy="25" rx="3" ry="3.5" fill="#fff" />
-      <circle cx="20" cy="25" r="1.6" fill="#1a1a2e" />
-      <circle cx="44" cy="25" r="1.6" fill="#1a1a2e" />
-      <path
-        d="M18 40 Q32 50 46 40"
-        stroke="#1a1a2e"
-        stroke-width="2"
-        fill="none"
-        stroke-linecap="round"
-      />
-      <rect x="22" y="39" width="3" height="4" rx="1" fill="#fff" />
-      <rect x="28" y="40" width="3" height="4" rx="1" fill="#fff" />
-      <rect x="34" y="40" width="3" height="4" rx="1" fill="#fff" />
-      <rect x="40" y="39" width="3" height="4" rx="1" fill="#fff" />
-    </svg>
+    <img src="gator-logo.png" alt="UF Logo" class="gator-icon" />
     <span class="brand-text">UF MarketPlace</span>
   </div>
 
@@ -65,7 +46,17 @@
 <main class="product-grid">
   @for (product of filteredProducts; track product.id) {
     <div class="product-card">
-      <img [src]="product.image_url" [alt]="product.title" class="product-image" />
+      @if (product.first_image_id) {
+        <img
+          [src]="'/api/listings/images/' + product.first_image_id"
+          [alt]="product.title"
+          class="product-image"
+        />
+      } @else {
+        <div class="product-image-placeholder">
+          <mat-icon>image</mat-icon>
+        </div>
+      }
       <div class="product-info">
         <h3 class="product-title">{{ product.title }}</h3>
         <p class="product-description">{{ product.description }}</p>
@@ -79,10 +70,15 @@
       </div>
     </div>
   }
-  @if (filteredProducts == null || filteredProducts.length === 0) {
-  <div class="no-results">
-    <mat-icon>search_off</mat-icon>
-    <p>No items found for "{{ searchQuery }}"</p>
-  </div>
-}
+  @if (filteredProducts?.length === 0) {
+    <div class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <p>No items found for "{{ searchQuery }}"</p>
+    </div>
+  }
 </main>
+
+<!-- FAB Add Button -->
+<button class="fab-btn" (click)="openAddModal()">
+  <mat-icon>add</mat-icon>
+</button>

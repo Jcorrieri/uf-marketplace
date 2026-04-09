@@ -118,3 +118,18 @@ func (s *UserService) Update(
 
 	return &user, nil
 }
+
+func (s *UserService) UpdateProfileImage(ctx context.Context, id uuid.UUID, imageData []byte) error {
+	rows, err := gorm.G[models.User](s.db).
+		Where("id = ?", id).
+		Select("ProfileImage").
+		Updates(ctx, models.User{ProfileImage: imageData})
+
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
+}

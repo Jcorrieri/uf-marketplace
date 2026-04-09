@@ -1,0 +1,73 @@
+<header class="create-header">
+  <button class="back-btn" (click)="goBack()" aria-label="Back to profile">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h1 class="page-title">Create Listing</h1>
+</header>
+
+<main class="create-content">
+  <!-- Image upload section -->
+  <section class="form-section">
+    <h2 class="section-title">Photos</h2>
+    <div class="image-upload-area">
+      <div class="image-scroll-container">
+        @for (img of images; track img.url) {
+          <div class="image-preview-card">
+            <img [src]="img.url" alt="Preview" class="preview-img" />
+            <button class="remove-img-btn" (click)="removeImage($index)" aria-label="Remove image">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+        <button class="add-image-btn" (click)="imageInput.click()">
+          <mat-icon>add_photo_alternate</mat-icon>
+          <span>Add Photos</span>
+        </button>
+      </div>
+      <input
+        #imageInput
+        type="file"
+        accept="image/jpeg,image/png"
+        multiple
+        style="display: none"
+        (change)="onImagesSelected($event)"
+      />
+    </div>
+  </section>
+
+  <!-- Listing details -->
+  <section class="form-section">
+    <h2 class="section-title">Details</h2>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Title</mat-label>
+      <input matInput [(ngModel)]="title" placeholder="What are you selling?" maxlength="100" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="description"
+        rows="5"
+        placeholder="Describe your item — condition, brand, size, etc."
+        maxlength="2000"
+      ></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Price ($)</mat-label>
+      <input matInput type="number" [(ngModel)]="price" placeholder="0.00" min="0" step="0.01" />
+    </mat-form-field>
+  </section>
+
+  @if (errorMsg()) {
+    <p class="error-msg">{{ errorMsg() }}</p>
+  }
+
+  <!-- Submit button -->
+  <button class="submit-btn" [disabled]="submitting()" (click)="submitListing()">
+    <mat-icon>storefront</mat-icon>
+    {{ submitting() ? 'Posting…' : 'Post Listing' }}
+  </button>
+</main>

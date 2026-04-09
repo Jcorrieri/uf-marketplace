@@ -5,11 +5,32 @@
   <h1 class="page-title">Account Settings</h1>
 </header>
 
+<input
+  #profileImageInput
+  type="file"
+  accept="image/jpeg,image/png"
+  style="display: none"
+  (change)="onProfileImageSelected($event)"
+/>
+
 <main class="profile-content">
-  <!-- User card -->
+  <!-- User card with clickable avatar for image upload -->
   @if (user) {
     <section class="user-card">
-      <div class="avatar-circle">{{ initials }}</div>
+      <div
+        class="avatar-circle clickable"
+        (click)="onAvatarClick()"
+        title="Click to change profile picture"
+      >
+        @if (profileImageUrl) {
+          <img [src]="profileImageUrl" alt="Profile" class="avatar-img" />
+        } @else {
+          {{ initials }}
+        }
+        <div class="avatar-overlay">
+          <mat-icon>camera_alt</mat-icon>
+        </div>
+      </div>
       <div class="user-details">
         <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
         <span class="user-email">{{ user.email }}</span>
@@ -17,56 +38,21 @@
     </section>
   }
 
+  @if (errorMsg()) {
+    <p class="upload-error">{{ errorMsg() }}</p>
+  }
+
   <!-- Profile section -->
   <section class="settings-section">
     <h2 class="section-title">Profile</h2>
 
-    <!-- Edit Name -->
-    <div class="setting-row" (click)="startEditName()">
+    <!-- Name (read-only) -->
+    <div class="setting-row">
       <mat-icon class="setting-icon">badge</mat-icon>
       <div class="setting-info">
         <span class="setting-label">Name</span>
         <span class="setting-hint">{{ user?.firstName }} {{ user?.lastName }}</span>
       </div>
-      <mat-icon class="setting-arrow">chevron_right</mat-icon>
-    </div>
-
-    @if (editingName()) {
-      <div class="edit-panel">
-        <mat-form-field appearance="outline" class="edit-field">
-          <mat-label>First Name</mat-label>
-          <input matInput [(ngModel)]="editFirstName" />
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="edit-field">
-          <mat-label>Last Name</mat-label>
-          <input matInput [(ngModel)]="editLastName" />
-        </mat-form-field>
-        @if (errorMsg()) {
-          <p class="edit-error">{{ errorMsg() }}</p>
-        }
-        <div class="edit-actions">
-          <button mat-stroked-button (click)="cancelEditName()">Cancel</button>
-          <button
-            mat-flat-button
-            color="primary"
-            class="save-btn"
-            [disabled]="saving()"
-            (click)="saveName()"
-          >
-            {{ saving() ? 'Saving…' : 'Save' }}
-          </button>
-        </div>
-      </div>
-    }
-
-    <!-- Profile Picture (placeholder) -->
-    <div class="setting-row">
-      <mat-icon class="setting-icon">account_circle</mat-icon>
-      <div class="setting-info">
-        <span class="setting-label">Profile Picture</span>
-        <span class="setting-hint">Update your profile photo</span>
-      </div>
-      <mat-icon class="setting-arrow">chevron_right</mat-icon>
     </div>
 
     <!-- Email (read-only) -->
@@ -76,6 +62,19 @@
         <span class="setting-label">Email</span>
         <span class="setting-hint">{{ user?.email }}</span>
       </div>
+    </div>
+  </section>
+
+  <!-- Listings -->
+  <section class="settings-section">
+    <h2 class="section-title">Listings</h2>
+    <div class="setting-row" (click)="goToCreateListing()">
+      <mat-icon class="setting-icon">add_circle</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label">Create New Listing</span>
+        <span class="setting-hint">Sell an item on the marketplace</span>
+      </div>
+      <mat-icon class="setting-arrow">chevron_right</mat-icon>
     </div>
   </section>
 

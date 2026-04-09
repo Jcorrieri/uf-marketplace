@@ -3,6 +3,7 @@ import { LoginPage } from './views/login-page/login-page';
 import { SignUpPage } from './views/sign-up-page/sign-up-page';
 import { MainPage } from './views/main-page/main-page';
 import { UserProfilePage } from './views/user-profile-page/user-profile-page';
+import { CreateListingPage } from './views/create-listing-page/create-listing-page';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -11,4 +12,5 @@ export const routes: Routes = [
   { path: 'sign-up', component: SignUpPage },
   { path: 'main', component: MainPage, canActivate: [authGuard] },
   { path: 'profile', component: UserProfilePage, canActivate: [authGuard] },
+  { path: 'create-listing', component: CreateListingPage, canActivate: [authGuard] },
 ];

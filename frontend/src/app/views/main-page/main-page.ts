@@ -8,10 +8,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface Product {
   id: number;
-  image_url: string;
+  image_count: number;
+  first_image_id: number | null;
   title: string;
   description: string;
   price: number;
@@ -27,11 +30,19 @@ export interface ProductRequest {
 
 @Component({
   selector: 'app-main-page',
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+  ],
   templateUrl: './main-page.html',
   styleUrl: './main-page.css',
 })
-export class MainPage implements OnInit  {
+export class MainPage implements OnInit {
   searchQuery = '';
   menuOpen = false;
 
@@ -40,9 +51,7 @@ export class MainPage implements OnInit  {
   }
 
   get initials(): string {
-    return (
-      this.currentUser.firstName[0] + this.currentUser.lastName[0]
-    ).toUpperCase();
+    return (this.currentUser.firstName[0] + this.currentUser.lastName[0]).toUpperCase();
   }
 
   toggleMenu() {
@@ -119,7 +128,16 @@ export class MainPage implements OnInit  {
     await this.fetchListings(request);
   }
 
-  constructor(private router: Router, private authService: AuthService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  openAddModal() {
+    this.router.navigate(['/create-listing']);
+  }
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   navigateTo(path: string) {
     this.menuOpen = false;
