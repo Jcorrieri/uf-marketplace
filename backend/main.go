@@ -14,26 +14,26 @@ import (
 )
 
 func RegisterAuthRoutes(
-	router *gin.RouterGroup,
+	public *gin.RouterGroup,
 	authHandler *handlers.AuthHandler,
 	authService *services.AuthService,
 ) {
-	router.POST("/register", authHandler.Register)
-	router.POST("/login", authHandler.Login)
-	router.POST("/logout", authHandler.Logout)
+	public.POST("/register", authHandler.Register)
+	public.POST("/login", authHandler.Login)
+	public.POST("/logout", authHandler.Logout)
 }
 
 func RegisterUserRoutes(
-	router *gin.RouterGroup,
+	protected *gin.RouterGroup,
 	userHandler *handlers.UserHandler,
 	userService *services.UserService,
 ) {
-	router.GET("/users/:id", userHandler.GetUserById)
-	router.GET("/users/:id/profile-image", userHandler.GetProfileImage)
-	router.GET("/users/me", userHandler.GetCurrentUser)
-	router.DELETE("/users/me", userHandler.DeleteUser)
-	router.PUT("/users/me", userHandler.UpdateSettings)
-	router.PUT("/users/me/profile-image", userHandler.UploadProfileImage)
+	protected.GET("/users/:id/profile-image", userHandler.GetProfileImage)
+	protected.PUT("/users/me/profile-image", userHandler.UploadProfileImage)
+	protected.GET("/users/:id", userHandler.GetUserById)
+	protected.GET("/users/me", userHandler.GetCurrentUser)
+	protected.DELETE("/users/me", userHandler.DeleteUser)
+	protected.PUT("/users/me", userHandler.UpdateSettings)
 }
 
 func RegisterListingsRoutes(
