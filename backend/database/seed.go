@@ -79,7 +79,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) error {
 		i += offset
 		listings = append(listings, &models.Listing{
 			ID:          uint(i + 1),
-			ImageURL:    fmt.Sprintf("https://picsum.photos/seed/item%d/400/300", i),
 			Title:       fmt.Sprintf("Product %d", i+1),
 			Description: "This is a sample description for the item.",
 			Price:       float64((20 + i*2)),
