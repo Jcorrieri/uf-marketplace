@@ -128,6 +128,10 @@ export class MainPage implements OnInit {
     await this.fetchListings(request);
   }
 
+  openAddModal() {
+    this.router.navigate(['/create-listing']);
+  }
+
   constructor(
     private router: Router,
     private authService: AuthService,
