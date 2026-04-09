@@ -127,8 +127,8 @@ func (h *UserHandler) UploadProfileImage(c *gin.Context) {
 	}
 	defer file.Close()
 
-	// Limit to 5MB
-	if header.Size > 5*1024*1024 {
+	MAX_IMG_SIZE := 5 * 1024 * 1024
+	if header.Size > int64(MAX_IMG_SIZE) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Image must be under 5MB"})
 		return
 	}

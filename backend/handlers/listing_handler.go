@@ -95,10 +95,11 @@ func (h *ListingHandler) CreateListing(c *gin.Context) {
 	}
 
 	// Parse multiple image files
+	MAX_IMG_SIZE := 5 * 1024 * 1024
 	form, err := c.MultipartForm()
 	if err == nil && form.File["images"] != nil {
 		for _, fileHeader := range form.File["images"] {
-			if fileHeader.Size > 5*1024*1024 {
+			if fileHeader.Size > int64(MAX_IMG_SIZE) {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Each image must be under 5MB"})
 				return
 			}
