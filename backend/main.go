@@ -28,7 +28,6 @@ func RegisterUserRoutes(
 	userHandler *handlers.UserHandler,
 	userService *services.UserService,
 ) {
-	protected.GET("/users/:id/profile-image", userHandler.GetProfileImage)
 	protected.PUT("/users/me/profile-image", userHandler.UploadProfileImage)
 	protected.GET("/users/:id", userHandler.GetUserById)
 	protected.GET("/users/me", userHandler.GetCurrentUser)
@@ -43,8 +42,14 @@ func RegisterListingsRoutes(
 	listingService *services.ListingService,
 ) {
 	public.GET("/listings", listingHandler.GetListings)
-	public.GET("/listings/images/:imageId", listingHandler.GetListingImage)
 	protected.POST("/listings", listingHandler.CreateListing)
+}
+
+func RegisterImageRoutes(
+	public *gin.RouterGroup,
+	imageHandler *handlers.ImageHandler,
+) {
+	public.GET("/images/:imageId", imageHandler.GetImage)
 }
 
 func main() {
@@ -65,11 +70,13 @@ func main() {
 	authService := services.NewAuthService(db)
 	userService := services.NewUserService(db)
 	listingService := services.NewListingService(db)
+	imageService := services.NewImageService(db)
 
 	// Handlers
 	authHandler := handlers.NewAuthHandler(authService, userService, sessionName)
 	userHandler := handlers.NewUserHandler(userService)
 	listingHandler := handlers.NewListingHandler(listingService)
+	imageHandler := handlers.NewImageHandler(imageService)
 
 	// Middleware
 	authMiddleware := middleware.AuthMiddleware(os.Getenv("JWT_SECRET"), sessionName)
@@ -85,6 +92,7 @@ func main() {
 	RegisterAuthRoutes(auth, authHandler, authService)
 	RegisterUserRoutes(protected, userHandler, userService)
 	RegisterListingsRoutes(api, protected, listingHandler, listingService)
+	RegisterImageRoutes(api, imageHandler)
 
 	router.Run("localhost:8080")
 }

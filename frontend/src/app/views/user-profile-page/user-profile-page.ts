@@ -49,11 +49,12 @@ export class UserProfilePage implements OnInit {
           firstName: data.first_name,
           lastName: data.last_name,
           email: data.email,
+          image_id: data.image_id,
         };
         this.authService.setUser(u);
         this.user = u;
-        if (data.has_profile_image) {
-          this.profileImageUrl = `/api/users/${data.id}/profile-image?t=${Date.now()}`;
+        if (data.image_id) {
+          this.profileImageUrl = `/api/images/${data.image_id}?t=${Date.now()}`;
         }
         this.cdr.detectChanges();
       }
@@ -94,21 +95,24 @@ export class UserProfilePage implements OnInit {
       formData.append('image', file);
 
       const res = await fetch('/api/users/me/profile-image', {
-        method: 'PUT',
-        credentials: 'include',
-        body: formData,
+          method: 'PUT',
+          credentials: 'include',
+          body: formData,
       });
 
+      const body = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        this.errorMsg.set(body.error || 'Failed to upload image.');
-        return;
+          this.errorMsg.set(body.error || 'Failed to upload image.');
+          return;
       }
 
       // Refresh the image
       if (this.user) {
-        this.profileImageUrl = `/api/users/${this.user.id}/profile-image?t=${Date.now()}`;
+          this.user.image_id = body.image_id;
+          this.profileImageUrl = `/api/images/${this.user.image_id}?t=${Date.now()}`;
       }
+
     } catch {
       this.errorMsg.set('Unable to reach the server.');
     } finally {

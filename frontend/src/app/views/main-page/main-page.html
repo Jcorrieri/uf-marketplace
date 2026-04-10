@@ -48,7 +48,7 @@
     <div class="product-card">
       @if (product.first_image_id) {
         <img
-          [src]="'/api/listings/images/' + product.first_image_id"
+          [src]="'/api/images/' + product.first_image_id"
           [alt]="product.title"
           class="product-image"
         />
