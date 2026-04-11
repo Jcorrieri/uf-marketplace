@@ -12,8 +12,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Our imports
 import { AuthService } from '../../services/auth.service';
-import { AvatarDropdown } from '../../avatar-dropdown/avatar-dropdown';
-import { Listing, ListingRequest } from '../../listing/listing';
+import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
+import { Listing, ListingRequest } from '../../components/listing/listing';
 
 @Component({
   selector: 'app-main-page',
