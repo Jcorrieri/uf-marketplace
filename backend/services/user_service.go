@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
 	"github.com/google/uuid"
@@ -25,15 +26,23 @@ func NewUserService(db *gorm.DB) *UserService {
 
 func (s *UserService) GetAll(ctx context.Context) ([]models.User, error) {
 	// Use gorm.G[model.<model>]()... to get built-in type safety
-	return gorm.G[models.User](s.db).Find(ctx)
+	return gorm.G[models.User](s.db).
+		Preload("ProfileImage", ImageIDsOnly).
+		Find(ctx)
 }
 
 func (s *UserService) GetByID(ctx context.Context, id uuid.UUID) (models.User, error) {
-	return gorm.G[models.User](s.db).Where("id = ?", id).First(ctx)
+	return gorm.G[models.User](s.db).
+		Preload("ProfileImage", ImageIDsOnly).
+		Where("id = ?", id).
+		First(ctx)
 }
 
 func (s *UserService) GetByEmail(ctx context.Context, email string) (models.User, error) {
-	return gorm.G[models.User](s.db).Where("email = ?", email).First(ctx)
+	return gorm.G[models.User](s.db).
+		Preload("ProfileImage", ImageIDsOnly).
+		Where("email = ?", email).
+		First(ctx)
 }
 
 type CreateUserRequest struct {
@@ -64,6 +73,7 @@ func (s *UserService) Create(ctx context.Context, request CreateUserRequest) (*m
 	return &user, nil
 }
 
+// TODO: Update to delete images as well
 func (s *UserService) Delete(ctx context.Context, id uuid.UUID) error {
 	// Deleting a record requires some additional processing. Gorm
 	// uses soft deletion by default (see https://gorm.io/docs/delete.html#Soft-Delete).
@@ -119,17 +129,43 @@ func (s *UserService) Update(
 	return &user, nil
 }
 
-func (s *UserService) UpdateProfileImage(ctx context.Context, id uuid.UUID, imageData []byte) error {
-	rows, err := gorm.G[models.User](s.db).
-		Where("id = ?", id).
-		Select("ProfileImage").
-		Updates(ctx, models.User{ProfileImage: imageData})
+func (s *UserService) UpdateProfileImage(
+	ctx context.Context,
+	id uuid.UUID,
+	imageData []byte,
+	mimeType string,
+) (uuid.UUID, error) {
+	image := models.Image{
+		OwnerID:   id,
+		OwnerType: "users",
+		Data:      imageData,
+		MimeType:  mimeType,
+	}
 
-	if err != nil {
-		return err
+	// Check if image already exists
+	existing, err := gorm.G[models.Image](s.db).
+		Where("owner_id = ? AND owner_type = ?", id, "users").
+		First(ctx)
+
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return uuid.Nil, err
 	}
-	if rows == 0 {
-		return gorm.ErrRecordNotFound
+
+	// Image exists
+	if existing.ID != uuid.Nil {
+		_, err := gorm.G[models.Image](s.db).
+			Where("owner_id = ? AND owner_type = ?", id, "users").
+			Updates(ctx, image)
+		if err != nil {
+			return uuid.Nil, err
+		}
+		return existing.ID, nil
 	}
-	return nil
+
+	// Create new
+	if err := gorm.G[models.Image](s.db).Create(ctx, &image); err != nil {
+		return uuid.Nil, err
+	}
+
+	return image.ID, nil
 }

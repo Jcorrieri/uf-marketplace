@@ -5,6 +5,7 @@ export interface CurrentUser {
   firstName: string;
   lastName: string;
   email: string;
+  image_id?: string | null;
 }
 
 @Injectable({
@@ -22,7 +23,8 @@ export class AuthService {
           id: data.id,
           firstName: data.first_name,
           lastName: data.last_name,
-          email: data.email
+          email: data.email,
+          image_id: data.image_id,
         };
       }
     } catch {
@@ -34,11 +36,16 @@ export class AuthService {
     this.user = user;
   }
 
-  getUser(): CurrentUser | null {
+  currentUser(): CurrentUser | null {
     return this.user;
   }
 
-  clearUser() {
+  async logout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    } catch (e) {
+      console.error('logout request failed', e);
+    }
     this.user = null;
   }
 }

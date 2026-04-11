@@ -14,62 +14,54 @@ import (
 func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) error {
 	listings := []*models.Listing{
 		{
-			ID:          1,
 			Title:       "Standing Desk",
 			Description: "Adjustable standing desk, great condition. Perfect for studying.",
 			Price:       85,
 			SellerID:    ids[0],
 		},
 		{
-		  	ID: 2,
-		  	Title: "Mountain Bike",
-		  	Description: "Trek mountain bike, barely used. Includes lock and helmet.",
-		  	Price: 220,
-		  	SellerID: ids[3],
+			Title:       "Mountain Bike",
+			Description: "Trek mountain bike, barely used. Includes lock and helmet.",
+			Price:       220,
+			SellerID:    ids[3],
 		},
 		{
-			ID:          3,
 			Title:       "Organic Chemistry Textbook",
 			Description: "8th edition, no highlights. ISBN 978-0134042282.",
 			Price:       45,
 			SellerID:    ids[2],
 		},
 		{
-			ID:          4,
 			Title:       "27\" Monitor",
 			Description: "Dell 27\" 1440p IPS monitor. Comes with HDMI cable.",
 			Price:       150,
 			SellerID:    ids[3],
 		},
 		{
-			ID:          5,
 			Title:       "Futon Couch",
 			Description: "Foldable futon, dark grey. Great for dorm rooms.",
 			Price:       60,
 			SellerID:    ids[4],
 		},
 		{
-			ID:          6,
 			Title:       "Acoustic Guitar",
 			Description: "Yamaha FG800, excellent sound. Includes gig bag and tuner.",
 			Price:       130,
 			SellerID:    ids[5],
 		},
 		{
-			ID:          7,
 			Title:       "Desk Lamp",
 			Description: "LED desk lamp with USB charging port. 3 brightness levels.",
 			Price:       18,
 			SellerID:    ids[6],
 		},
 		{
-			ID:          8,
 			Title:       "North Face Backpack",
 			Description: "Black Borealis backpack, very spacious. Minor wear.",
 			Price:       40,
 			SellerID:    ids[7],
 		},
-	}	
+	}
 
 	numListings := 80
 	offset := len(listings)
@@ -78,7 +70,6 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) error {
 	for i := range numListings {
 		i += offset
 		listings = append(listings, &models.Listing{
-			ID:          uint(i + 1),
 			Title:       fmt.Sprintf("Product %d", i+1),
 			Description: "This is a sample description for the item.",
 			Price:       float64((20 + i*2)),
@@ -100,10 +91,10 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) error {
 func SeedUsers(db *gorm.DB, ctx context.Context) ([]*models.User, error) {
 	userRequests := []services.CreateUserRequest{
 		{
-			Email: "test@ufl.edu",
-			Password: "password",
+			Email:     "test@ufl.edu",
+			Password:  "password",
 			FirstName: "Test",
-			LastName: "User",
+			LastName:  "User",
 		},
 		{
 			Email:     "jsmack@ufl.edu",
