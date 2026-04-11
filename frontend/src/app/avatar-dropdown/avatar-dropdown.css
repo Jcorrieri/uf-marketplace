@@ -28,7 +28,6 @@
 
 /* ── Avatar & Dropdown ── */
 .avatar-wrapper {
-  flex: 1; /* Matches the left side to keep search perfectly centered */
   display: flex;
   justify-content: flex-end;
 }
