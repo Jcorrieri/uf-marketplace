@@ -12,34 +12,7 @@
     </mat-form-field>
   </div>
 
-  <!-- Avatar with dropdown -->
-  <div class="avatar-wrapper">
-    <button class="avatar-btn" (click)="toggleMenu()">
-      {{ initials }}
-    </button>
-
-    @if (menuOpen) {
-      <div class="dropdown-menu">
-        <div class="dropdown-header">
-          <span class="dropdown-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
-        </div>
-        <hr class="dropdown-divider" />
-        <button class="dropdown-item" (click)="navigateTo('/profile')">
-          <mat-icon>person</mat-icon> My Profile
-        </button>
-        <button class="dropdown-item" (click)="navigateTo('/my-listings')">
-          <mat-icon>storefront</mat-icon> My Listings
-        </button>
-        <button class="dropdown-item" (click)="navigateTo('/settings')">
-          <mat-icon>settings</mat-icon> Settings
-        </button>
-        <hr class="dropdown-divider" />
-        <button class="dropdown-item logout-item" (click)="logout()">
-          <mat-icon>logout</mat-icon> Logout
-        </button>
-      </div>
-    }
-  </div>
+  <app-avatar-dropdown></app-avatar-dropdown>
 </header>
 
 <!-- Product grid -->

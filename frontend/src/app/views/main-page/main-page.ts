@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AvatarDropdown } from '../../avatar-dropdown/avatar-dropdown';
 
 export interface Product {
   id: number;
@@ -38,34 +39,13 @@ export interface ProductRequest {
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
+    AvatarDropdown,
   ],
   templateUrl: './main-page.html',
   styleUrl: './main-page.css',
 })
 export class MainPage implements OnInit {
   searchQuery = '';
-  menuOpen = false;
-
-  get currentUser() {
-    return this.authService.getUser() ?? { firstName: '?', lastName: '?' };
-  }
-
-  get initials(): string {
-    return (this.currentUser.firstName[0] + this.currentUser.lastName[0]).toUpperCase();
-  }
-
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
-  }
-
-  // Close menu when clicking outside
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.avatar-wrapper')) {
-      this.menuOpen = false;
-    }
-  }
 
   // Shared by OnInit and Search
   async fetchListings(request: ProductRequest) {
@@ -138,22 +118,6 @@ export class MainPage implements OnInit {
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
   ) {}
-
-  navigateTo(path: string) {
-    this.menuOpen = false;
-    this.router.navigate([path]);
-  }
-
-  async logout() {
-    this.menuOpen = false;
-    try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    } catch (e) {
-      console.error('logout request failed', e);
-    }
-    this.authService.clearUser();
-    this.router.navigate(['/']);
-  }
 
   timeAgo(date: Date): string {
     const now = new Date();

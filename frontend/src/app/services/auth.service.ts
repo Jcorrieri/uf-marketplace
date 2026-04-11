@@ -36,11 +36,16 @@ export class AuthService {
     this.user = user;
   }
 
-  getUser(): CurrentUser | null {
+  currentUser(): CurrentUser | null {
     return this.user;
   }
 
-  clearUser() {
+  async logout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    } catch (e) {
+      console.error('logout request failed', e);
+    }
     this.user = null;
   }
 }

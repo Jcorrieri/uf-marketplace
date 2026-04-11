@@ -59,7 +59,7 @@ export class UserProfilePage implements OnInit {
         this.cdr.detectChanges();
       }
     } catch {
-      this.user = this.authService.getUser();
+      this.user = this.authService.currentUser();
       this.cdr.detectChanges();
     }
   }
@@ -129,13 +129,8 @@ export class UserProfilePage implements OnInit {
     this.router.navigate(['/create-listing']);
   }
 
-  async logout() {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    } catch (e) {
-      console.error('logout request failed', e);
-    }
-    this.authService.clearUser();
+  logout() {
+    this.authService.logout();
     this.router.navigate(['/']);
   }
 }
