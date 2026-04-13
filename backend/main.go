@@ -42,7 +42,19 @@ func RegisterListingsRoutes(
 	listingService *services.ListingService,
 ) {
 	public.GET("/listings", listingHandler.GetListings)
+	protected.GET("/listings/me", listingHandler.GetMyListings)
 	protected.POST("/listings", listingHandler.CreateListing)
+	protected.PUT("/listings/:id", listingHandler.UpdateListing)
+	protected.DELETE("/listings/:id", listingHandler.DeleteListing)
+}
+
+func RegisterOrderRoutes(
+	protected *gin.RouterGroup,
+	orderHandler *handlers.OrderHandler,
+) {
+	protected.POST("/orders", orderHandler.BuyListing)
+	protected.GET("/orders/purchases", orderHandler.GetMyPurchases)
+	protected.GET("/orders/sales", orderHandler.GetMySales)
 }
 
 func RegisterImageRoutes(
@@ -50,17 +62,6 @@ func RegisterImageRoutes(
 	imageHandler *handlers.ImageHandler,
 ) {
 	public.GET("/images/:imageId", imageHandler.GetImage)
-}
-
-func RegisterOrderRoutes(
-	protected *gin.RouterGroup,
-	orderHandler *handlers.OrderHandler,
-	orderService *services.OrderService,
-) {
-	protected.POST("/orders", orderHandler.CreateOrder)
-	protected.GET("/orders", orderHandler.GetMyOrders)
-	protected.PUT("/orders/:id/cancel", orderHandler.CancelOrder)
-	protected.DELETE("/orders/:id", orderHandler.DeleteOrder)
 }
 
 func main() {
@@ -106,7 +107,7 @@ func main() {
 	RegisterUserRoutes(protected, userHandler, userService)
 	RegisterListingsRoutes(api, protected, listingHandler, listingService)
 	RegisterImageRoutes(api, imageHandler)
-	RegisterOrderRoutes(protected, orderHandler, orderService)
+	RegisterOrderRoutes(protected, orderHandler)
 
 	router.Run("localhost:8080")
 }

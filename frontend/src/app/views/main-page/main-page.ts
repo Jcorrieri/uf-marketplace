@@ -108,4 +108,10 @@ export class MainPage implements OnInit {
   openAddModal() {
     this.router.navigate(['/create-listing']);
   }
+
+  onListingPurchased(id: string) {
+    this.listings = this.listings.filter((l) => l.id !== id);
+    this.filteredListings = this.filteredListings.filter((l) => l.id !== id);
+    this.cdr.detectChanges();
+  }
 }

@@ -94,3 +94,61 @@
   height: 16px;
 }
 
+/* ── Buy Button ── */
+.buy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  width: 100%;
+  padding: 9px 0;
+  border: none;
+  border-radius: 8px;
+  background: #0021a5;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.15s;
+}
+
+.buy-btn:hover:not(:disabled) {
+  background: #fa4616;
+  transform: translateY(-1px);
+}
+
+.buy-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.buy-btn.success {
+  background: #2e7d32;
+}
+
+.btn-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.btn-icon.spin {
+  animation: btn-spin 0.8s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Inline purchase error */
+.buy-error {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  color: #c62828;
+  text-align: center;
+}

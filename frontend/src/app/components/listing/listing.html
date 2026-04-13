@@ -20,6 +20,33 @@
         {{ listing.seller_name }}
       </span>
     </div>
+
+    <!-- Buy button — only shown when the user is NOT the seller -->
+    @if (canBuy) {
+      <button
+        class="buy-btn"
+        [class.buying]="purchasing()"
+        [class.success]="purchaseSuccess()"
+        (click)="buy($event)"
+        [disabled]="purchasing()"
+        id="buy-btn-{{ listing.id }}"
+      >
+        @if (purchasing()) {
+          <mat-icon class="btn-icon spin">sync</mat-icon>
+          Processing…
+        } @else if (purchaseSuccess()) {
+          <mat-icon class="btn-icon">check_circle</mat-icon>
+          Purchased!
+        } @else {
+          <mat-icon class="btn-icon">shopping_cart</mat-icon>
+          Buy Now
+        }
+      </button>
+    }
+
+    <!-- Inline error message -->
+    @if (purchaseError()) {
+      <p class="buy-error">{{ purchaseError() }}</p>
+    }
   </div>
 </div>
-
