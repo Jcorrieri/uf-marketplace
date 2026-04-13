@@ -1,0 +1,61 @@
+<div class="purchase-dialog">
+  <h2 mat-dialog-title class="dialog-title">Confirm Purchase</h2>
+
+  <mat-dialog-content>
+    <div class="purchase-details">
+      <mat-card class="item-card">
+        <mat-card-content>
+          <div class="detail-row">
+            <span class="label">Item:</span>
+            <span class="value">{{ data.listingName }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Seller:</span>
+            <span class="value">{{ data.sellerName }}</span>
+          </div>
+          <div class="detail-row total">
+            <span class="label">Total Price:</span>
+            <span class="value">${{ data.price.toFixed(2) }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="confirmation-text">
+        <mat-icon>info</mat-icon>
+        <p>
+          By clicking "Confirm Purchase", you agree to complete this transaction.
+          This is a binding agreement.
+        </p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="processing()">
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onConfirm()"
+      [disabled]="processing()"
+    >
+      <ng-container>
+        @if (processing()) {
+          <mat-spinner diameter="20"></mat-spinner>
+          <span>Processing...</span>
+        } @else {
+          <mat-icon iconPositionEnd>check_circle</mat-icon>
+          <span>Confirm Purchase</span>
+        }
+      </ng-container>
+    </button>
+  </mat-dialog-actions>
+
+  @if (errorMsg()) {
+    <div class="error-message">
+      <mat-icon>error</mat-icon>
+      <p>{{ errorMsg() }}</p>
+    </div>
+  }
+</div>
