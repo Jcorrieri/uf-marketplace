@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"io"
 	"net/http"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
+	"github.com/Jcorrieri/uf-marketplace/backend/utils"
 	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
@@ -120,59 +120,23 @@ func (h *UserHandler) UploadProfileImage(c *gin.Context) {
 		return
 	}
 
-	file, header, err := c.Request.FormFile("image")
+	fileHeader, err := c.FormFile("image")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No image provided"})
 		return
 	}
-	defer file.Close()
 
-	MAX_IMG_SIZE := 5 * 1024 * 1024
-	if header.Size > int64(MAX_IMG_SIZE) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Image must be under 5MB"})
-		return
-	}
-
-	data, err := io.ReadAll(file)
+	data, mimeType, err := utils.ProcessImageFile(fileHeader)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read image"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Validate content type
-	contentType := http.DetectContentType(data)
-	if contentType != "image/jpeg" && contentType != "image/png" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only JPEG and PNG images are allowed"})
-		return
-	}
-
-	if err := h.userService.UpdateProfileImage(c.Request.Context(), id, data); err != nil {
+	imageID, err := h.userService.UpdateProfileImage(c.Request.Context(), id, data, mimeType)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Profile image updated"})
-}
-
-// GET /api/users/:id/profile-image
-func (h *UserHandler) GetProfileImage(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
-
-	user, err := h.userService.GetByID(c.Request.Context(), id)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
-	}
-
-	if len(user.ProfileImage) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "No profile image"})
-		return
-	}
-
-	contentType := http.DetectContentType(user.ProfileImage)
-	c.Data(http.StatusOK, contentType, user.ProfileImage)
+	c.JSON(http.StatusOK, gin.H{"message": "Profile image updated", "image_id": imageID})
 }

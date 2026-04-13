@@ -1,0 +1,25 @@
+<div class="listing-card">
+  @if (listing.first_image_id) {
+  <img
+    [src]="'/api/images/' + listing.first_image_id"
+    [alt]="listing.title"
+    class="listing-image"
+  />
+  } @else {
+  <div class="listing-image-placeholder">
+    <mat-icon>image</mat-icon>
+  </div>
+  }
+  <div class="listing-info">
+    <h3 class="listing-title">{{ listing.title }}</h3>
+    <p class="listing-description">{{ listing.description }}</p>
+    <span class="listing-price">{{ listing.price | currency }}</span>
+    <div class="listing-meta">
+      <span class="listing-seller">
+        <mat-icon class="meta-icon">person</mat-icon>
+        {{ listing.seller_name }}
+      </span>
+    </div>
+  </div>
+</div>
+
