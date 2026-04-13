@@ -61,3 +61,24 @@ func (s *ListingService) GetAll(
 func (s *ListingService) Create(ctx context.Context, listing *models.Listing) error {
 	return gorm.G[models.Listing](s.db).Create(ctx, listing)
 }
+
+func (s *ListingService) GetImageByID(ctx context.Context, imageID uint) (models.ListingImage, error) {
+	return gorm.G[models.ListingImage](s.db).Where("id = ?", imageID).First(ctx)
+}
+
+// MarkAsSold soft-deletes a listing (marks it as sold)
+func (s *ListingService) MarkAsSold(ctx context.Context, listingID uint) error {
+	_, err := gorm.G[models.Listing](s.db).
+		Where("id = ?", listingID).
+		Delete(ctx)
+	return err
+}
+
+// RestoreListing restores a soft-deleted listing (un-sells it)
+func (s *ListingService) RestoreListing(ctx context.Context, listingID uint) error {
+	return s.db.Unscoped().
+		Model(&models.Listing{}).
+		Where("id = ?", listingID).
+		Update("deleted_at", nil).
+		Error
+}
