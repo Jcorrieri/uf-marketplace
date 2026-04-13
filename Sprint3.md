@@ -46,14 +46,14 @@ Create a new user account
 Authenticate a user and start a session  
 - Auth: No  
 - Body: Login credentials  
-- Response: Session cookie or token  
+- Response: Sets an HTTP Only cookie containing a JWT.
 
 ---
 
 #### POST /auth/logout
 Log out the current user  
-- Auth: Typically no (may rely on session cookie)  
-- Response: Success message  
+- Auth: No
+- Response: Success message and request to clear local cookies.
 
 ---
 
@@ -79,14 +79,14 @@ Update current user settings
 Upload or update profile image  
 - Auth: Yes  
 - Body: multipart/form-data (image file)  
-- Response: Updated user or image reference  
+- Response: Message and imageID for frontend.
 
 ---
 
 #### DELETE /users/me
 Delete the current user account  
 - Auth: Yes  
-- Response: Confirmation of deletion  
+- Response: N/A (Should be updated to confirmation)
 
 ---
 
@@ -123,7 +123,7 @@ Retrieve an image by ID
 - Auth: No  
 - Params:  
   - imageId: Image identifier  
-- Response: Image file or binary data  
+- Response: Binary image data
 
 ---
 
