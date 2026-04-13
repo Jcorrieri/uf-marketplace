@@ -1,1 +1,37 @@
-<p>my-listings-page works!</p>
+<header class="main-header">
+  <div class="header-left">
+    <img src="gator-logo.png" alt="UF Logo" class="gator-icon" />
+    <span class="brand-text">UF MarketPlace</span>
+  </div>
+
+  <h2 class="page-title">My Listings</h2>
+
+  <button class="back-btn" (click)="navigateTo('/main')">
+    <mat-icon>home</mat-icon> Home
+  </button>
+</header>
+
+<div class="page-toolbar">
+  <button class="add-listing-btn" (click)="navigateTo('/create-listing')">
+    <mat-icon>add</mat-icon> Add Listing
+  </button>
+</div>
+
+<main class="product-grid">
+  @for (listing of listings; track listing.id) {
+    <div class="product-card">
+      <img *ngIf="listing.first_image_id" [src]="'/api/listings/images/' + listing.first_image_id" [alt]="listing.title" class="product-image" />
+      <div class="product-info">
+        <h3 class="product-title">{{ listing.title }}</h3>
+        <p class="product-description">{{ listing.description }}</p>
+        <span class="product-price">{{ listing.price | currency }}</span>
+      </div>
+    </div>
+  }
+  @if (listings.length === 0) {
+    <div class="no-results">
+      <mat-icon>storefront</mat-icon>
+      <p>You haven't posted any listings yet.</p>
+    </div>
+  }
+</main>

@@ -155,7 +155,7 @@ func (h *ListingHandler) GetMyListings(c *gin.Context) {
 		return
 	}
 
-	listings, err := h.listingService.GetBySellerID(c.Request.Context(), userID.(uint))
+	listings, err := h.listingService.GetBySellerID(c.Request.Context(), userID.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch listings"})
 		return

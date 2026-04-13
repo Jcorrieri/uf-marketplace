@@ -64,6 +64,6 @@ func (s *ListingService) GetImageByID(ctx context.Context, imageID uint) (models
 	return gorm.G[models.ListingImage](s.db).Where("id = ?", imageID).First(ctx)
 }
 
-func (s *ListingService) GetBySellerID(ctx context.Context, sellerID uint) ([]models.Listing, error) {
-	return gorm.G[models.Listing](s.db).Find(ctx, gorm.Where("seller_id = ?", sellerID))
+func (s *ListingService) GetBySellerID(ctx context.Context, sellerID string) ([]models.Listing, error) {
+	return gorm.G[models.Listing](s.db).Where("seller_id = ?", sellerID).Find(ctx)
 }
