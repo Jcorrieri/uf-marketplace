@@ -4,6 +4,7 @@ import { SignUpPage } from './views/sign-up-page/sign-up-page';
 import { MainPage } from './views/main-page/main-page';
 import { UserProfilePage } from './views/user-profile-page/user-profile-page';
 import { CreateListingPage } from './views/create-listing-page/create-listing-page';
+import { MyListingsPage } from './views/my-listings-page/my-listings-page';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -13,4 +14,5 @@ export const routes: Routes = [
   { path: 'main', component: MainPage, canActivate: [authGuard] },
   { path: 'profile', component: UserProfilePage, canActivate: [authGuard] },
   { path: 'create-listing', component: CreateListingPage, canActivate: [authGuard] },
+  { path: 'my-listings', component: MyListingsPage, canActivate: [authGuard] },
 ];
