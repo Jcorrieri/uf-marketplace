@@ -3,9 +3,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { CurrencyPipe } from '@angular/common';
 
 export interface Listing {
-  id: number;
+  id: string;
   image_count: number;
-  first_image_id: number | null;
+  first_image_id: string | null;
   title: string;
   description: string;
   price: number;
@@ -16,7 +16,7 @@ export interface ListingRequest {
   key: string;
   query: string;
   limit: number;
-  cursor: number;
+  cursor: string;
 }
 
 @Component({

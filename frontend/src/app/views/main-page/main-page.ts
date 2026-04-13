@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -61,14 +61,16 @@ export class MainPage implements OnInit {
           key: request.key,
           query: request.query,
           limit: request.limit,
-          cursor: request.cursor
-        }
-      })
+          cursor: request.cursor,
+        },
+      }),
     );
 
     this.filteredListings = results;
     this.cdr.detectChanges();
-    request.cursor = results[results.length - 1].id;
+    if (results.length > 0) {
+      request.cursor = results[results.length - 1].id;
+    }
 
     return results;
   }
@@ -79,23 +81,24 @@ export class MainPage implements OnInit {
     key: '',
     query: '',
     limit: 20,
-    cursor: 0
+    cursor: '',
   };
 
   // search functionality
   async search() {
     const query = this.searchQuery.toLowerCase().trim();
-    const key = "title"; // Hardcoded for now but leaves flexibility for later
+    const key = 'title'; // Hardcoded for now but leaves flexibility for later
 
-    const request = this.listingRequest
+    const request = this.listingRequest;
     request.key = key;
     request.query = query;
-    request.cursor = 0; // Reset cursor upon new search
+    request.cursor = ''; // Reset cursor upon new search
 
     // TODO: Maybe remove caching and just query the API every time? Not that expensive.
     if (!query) {
-      request.cursor = this.listings[this.listings.length - 1].id; // Use cached id for cursor here
+      request.cursor = this.listings.length > 0 ? this.listings[this.listings.length - 1].id : '';
       this.filteredListings = this.listings;
+      this.cdr.detectChanges();
       return;
     }
 
@@ -105,5 +108,4 @@ export class MainPage implements OnInit {
   openAddModal() {
     this.router.navigate(['/create-listing']);
   }
-
 }

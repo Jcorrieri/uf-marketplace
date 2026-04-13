@@ -21,7 +21,7 @@ func (s *ListingService) Search(
 	key string,
 	query string,
 	limit int,
-	cursor uint,
+	cursor string,
 ) ([]models.Listing, error) {
 
 	queryObj := gorm.G[models.Listing](s.db).
@@ -31,7 +31,7 @@ func (s *ListingService) Search(
 		Order("id DESC").
 		Limit(limit)
 
-	if cursor > 0 {
+	if cursor != "" && cursor != "0" {
 		queryObj.Where("id < ?", cursor)
 	}
 
@@ -42,7 +42,7 @@ func (s *ListingService) Search(
 func (s *ListingService) GetAll(
 	ctx context.Context,
 	limit int,
-	cursor uint,
+	cursor string,
 ) ([]models.Listing, error) {
 
 	queryObj := gorm.G[models.Listing](s.db).
@@ -51,7 +51,7 @@ func (s *ListingService) GetAll(
 		Order("id DESC").
 		Limit(limit)
 
-	if cursor > 0 {
+	if cursor != "" && cursor != "0" {
 		queryObj.Where("id < ?", cursor)
 	}
 
