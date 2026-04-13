@@ -111,6 +111,7 @@ export class UserProfilePage implements OnInit {
       if (this.user) {
           this.user.image_id = body.image_id;
           this.profileImageUrl = `/api/images/${this.user.image_id}?t=${Date.now()}`;
+          this.authService.setUser(this.user);
       }
 
     } catch {

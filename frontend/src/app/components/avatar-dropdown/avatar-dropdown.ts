@@ -38,6 +38,11 @@ export class AvatarDropdown {
     return (this.currentUser.firstName[0] + this.currentUser.lastName[0]).toUpperCase();
   }
 
+  get profileImageUrl(): string | null {
+    const id = this.currentUser && 'image_id' in this.currentUser ? this.currentUser.image_id : null;
+    return id ? `/api/images/${id}` : null;
+  }
+
   async logout() {
     this.menuOpen = false;
     await this.authService.logout();

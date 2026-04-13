@@ -1,7 +1,11 @@
 <!-- Avatar with dropdown -->
 <div class="avatar-wrapper">
-  <button class="avatar-btn" (click)="toggleMenu()">
-    {{ initials }}
+  <button class="avatar-btn" [class.has-image]="profileImageUrl" (click)="toggleMenu()">
+    @if (profileImageUrl) {
+      <img [src]="profileImageUrl" alt="Profile" class="avatar-img" />
+    } @else {
+      {{ initials }}
+    }
   </button>
 
   @if (menuOpen) {
