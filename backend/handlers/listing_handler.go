@@ -146,3 +146,25 @@ func (h *ListingHandler) GetListingImage(c *gin.Context) {
 	contentType := http.DetectContentType(img.Data)
 	c.Data(http.StatusOK, contentType, img.Data)
 }
+
+// GET /api/listings/mine
+func (h *ListingHandler) GetMyListings(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	listings, err := h.listingService.GetBySellerID(c.Request.Context(), userID.(uint))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch listings"})
+		return
+	}
+
+	var response []models.ListingResponse
+	for _, l := range listings {
+		response = append(response, l.GetResponse())
+	}
+
+	c.JSON(http.StatusOK, response)
+}

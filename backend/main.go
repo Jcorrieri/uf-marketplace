@@ -45,6 +45,7 @@ func RegisterListingsRoutes(
 	public.GET("/listings", listingHandler.GetListings)
 	public.GET("/listings/images/:imageId", listingHandler.GetListingImage)
 	protected.POST("/listings", listingHandler.CreateListing)
+	protected.GET("/listings/mine", listingHandler.GetMyListings)
 }
 
 func main() {

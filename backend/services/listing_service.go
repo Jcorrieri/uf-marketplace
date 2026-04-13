@@ -29,7 +29,7 @@ func (s *ListingService) Search(
 		Where(key+" LIKE ?", "%"+query+"%").
 		Order("id DESC").
 		Limit(limit)
-	
+
 	if cursor > 0 {
 		queryObj.Where("id < ?", cursor)
 	}
@@ -48,7 +48,7 @@ func (s *ListingService) GetAll(
 		Preload("Seller", nil).
 		Order("id DESC").
 		Limit(limit)
-	
+
 	if cursor > 0 {
 		queryObj.Where("id < ?", cursor)
 	}
@@ -62,4 +62,8 @@ func (s *ListingService) Create(ctx context.Context, listing *models.Listing) er
 
 func (s *ListingService) GetImageByID(ctx context.Context, imageID uint) (models.ListingImage, error) {
 	return gorm.G[models.ListingImage](s.db).Where("id = ?", imageID).First(ctx)
+}
+
+func (s *ListingService) GetBySellerID(ctx context.Context, sellerID uint) ([]models.Listing, error) {
+	return gorm.G[models.Listing](s.db).Find(ctx, gorm.Where("seller_id = ?", sellerID))
 }
