@@ -13,8 +13,8 @@ export class AvatarDropdown {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private elRef: ElementRef
-  ){}
+    private elRef: ElementRef,
+  ) {}
 
   menuOpen = false;
 
@@ -39,7 +39,8 @@ export class AvatarDropdown {
   }
 
   get profileImageUrl(): string | null {
-    const id = this.currentUser && 'image_id' in this.currentUser ? this.currentUser.image_id : null;
+    const id =
+      this.currentUser && 'image_id' in this.currentUser ? this.currentUser.image_id : null;
     return id ? `/api/images/${id}` : null;
   }
 
