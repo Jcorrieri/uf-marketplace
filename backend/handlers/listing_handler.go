@@ -27,13 +27,7 @@ func (h *ListingHandler) GetListings(c *gin.Context) {
 		return
 	}
 
-	cursor64, err := strconv.ParseUint(c.Query("cursor"), 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid cursor parameter."})
-		return
-	}
-
-	cursor := uint(cursor64) // ParseUint returns uint64, but listings ID is of type uint
+	cursor := c.Query("cursor") // UUID string, empty or "0" means no cursor
 
 	var listings []models.Listing
 

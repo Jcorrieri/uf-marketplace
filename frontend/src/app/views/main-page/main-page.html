@@ -8,7 +8,12 @@
   <div class="header-search">
     <mat-form-field class="search-field" appearance="outline">
       <mat-icon matPrefix>search</mat-icon>
-      <input matInput placeholder="Search marketplace..." [(ngModel)]="searchQuery" (keyup.enter)="search()" />
+      <input
+        matInput
+        placeholder="Search marketplace..."
+        [(ngModel)]="searchQuery"
+        (input)="search()"
+      />
     </mat-form-field>
   </div>
 

@@ -46,6 +46,19 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s;
+  overflow: hidden;
+  padding: 0;
+}
+
+.avatar-btn.has-image {
+  background-color: transparent;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .avatar-btn:hover {
