@@ -1,0 +1,118 @@
+<header class="page-header">
+  <button class="back-btn" (click)="goBack()" aria-label="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h1 class="page-title">My Listings</h1>
+</header>
+
+<main class="page-content">
+  @if (errorMsg()) {
+    <div class="error-banner">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  }
+
+  @if (listings.length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">storefront</mat-icon>
+      <p>You haven't posted any listings yet.</p>
+      <button mat-flat-button color="primary" (click)="goBack()">Browse Marketplace</button>
+    </div>
+  }
+
+  <div class="listings-grid">
+    @for (listing of listings; track listing.id) {
+      <div class="listing-card" [class.editing]="editingId === listing.id">
+        <!-- Image -->
+        @if (listing.first_image_id) {
+          <img
+            [src]="'/api/images/' + listing.first_image_id"
+            [alt]="listing.title"
+            class="listing-image"
+          />
+        } @else {
+          <div class="listing-image-placeholder">
+            <mat-icon>image</mat-icon>
+          </div>
+        }
+
+        <div class="listing-body">
+          @if (editingId === listing.id) {
+            <!-- Edit mode -->
+            <h3 class="listing-title">{{ listing.title }}</h3>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea
+                matInput
+                [(ngModel)]="editState.description"
+                rows="3"
+                maxlength="2000"
+              ></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Price ($)</mat-label>
+              <input matInput type="number" [(ngModel)]="editState.price" min="0" step="0.01" />
+            </mat-form-field>
+
+            <!-- New images -->
+            <div class="image-edit-area">
+              <div class="image-scroll">
+                @for (img of editState.newImages; track img.url) {
+                  <div class="image-preview">
+                    <img [src]="img.url" alt="Preview" class="preview-img" />
+                    <button class="remove-img-btn" (click)="removeNewImage($index)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+                <button class="add-image-btn" (click)="imageInput.click()">
+                  <mat-icon>add_photo_alternate</mat-icon>
+                  <span>Replace Photos</span>
+                </button>
+              </div>
+              <input
+                #imageInput
+                type="file"
+                accept="image/jpeg,image/png"
+                multiple
+                style="display: none"
+                (change)="onImagesSelected($event)"
+              />
+            </div>
+
+            <div class="edit-actions">
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="saveEdit(listing)"
+                [disabled]="saving()"
+              >
+                {{ saving() ? 'Saving...' : 'Save' }}
+              </button>
+              <button mat-stroked-button (click)="cancelEdit()">Cancel</button>
+            </div>
+          } @else {
+            <!-- View mode -->
+            <h3 class="listing-title">{{ listing.title }}</h3>
+            <p class="listing-description">{{ listing.description }}</p>
+            <span class="listing-price">{{ listing.price | currency }}</span>
+
+            <div class="card-actions">
+              <button class="action-btn edit-btn" (click)="startEdit(listing)">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button class="action-btn delete-btn" (click)="deleteListing(listing)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</main>

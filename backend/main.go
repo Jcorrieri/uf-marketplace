@@ -42,7 +42,10 @@ func RegisterListingsRoutes(
 	listingService *services.ListingService,
 ) {
 	public.GET("/listings", listingHandler.GetListings)
+	protected.GET("/listings/me", listingHandler.GetMyListings)
 	protected.POST("/listings", listingHandler.CreateListing)
+	protected.PUT("/listings/:id", listingHandler.UpdateListing)
+	protected.DELETE("/listings/:id", listingHandler.DeleteListing)
 }
 
 func RegisterImageRoutes(
