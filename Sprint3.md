@@ -1,4 +1,4 @@
-# Sprint 3 Techincal Documentation
+# Sprint 3 Technical Documentation
 
 ---
 
