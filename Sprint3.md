@@ -145,4 +145,54 @@ Retrieve an image by ID
 
 ## Testing Overview:
 
-TBD
+---
+
+### Frontend:
+
+---
+
+### Backend:
+
+--- 
+
+#### Middleware:
+- Missing_Cookie: Pass (Reject request missing cookie)
+- Expired_Token: Pass (Reject request with expired token)
+- Invalid_Secret: Pass (Reject request having token signed with invalid secret)
+- Valid_Token: Pass (Accept request with valid token)
+
+#### Models:
+- TestUserResponse: Pass (Validate correct fields are present in User.GetResponse() function call)
+
+#### Services:
+- Auth Service:
+  - TestAuthBadPassword: Pass (Reject login request with bad password)
+  - TestAuthBadEmail: Pass (Reject login request with non-existant email)
+- Image Service:
+  - TestGetImageByID_Found: Pass (Returns correct image given ID)
+  - TestGetImageByID_NotFound: Pass (Returns err when invalid ID is given)
+- Listing Service:
+  - TestNewListingService_NotNil: Pass (Service initializes successfully)
+  - TestCreateListing: Pass (Creates a listing and assigns an ID)
+  - TestGetListingByID_Found: Pass (Returns correct listing given ID)
+  - TestGetListingByID_NotFound: Pass (Returns err when ID does not exist)
+  - TestGetListingByID_InvalidID: Pass (Returns err for malformed ID)
+  - TestGetAll_ReturnsResults: Pass (Returns at least one listing)
+  - TestGetAll_LimitIsRespected: Pass (Returns no more results than the limit)
+  - TestGetAll_CursorPagination: Pass (Returns only listings with ID less than cursor)
+  - TestGetBySellerID_Found: Pass (Returns listings belonging to the given seller)
+  - TestGetBySellerID_NoResults: Pass (Returns empty list for unknown seller ID)
+  - TestSearch_MatchingQuery: Pass (Returns listings matching the search query)
+  - TestSearch_NoMatch: Pass (Returns empty list when no listings match)
+  - TestUpdateListing: Pass (Updates listing fields correctly)
+  - TestReplaceImages: Pass (Replaces listing images with new set)
+  - TestReplaceImages_ClearsExisting: Pass (Clears all images when given empty slice)
+  - TestDeleteListing: Pass (Deletes listing and confirms it is no longer retrievable)
+  - TestDeleteListing_InvalidID: Pass (Returns err for malformed UUID)
+  - TestDeleteListing_NotFound: Pass (No error when deleting a non-existent record)
+
+#### Utilities:
+- JWT utils:
+  - Valid_Token: Pass (Parses valid token)
+  - Expired_Token: Pass (Raises err when parsing expired token)
+  - Invalid_Signing_Method: Pass (Raises err when parsing token with different signing method)
