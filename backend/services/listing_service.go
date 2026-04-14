@@ -33,7 +33,7 @@ func (s *ListingService) Search(
 		Limit(limit)
 
 	if cursor != "" && cursor != "0" {
-		queryObj.Where("id < ?", cursor)
+		queryObj = queryObj.Where("id < ?", cursor)
 	}
 
 	return queryObj.Find(ctx)
@@ -53,7 +53,7 @@ func (s *ListingService) GetAll(
 		Limit(limit)
 
 	if cursor != "" && cursor != "0" {
-		queryObj.Where("id < ?", cursor)
+		queryObj = queryObj.Where("id < ?", cursor)
 	}
 
 	return queryObj.Find(ctx)
