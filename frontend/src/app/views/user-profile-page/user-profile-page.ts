@@ -95,25 +95,24 @@ export class UserProfilePage implements OnInit {
       formData.append('image', file);
 
       const res = await fetch('/api/users/me/profile-image', {
-          method: 'PUT',
-          credentials: 'include',
-          body: formData,
+        method: 'PUT',
+        credentials: 'include',
+        body: formData,
       });
 
       const body = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-          this.errorMsg.set(body.error || 'Failed to upload image.');
-          return;
+        this.errorMsg.set(body.error || 'Failed to upload image.');
+        return;
       }
 
       // Refresh the image
       if (this.user) {
-          this.user.image_id = body.image_id;
-          this.profileImageUrl = `/api/images/${this.user.image_id}?t=${Date.now()}`;
-          this.authService.setUser(this.user);
+        this.user.image_id = body.image_id;
+        this.profileImageUrl = `/api/images/${this.user.image_id}?t=${Date.now()}`;
+        this.authService.setUser(this.user);
       }
-
     } catch {
       this.errorMsg.set('Unable to reach the server.');
     } finally {

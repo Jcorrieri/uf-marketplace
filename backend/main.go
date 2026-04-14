@@ -46,6 +46,7 @@ func RegisterListingsRoutes(
 	protected.POST("/listings", listingHandler.CreateListing)
 	protected.PUT("/listings/:id", listingHandler.UpdateListing)
 	protected.DELETE("/listings/:id", listingHandler.DeleteListing)
+	protected.DELETE("/listings/:id", listingHandler.DeleteListing)
 }
 
 func RegisterOrderRoutes(
