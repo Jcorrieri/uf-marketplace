@@ -46,6 +46,16 @@ func RegisterListingsRoutes(
 	protected.POST("/listings", listingHandler.CreateListing)
 	protected.PUT("/listings/:id", listingHandler.UpdateListing)
 	protected.DELETE("/listings/:id", listingHandler.DeleteListing)
+	protected.DELETE("/listings/:id", listingHandler.DeleteListing)
+}
+
+func RegisterOrderRoutes(
+	protected *gin.RouterGroup,
+	orderHandler *handlers.OrderHandler,
+) {
+	protected.POST("/orders", orderHandler.BuyListing)
+	protected.GET("/orders/purchases", orderHandler.GetMyPurchases)
+	protected.GET("/orders/sales", orderHandler.GetMySales)
 }
 
 func RegisterImageRoutes(
@@ -74,12 +84,14 @@ func main() {
 	userService := services.NewUserService(db)
 	listingService := services.NewListingService(db)
 	imageService := services.NewImageService(db)
+	orderService := services.NewOrderService(db)
 
 	// Handlers
 	authHandler := handlers.NewAuthHandler(authService, userService, sessionName)
 	userHandler := handlers.NewUserHandler(userService)
 	listingHandler := handlers.NewListingHandler(listingService)
 	imageHandler := handlers.NewImageHandler(imageService)
+	orderHandler := handlers.NewOrderHandler(orderService)
 
 	// Middleware
 	authMiddleware := middleware.AuthMiddleware(os.Getenv("JWT_SECRET"), sessionName)
@@ -96,6 +108,7 @@ func main() {
 	RegisterUserRoutes(protected, userHandler, userService)
 	RegisterListingsRoutes(api, protected, listingHandler, listingService)
 	RegisterImageRoutes(api, imageHandler)
+	RegisterOrderRoutes(protected, orderHandler)
 
 	router.Run("localhost:8080")
 }

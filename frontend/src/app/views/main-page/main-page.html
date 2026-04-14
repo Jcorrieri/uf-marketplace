@@ -23,7 +23,7 @@
 <!-- Listing grid -->
 <main class="listing-grid">
   @for (listing of filteredListings; track listing.id) {
-    <app-listing [listing]="listing"></app-listing>
+    <app-listing [listing]="listing" (purchased)="onListingPurchased($event)"></app-listing>
   }
   @if (filteredListings?.length === 0) {
     <div class="no-results">

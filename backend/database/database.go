@@ -53,6 +53,7 @@ func Connect(dbName string) *gorm.DB {
 		&models.User{},
 		&models.Listing{},
 		&models.Image{},
+		&models.Order{},
 	)
 
 	if err != nil {

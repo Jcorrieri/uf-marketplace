@@ -1,0 +1,115 @@
+<header class="page-header">
+  <button class="back-btn" (click)="goBack()" aria-label="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h1 class="page-title">Order History</h1>
+</header>
+
+<main class="page-content">
+
+  <!-- Tab switcher -->
+  <div class="tab-bar">
+    <button
+      id="tab-purchases"
+      class="tab-btn"
+      [class.active]="activeTab === 'purchases'"
+      (click)="setTab('purchases')"
+    >
+      <mat-icon>shopping_bag</mat-icon>
+      Purchases
+      @if (purchases.length > 0) {
+        <span class="tab-badge">{{ purchases.length }}</span>
+      }
+    </button>
+    <button
+      id="tab-sales"
+      class="tab-btn"
+      [class.active]="activeTab === 'sales'"
+      (click)="setTab('sales')"
+    >
+      <mat-icon>storefront</mat-icon>
+      Sales
+      @if (sales.length > 0) {
+        <span class="tab-badge">{{ sales.length }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- Error banner -->
+  @if (errorMsg()) {
+    <div class="error-banner">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  }
+
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your order history…</p>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && activeOrders.length === 0 && !errorMsg()) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">
+        {{ activeTab === 'purchases' ? 'shopping_bag' : 'storefront' }}
+      </mat-icon>
+      <p>
+        @if (activeTab === 'purchases') {
+          You haven't purchased anything yet.
+        } @else {
+          No one has purchased your listings yet.
+        }
+      </p>
+      <button mat-flat-button color="primary" (click)="goBack()">Browse Marketplace</button>
+    </div>
+  }
+
+  <!-- Order cards -->
+  @if (!loading()) {
+    <div class="orders-list">
+      @for (order of activeOrders; track order.id) {
+        <div class="order-card">
+          <!-- Icon column -->
+          <div class="order-icon-col">
+            <div class="order-icon-bg">
+              <mat-icon>{{ activeTab === 'purchases' ? 'shopping_bag' : 'sell' }}</mat-icon>
+            </div>
+          </div>
+
+          <!-- Info column -->
+          <div class="order-info">
+            <h3 class="order-title">{{ order.listing_title }}</h3>
+            <div class="order-meta">
+              @if (activeTab === 'purchases') {
+                <span class="meta-chip seller-chip">
+                  <mat-icon class="chip-icon">store</mat-icon>
+                  Sold by {{ order.seller_name }}
+                </span>
+              } @else {
+                <span class="meta-chip buyer-chip">
+                  <mat-icon class="chip-icon">person</mat-icon>
+                  Bought by {{ order.buyer_name }}
+                </span>
+              }
+              <span class="meta-chip date-chip">
+                <mat-icon class="chip-icon">schedule</mat-icon>
+                {{ order.created_at | date: 'MMM d, y · h:mm a' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Price column -->
+          <div class="order-price-col">
+            <span class="order-price">{{ order.price | currency }}</span>
+            <span class="order-status completed">Completed</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</main>

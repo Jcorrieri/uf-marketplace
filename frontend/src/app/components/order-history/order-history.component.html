@@ -1,0 +1,79 @@
+<div class="order-history-container">
+  <h2 class="page-title">Order History</h2>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading your orders...</p>
+    </div>
+  } @else if (errorMsg()) {
+    <div class="error-message">
+      <mat-icon>error</mat-icon>
+      <p>{{ errorMsg() }}</p>
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="empty-state">
+      <mat-icon>shopping_cart</mat-icon>
+      <p>No orders yet</p>
+      <p class="hint">Items you purchase will appear here</p>
+    </div>
+  } @else {
+    <div class="orders-list">
+      @for (order of orders(); track order.id) {
+        <mat-card class="order-card">
+          <mat-card-header>
+            <div class="order-id-section">
+              <span class="order-id">Order #{{ order.id }}</span>
+              <span [ngClass]="'status-badge status-' + order.status">
+                {{ order.status | titlecase }}
+              </span>
+            </div>
+            <div class="order-date">
+              {{ formatDate(order.created_at) }}
+            </div>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="order-detail-row">
+              <span class="label">Item:</span>
+              <span class="value">{{ order.listing_name }}</span>
+            </div>
+            <div class="order-detail-row">
+              <span class="label">Seller:</span>
+              <span class="value">{{ order.seller_name }}</span>
+            </div>
+            <div class="order-detail-row">
+              <span class="label">Price:</span>
+              <span class="value">${{ order.price.toFixed(2) }}</span>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            @if (order.status === 'pending') {
+              <button
+                mat-raised-button
+                color="warn"
+                (click)="cancelOrder(order.id)"
+              >
+                <mat-icon>close</mat-icon>
+                Cancel Order
+              </button>
+            }
+            <button mat-button>
+              <mat-icon>info</mat-icon>
+              Details
+            </button>
+            <button
+              mat-button
+              color="warn"
+              (click)="deleteOrder(order.id)"
+            >
+              <mat-icon>delete</mat-icon>
+              Delete from History
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

@@ -1,6 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, signal, Output, EventEmitter } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, NgIf } from '@angular/common';
+
+import { AuthService } from '../../services/auth.service';
+import { OrderService } from '../../services/order.service';
 
 export interface Listing {
   id: string;
@@ -10,6 +13,7 @@ export interface Listing {
   description: string;
   price: number;
   seller_name: string;
+  seller_id: string;
 }
 
 export interface ListingRequest {
@@ -21,12 +25,56 @@ export interface ListingRequest {
 
 @Component({
   selector: 'app-listing',
-  imports: [MatIconModule, CurrencyPipe],
+  imports: [MatIconModule, CurrencyPipe, NgIf],
   templateUrl: './listing.html',
   styleUrl: './listing.css',
 })
 export class Listing {
   @Input({ required: true }) listing!: Listing;
+  @Output() purchased = new EventEmitter<string>();
+
+  purchasing = signal(false);
+  purchaseSuccess = signal(false);
+  purchaseError = signal('');
+
+  constructor(
+    private authService: AuthService,
+    private orderService: OrderService,
+  ) {}
+
+  /** Returns true when a user is logged in. */
+  get canBuy(): boolean {
+    return !!this.authService.currentUser();
+  }
+
+  async buy(event: MouseEvent) {
+    // Prevent card-level click propagation if any.
+    event.stopPropagation();
+
+    if (this.purchasing()) return;
+
+    if (!confirm(`Purchase "${this.listing.title}" for ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.listing.price)}?`)) {
+      return;
+    }
+
+    this.purchasing.set(true);
+    this.purchaseError.set('');
+    this.purchaseSuccess.set(false);
+
+    try {
+      await this.orderService.createOrder(this.listing.id);
+      this.purchaseSuccess.set(true);
+      // Emit event so parent can remove item from list
+      this.purchased.emit(this.listing.id);
+      // Auto-clear success message after 4 s.
+      setTimeout(() => this.purchaseSuccess.set(false), 4000);
+    } catch (e: unknown) {
+      this.purchaseError.set(e instanceof Error ? e.message : 'Purchase failed.');
+      setTimeout(() => this.purchaseError.set(''), 4000);
+    } finally {
+      this.purchasing.set(false);
+    }
+  }
 
   timeAgo(date: Date): string {
     const now = new Date();
@@ -41,3 +89,4 @@ export class Listing {
     return date.toLocaleDateString();
   }
 }
+
