@@ -1,110 +1,52 @@
 import { Injectable } from '@angular/core';
 
 export interface Order {
-  id: number;
-  listing_id: number;
-  listing_name: string;
+  id: string;
+  listing_id: string;
+  listing_title: string;
   price: number;
-  seller_name: string;
+  buyer_id: string;
   buyer_name: string;
-  status: 'pending' | 'completed' | 'cancelled';
+  seller_id: string;
+  seller_name: string;
   created_at: string;
-  updated_at: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrderService {
-  private baseUrl = '/api/orders';
-
-  async createOrder(listingId: number): Promise<Order> {
-    const response = await fetch(this.baseUrl, {
+  /**
+   * Creates a new purchase order for the given listing.
+   * The backend will validate the buyer is not the seller.
+   */
+  async createOrder(listingId: string): Promise<Order> {
+    const res = await fetch('/api/orders', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ listing_id: listingId }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to create order');
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || 'Failed to place order');
     }
 
-    return response.json();
+    return res.json() as Promise<Order>;
   }
 
-  async getBuyerOrderHistory(
-    limit: number = 20,
-    offset: number = 0
-  ): Promise<{ orders: Order[]; count: number }> {
-    const params = new URLSearchParams();
-    params.set('limit', limit.toString());
-    params.set('offset', offset.toString());
-
-    const response = await fetch(`${this.baseUrl}/buyer/me?${params.toString()}`, {
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch order history');
-    }
-
-    return response.json();
+  /** Returns all orders where the current user is the buyer. */
+  async getMyPurchases(): Promise<Order[]> {
+    const res = await fetch('/api/orders/purchases', { credentials: 'include' });
+    if (!res.ok) throw new Error('Failed to load purchase history');
+    return (await res.json()) as Order[];
   }
 
-  async getSellerOrderHistory(
-    limit: number = 20,
-    offset: number = 0
-  ): Promise<{ orders: Order[]; count: number }> {
-    const params = new URLSearchParams();
-    params.set('limit', limit.toString());
-    params.set('offset', offset.toString());
-
-    const response = await fetch(`${this.baseUrl}/seller/me?${params.toString()}`, {
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch sales history');
-    }
-
-    return response.json();
-  }
-
-  async getOrder(orderId: number): Promise<Order> {
-    const response = await fetch(`${this.baseUrl}/${orderId}`, {
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch order');
-    }
-
-    return response.json();
-  }
-
-  async cancelOrder(orderId: number): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/${orderId}/cancel`, {
-      method: 'PUT',
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to cancel order');
-    }
-  }
-
-  async deleteOrder(orderId: number): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/${orderId}`, {
-      method: 'DELETE',
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to delete order');
-    }
+  /** Returns all orders where the current user is the seller. */
+  async getMySales(): Promise<Order[]> {
+    const res = await fetch('/api/orders/sales', { credentials: 'include' });
+    if (!res.ok) throw new Error('Failed to load sales history');
+    return (await res.json()) as Order[];
   }
 }
