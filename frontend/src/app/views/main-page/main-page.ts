@@ -105,6 +105,10 @@ export class MainPage implements OnInit {
     await this.fetchListings(request);
   }
 
+  openListing(listing: Listing) {
+    this.router.navigate(['/product', listing.id], { state: { listing } });
+  }
+
   openAddModal() {
     this.router.navigate(['/create-listing']);
   }

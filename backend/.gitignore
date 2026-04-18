@@ -29,6 +29,7 @@ go.work.sum
 *.db
 *.sqlite
 *.sqlite3
+test_db
 
 # Editor/IDE
 # .idea/

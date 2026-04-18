@@ -23,7 +23,9 @@
 <!-- Listing grid -->
 <main class="listing-grid">
   @for (listing of filteredListings; track listing.id) {
-    <app-listing [listing]="listing"></app-listing>
+    <div class="listing-link" (click)="openListing(listing)">
+      <app-listing [listing]="listing"></app-listing>
+    </div>
   }
   @if (filteredListings?.length === 0) {
     <div class="no-results">

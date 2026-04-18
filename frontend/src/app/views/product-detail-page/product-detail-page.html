@@ -1,0 +1,88 @@
+<!-- Header -->
+<header class="detail-header">
+  <div class="header-left">
+    <button class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <img src="gator-logo.png" alt="UF Logo" class="gator-icon" />
+    <span class="brand-text">UF MarketPlace</span>
+  </div>
+  <app-avatar-dropdown></app-avatar-dropdown>
+</header>
+
+@if (loading) {
+  <div class="loading-state">
+    <mat-icon>hourglass_empty</mat-icon>
+    <p>Loading product details...</p>
+  </div>
+}
+
+@if (error) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>Product not found</p>
+    <button class="back-link" (click)="goBack()">Back to marketplace</button>
+  </div>
+}
+
+@if (!loading && !error && listing) {
+  <main class="product-detail">
+    <!-- Image gallery -->
+    <section class="image-section">
+      @if (imageUrls.length > 0) {
+        <div class="main-image-container">
+          <img [src]="imageUrls[selectedImageIndex]" [alt]="listing.title" class="main-image" />
+        </div>
+        @if (imageUrls.length > 1) {
+          <div class="thumbnail-row">
+            @for (url of imageUrls; track url; let i = $index) {
+              <img
+                [src]="url"
+                [alt]="listing.title + ' image ' + (i + 1)"
+                class="thumbnail"
+                [class.active]="i === selectedImageIndex"
+                (click)="selectImage(i)"
+              />
+            }
+          </div>
+        }
+      } @else {
+        <div class="image-placeholder">
+          <mat-icon>image</mat-icon>
+          <span>No images available</span>
+        </div>
+      }
+    </section>
+
+    <!-- Product info -->
+    <section class="info-section">
+      <h1 class="product-title">{{ listing.title }}</h1>
+      <span class="product-price">{{ listing.price | currency }}</span>
+
+      <div class="seller-info">
+        <mat-icon>person</mat-icon>
+        <span
+          >Sold by <strong>{{ listing.seller_name }}</strong></span
+        >
+      </div>
+
+      <div class="divider"></div>
+
+      <h2 class="section-label">Description</h2>
+      <p class="product-description">{{ listing.description }}</p>
+
+      <div class="divider"></div>
+
+      <div class="action-buttons">
+        <button class="purchase-btn" (click)="purchase()">
+          <mat-icon>shopping_cart</mat-icon>
+          Buy Now
+        </button>
+        <button class="message-btn" disabled>
+          <mat-icon>chat</mat-icon>
+          Message Seller
+        </button>
+      </div>
+    </section>
+  </main>
+}
