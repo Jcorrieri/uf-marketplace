@@ -31,11 +31,7 @@
     <section class="image-section">
       @if (imageUrls.length > 0) {
         <div class="main-image-container">
-          <img
-            [src]="imageUrls[selectedImageIndex]"
-            [alt]="listing.title"
-            class="main-image"
-          />
+          <img [src]="imageUrls[selectedImageIndex]" [alt]="listing.title" class="main-image" />
         </div>
         @if (imageUrls.length > 1) {
           <div class="thumbnail-row">
@@ -65,7 +61,9 @@
 
       <div class="seller-info">
         <mat-icon>person</mat-icon>
-        <span>Sold by <strong>{{ listing.seller_name }}</strong></span>
+        <span
+          >Sold by <strong>{{ listing.seller_name }}</strong></span
+        >
       </div>
 
       <div class="divider"></div>

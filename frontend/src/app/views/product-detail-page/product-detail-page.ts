@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +24,7 @@ export class ProductDetailPage implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit() {
@@ -49,6 +50,7 @@ export class ProductDetailPage implements OnInit {
     }
 
     this.loading = false;
+    this.cdr.detectChanges();
   }
 
   selectImage(index: number) {
