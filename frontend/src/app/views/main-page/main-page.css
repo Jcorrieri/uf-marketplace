@@ -110,6 +110,13 @@ app-avatar-dropdown {
   margin: 0 auto;
 }
 
+.listing-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: pointer;
+}
+
 .no-results {
   grid-column: 1 / -1;
   text-align: center;
