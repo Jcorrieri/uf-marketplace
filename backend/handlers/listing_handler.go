@@ -27,7 +27,11 @@ func (h *ListingHandler) GetListings(c *gin.Context) {
 		return
 	}
 
-	cursor := c.Query("cursor") // UUID string, empty or "0" means no cursor
+	cursor, err := uuid.Parse(c.Query("cursor")) // UUID string, empty or "0" means no cursor
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid cursor parameter."})
+		return
+	}
 
 	var listings []models.Listing
 
@@ -54,15 +58,9 @@ func (h *ListingHandler) GetListings(c *gin.Context) {
 
 // POST /api/listings (multipart form)
 func (h *ListingHandler) CreateListing(c *gin.Context) {
-	userIDStr, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-
-	sellerID, err := uuid.Parse(userIDStr.(string))
+	userID, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
@@ -85,7 +83,7 @@ func (h *ListingHandler) CreateListing(c *gin.Context) {
 		Title:       title,
 		Description: description,
 		Price:       price,
-		SellerID:    sellerID,
+		SellerID:    userID,
 	}
 
 	// Parse multiple image files
@@ -115,13 +113,13 @@ func (h *ListingHandler) CreateListing(c *gin.Context) {
 
 // GET /api/listings/me
 func (h *ListingHandler) GetMyListings(c *gin.Context) {
-	userIDStr, exists := c.Get("userID")
-	if !exists {
+	userID, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	listings, err := h.listingService.GetBySellerID(c.Request.Context(), userIDStr.(string))
+	listings, err := h.listingService.GetBySellerID(c.Request.Context(), userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch listings."})
 		return
@@ -137,45 +135,39 @@ func (h *ListingHandler) GetMyListings(c *gin.Context) {
 
 // PUT /api/listings/:id
 func (h *ListingHandler) UpdateListing(c *gin.Context) {
-	userIDStr, exists := c.Get("userID")
-	if !exists {
+	userID, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	listingID := c.Param("id")
-	listing, err := h.listingService.GetByID(c.Request.Context(), listingID)
+	listingID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Listing not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
 
-	if listing.SellerID.String() != userIDStr.(string) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "You can only edit your own listings"})
+	listing, err := h.listingService.GetByID(c.Request.Context(), listingID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Listing not found"})
+	}
+
+	if userID != listing.SellerID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
 		return
 	}
 
 	description := c.PostForm("description")
 	priceStr := c.PostForm("price")
 
-	updates := map[string]interface{}{}
-	if description != "" {
-		updates["description"] = description
-	}
+	var price float64
 	if priceStr != "" {
-		price, err := strconv.ParseFloat(priceStr, 64)
+		parsed, err := strconv.ParseFloat(priceStr, 64)
 		if err != nil || price < 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid price"})
 			return
 		}
-		updates["price"] = price
-	}
-
-	if len(updates) > 0 {
-		if err := h.listingService.Update(c.Request.Context(), &listing, updates); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update listing"})
-			return
-		}
+		price = parsed
 	}
 
 	// Handle new images if provided
@@ -200,10 +192,18 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 		}
 	}
 
-	// Re-fetch to get updated data with images
-	updated, err := h.listingService.GetByID(c.Request.Context(), listingID)
+	updated, err := h.listingService.Update(
+		c.Request.Context(),
+		listingID,
+		services.UpdateListingRequest{
+			Title: "",
+			Description: description,
+			Price: price,
+		},
+	)
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch updated listing"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -212,21 +212,25 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 
 // DELETE /api/listings/:id
 func (h *ListingHandler) DeleteListing(c *gin.Context) {
-	userIDStr, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	userID, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
-	listingID := c.Param("id")
+	listingID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid listing ID"})
+		return
+	}
+
 	listing, err := h.listingService.GetByID(c.Request.Context(), listingID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Listing not found"})
-		return
 	}
 
-	if listing.SellerID.String() != userIDStr.(string) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "You can only delete your own listings"})
+	if userID != listing.SellerID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
 		return
 	}
 

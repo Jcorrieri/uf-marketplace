@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 // Our imports
 import { AuthService } from '../../services/auth.service';
 import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
-import { Listing, ListingRequest } from '../../components/listing/listing';
+import { Listing, ListingRequest, NULL_UUID } from '../../components/listing/listing';
 
 @Component({
   selector: 'app-main-page',
@@ -81,7 +81,7 @@ export class MainPage implements OnInit {
     key: '',
     query: '',
     limit: 20,
-    cursor: '',
+    cursor: NULL_UUID,
   };
 
   // search functionality
@@ -92,7 +92,7 @@ export class MainPage implements OnInit {
     const request = this.listingRequest;
     request.key = key;
     request.query = query;
-    request.cursor = ''; // Reset cursor upon new search
+    request.cursor = NULL_UUID; // Reset cursor upon new search
 
     // TODO: Maybe remove caching and just query the API every time? Not that expensive.
     if (!query) {
