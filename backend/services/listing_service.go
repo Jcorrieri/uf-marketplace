@@ -22,7 +22,7 @@ func (s *ListingService) Search(
 	key string,
 	query string,
 	limit int,
-	cursor string,
+	cursor uuid.UUID,
 ) ([]models.Listing, error) {
 
 	queryObj := gorm.G[models.Listing](s.db).
@@ -32,7 +32,7 @@ func (s *ListingService) Search(
 		Order("id DESC").
 		Limit(limit)
 
-	if cursor != "" && cursor != "0" {
+	if cursor != uuid.Nil {
 		queryObj = queryObj.Where("id < ?", cursor)
 	}
 
@@ -43,7 +43,7 @@ func (s *ListingService) Search(
 func (s *ListingService) GetAll(
 	ctx context.Context,
 	limit int,
-	cursor string,
+	cursor uuid.UUID,
 ) ([]models.Listing, error) {
 
 	queryObj := gorm.G[models.Listing](s.db).
@@ -52,14 +52,14 @@ func (s *ListingService) GetAll(
 		Order("id DESC").
 		Limit(limit)
 
-	if cursor != "" && cursor != "0" {
+	if cursor != uuid.Nil {
 		queryObj = queryObj.Where("id < ?", cursor)
 	}
 
 	return queryObj.Find(ctx)
 }
 
-func (s *ListingService) GetBySellerID(ctx context.Context, sellerID string) ([]models.Listing, error) {
+func (s *ListingService) GetBySellerID(ctx context.Context, sellerID uuid.UUID) ([]models.Listing, error) {
 	return gorm.G[models.Listing](s.db).
 		Preload("Seller", nil).
 		Preload("Images", ImageIDsOnly).
@@ -68,7 +68,7 @@ func (s *ListingService) GetBySellerID(ctx context.Context, sellerID string) ([]
 		Find(ctx)
 }
 
-func (s *ListingService) GetByID(ctx context.Context, id string) (models.Listing, error) {
+func (s *ListingService) GetByID(ctx context.Context, id uuid.UUID) (models.Listing, error) {
 	return gorm.G[models.Listing](s.db).
 		Preload("Seller", nil).
 		Preload("Images", ImageIDsOnly).
@@ -80,8 +80,42 @@ func (s *ListingService) Create(ctx context.Context, listing *models.Listing) er
 	return gorm.G[models.Listing](s.db).Create(ctx, listing)
 }
 
-func (s *ListingService) Update(ctx context.Context, listing *models.Listing, fields map[string]interface{}) error {
-	return s.db.WithContext(ctx).Model(listing).Omit("Images", "Seller").Updates(fields).Error
+type UpdateListingRequest struct {
+	Title string
+	Description string
+	Price float64
+}
+
+func (s *ListingService) Update(
+	ctx context.Context,
+	id uuid.UUID,
+	req UpdateListingRequest,
+) (*models.Listing, error) {
+
+	rows, err := gorm.G[models.Listing](s.db).
+		Where("id = ?", id).
+		Omit("Images").
+		Updates(ctx, models.Listing{
+			Title: req.Title,
+			Description: req.Description,
+			Price: req.Price,
+		})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if rows == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	// Get updated listing
+	listing, err := gorm.G[models.Listing](s.db).Where("id = ?", id).First(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+    return &listing, nil
 }
 
 func (s *ListingService) ReplaceImages(ctx context.Context, listingID uuid.UUID, newImages []models.Image) error {
@@ -104,10 +138,19 @@ func (s *ListingService) ReplaceImages(ctx context.Context, listingID uuid.UUID,
 	})
 }
 
-func (s *ListingService) Delete(ctx context.Context, id string) error {
-	parsedID, err := uuid.Parse(id)
+func (s *ListingService) Delete(ctx context.Context, id uuid.UUID) error {
+	// Deleting a record requires some additional processing. Gorm
+	// uses soft deletion by default (see https://gorm.io/docs/delete.html#Soft-Delete).
+	rowsAffected, err := gorm.G[models.Listing](s.db).Where("id = ?", id).Delete(ctx)
+
 	if err != nil {
 		return err
 	}
-	return s.db.WithContext(ctx).Delete(&models.Listing{ID: parsedID}).Error
+
+	// No affected rows ⇒ no record existed; should return an error
+	if rowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }

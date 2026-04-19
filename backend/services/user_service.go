@@ -102,15 +102,13 @@ func (s *UserService) Update(
 	req UpdateUserRequest,
 ) (*models.User, error) {
 
-	updatedUser := models.User{
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-	}
-
 	rows, err := gorm.G[models.User](s.db).
 		Where("id = ?", id).
 		Select("FirstName", "LastName").
-		Updates(ctx, updatedUser)
+		Updates(ctx, models.User{
+			FirstName: req.FirstName,
+			LastName: req.LastName,
+		})
 
 	if err != nil {
 		return nil, err
