@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 import { AuthService } from '../../services/auth.service';
+import { OrderService } from '../../services/order.service';
 import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
 import { Listing } from '../../components/listing/listing';
 
@@ -24,6 +25,7 @@ export class ProductDetailPage implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private orderService: OrderService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -62,7 +64,20 @@ export class ProductDetailPage implements OnInit {
   }
 
   purchase() {
-    // TODO: Backend team will implement purchase endpoint
-    alert('Purchase functionality coming soon! Your backend team will wire this up.');
+    if (!this.listing) return;
+
+    // Backend does not yet have a purchase endpoint. We record the order
+    // locally so the user can see it in their order history. When the real
+    // endpoint ships, replace this with the API call and keep the navigation.
+    this.orderService.recordPurchase({
+      listing_id: this.listing.id,
+      title: this.listing.title,
+      description: this.listing.description,
+      price: this.listing.price,
+      first_image_id: this.listing.first_image_id,
+      seller_name: this.listing.seller_name,
+    });
+
+    this.router.navigate(['/orders']);
   }
 }
