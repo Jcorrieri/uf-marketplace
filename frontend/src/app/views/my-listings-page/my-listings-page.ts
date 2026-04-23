@@ -141,6 +141,7 @@ export class MyListingsPage implements OnInit {
       }
 
       const updated = await res.json();
+      console.log(updated);
       const idx = this.listings.findIndex((l) => l.id === listing.id);
       if (idx !== -1) {
         this.listings[idx] = updated;

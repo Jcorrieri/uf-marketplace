@@ -118,22 +118,20 @@ func (s *ListingService) Update(
     return &listing, nil
 }
 
-func (s *ListingService) ReplaceImages(ctx context.Context, listingID uuid.UUID, newImages []models.Image) error {
-	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// Delete old images for this listing
-		if err := tx.Unscoped().Where("owner_id = ? AND owner_type = ?", listingID, "listings").Delete(&models.Image{}).Error; err != nil {
+func (s *ListingService) ReplaceImages(ctx context.Context, listingID uuid.UUID, newImages []CreateImageRequest) error {
+	return s.db.Transaction(func(tx *gorm.DB) error {
+		imageService := NewImageService(tx)
+
+		// Delete (permanently) old images for this listing
+		if err := imageService.DeleteAllByOwner(ctx, listingID); err != nil {
 			return err
 		}
+
 		// Insert new images
-		if len(newImages) > 0 {
-			for i := range newImages {
-				newImages[i].OwnerID = listingID
-				newImages[i].OwnerType = "listings"
-			}
-			if err := tx.Create(&newImages).Error; err != nil {
-				return err
-			}
+		if err := imageService.CreateInBatches(ctx, newImages); err != nil {
+			return err
 		}
+
 		return nil
 	})
 }
@@ -141,6 +139,7 @@ func (s *ListingService) ReplaceImages(ctx context.Context, listingID uuid.UUID,
 func (s *ListingService) Delete(ctx context.Context, id uuid.UUID) error {
 	// Deleting a record requires some additional processing. Gorm
 	// uses soft deletion by default (see https://gorm.io/docs/delete.html#Soft-Delete).
+	// TODO: Update to delete images within transaction
 	rowsAffected, err := gorm.G[models.Listing](s.db).Where("id = ?", id).Delete(ctx)
 
 	if err != nil {

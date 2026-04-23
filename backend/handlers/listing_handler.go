@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -181,14 +182,16 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 	// Handle new images if provided
 	form, err := c.MultipartForm()
 	if err == nil && form.File["images"] != nil {
-		var newImages []models.Image
+		var newImages []services.CreateImageRequest
 		for i, fileHeader := range form.File["images"] {
 			data, mimeType, err := utils.ProcessImageFile(fileHeader)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			newImages = append(newImages, models.Image{
+			newImages = append(newImages, services.CreateImageRequest{
+				OwnerID: listingID,
+				OwnerType: "listings",
 				Data:     data,
 				MimeType: mimeType,
 				Position: i,
@@ -204,6 +207,8 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	fmt.Println(updated.Images)
 
 	c.JSON(http.StatusOK, updated.GetResponse())
 }
