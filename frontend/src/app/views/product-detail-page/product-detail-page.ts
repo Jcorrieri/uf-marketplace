@@ -63,21 +63,21 @@ export class ProductDetailPage implements OnInit {
     this.router.navigate(['/main']);
   }
 
-  purchase() {
+  async purchase() {
     if (!this.listing) return;
 
-    // Backend does not yet have a purchase endpoint. We record the order
-    // locally so the user can see it in their order history. When the real
-    // endpoint ships, replace this with the API call and keep the navigation.
-    this.orderService.recordPurchase({
-      listing_id: this.listing.id,
-      title: this.listing.title,
-      description: this.listing.description,
-      price: this.listing.price,
-      first_image_id: this.listing.first_image_id,
-      seller_name: this.listing.seller_name,
-    });
-
-    this.router.navigate(['/orders']);
+    try {
+      await this.orderService.recordPurchase({
+        listing_id: this.listing.id,
+        title: this.listing.title,
+        description: this.listing.description,
+        price: this.listing.price,
+        first_image_id: this.listing.first_image_id,
+        seller_name: this.listing.seller_name,
+      });
+      this.router.navigate(['/orders']);
+    } catch {
+      // keep user on page if purchase fails
+    }
   }
 }
