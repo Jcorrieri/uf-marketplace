@@ -46,7 +46,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	}
 
 	listingID, err := uuid.Parse(input.ListingID)
-	if err != nil {
+	if err != nil || listingID == uuid.Nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid listing ID"})
 		return
 	}
