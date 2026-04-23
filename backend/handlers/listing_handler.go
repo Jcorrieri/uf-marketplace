@@ -157,18 +157,26 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 		return
 	}
 
-	description := c.PostForm("description")
 	priceStr := c.PostForm("price")
 
 	var price float64
 	if priceStr != "" {
-		parsed, err := strconv.ParseFloat(priceStr, 64)
+		price, err = strconv.ParseFloat(priceStr, 64)
 		if err != nil || price < 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid price"})
 			return
 		}
-		price = parsed
 	}
+
+	updated, err := h.listingService.Update(
+		c.Request.Context(),
+		listingID,
+		services.UpdateListingRequest{
+			Title: c.PostForm("title"),
+			Description: c.PostForm("description"),
+			Price: price,
+		},
+	)
 
 	// Handle new images if provided
 	form, err := c.MultipartForm()
@@ -191,16 +199,6 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 			return
 		}
 	}
-
-	updated, err := h.listingService.Update(
-		c.Request.Context(),
-		listingID,
-		services.UpdateListingRequest{
-			Title: "",
-			Description: description,
-			Price: price,
-		},
-	)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

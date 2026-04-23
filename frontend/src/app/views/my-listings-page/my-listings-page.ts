@@ -19,6 +19,7 @@ interface MyListing {
 }
 
 interface EditState {
+  title: string;
   description: string;
   price: number;
   newImages: { file: File; url: string }[];
@@ -41,7 +42,7 @@ interface EditState {
 export class MyListingsPage implements OnInit {
   listings: MyListing[] = [];
   editingId: string | null = null;
-  editState: EditState = { description: '', price: 0, newImages: [] };
+  editState: EditState = { title: '', description: '', price: 0, newImages: [] };
   saving = signal(false);
   errorMsg = signal('');
 
@@ -69,6 +70,7 @@ export class MyListingsPage implements OnInit {
   startEdit(listing: MyListing) {
     this.editingId = listing.id;
     this.editState = {
+      title: listing.title,
       description: listing.description,
       price: listing.price,
       newImages: [],
@@ -79,7 +81,7 @@ export class MyListingsPage implements OnInit {
   cancelEdit() {
     this.editingId = null;
     this.editState.newImages.forEach((img) => URL.revokeObjectURL(img.url));
-    this.editState = { description: '', price: 0, newImages: [] };
+    this.editState = { title: '', description: '', price: 0, newImages: [] };
   }
 
   onImagesSelected(event: Event) {
@@ -118,6 +120,7 @@ export class MyListingsPage implements OnInit {
 
     try {
       const formData = new FormData();
+      formData.append('title', this.editState.title);
       formData.append('description', this.editState.description);
       formData.append('price', this.editState.price.toString());
 
@@ -144,7 +147,7 @@ export class MyListingsPage implements OnInit {
       }
       this.editingId = null;
       this.editState.newImages.forEach((img) => URL.revokeObjectURL(img.url));
-      this.editState = { description: '', price: 0, newImages: [] };
+      this.editState = { title: '', description: '', price: 0, newImages: [] };
     } catch {
       this.errorMsg.set('Unable to reach the server.');
     } finally {
