@@ -32,9 +32,15 @@ export class OrderHistoryPage implements OnInit {
       // allow page to render even if user fetch fails
     }
 
-    this.orders.set(this.orderService.getOrders());
-    this.loading.set(false);
-    this.cdr.detectChanges();
+    try {
+      const orders = await this.orderService.getOrders();
+      this.orders.set(orders);
+    } catch {
+      this.orders.set([]);
+    } finally {
+      this.loading.set(false);
+      this.cdr.detectChanges();
+    }
   }
 
   get totalSpent(): number {
