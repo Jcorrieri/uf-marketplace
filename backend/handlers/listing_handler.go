@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -169,6 +168,27 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 		}
 	}
 
+	// Handle new images if provided
+	var newImageBatch []services.CreateImageRequest
+
+	form, err := c.MultipartForm()
+	if err == nil && form.File["images"] != nil {
+		for i, fileHeader := range form.File["images"] {
+			data, mimeType, err := utils.ProcessImageFile(fileHeader)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			newImageBatch = append(newImageBatch, services.CreateImageRequest{
+				OwnerID: listingID,
+				OwnerType: "listings",
+				Data:     data,
+				MimeType: mimeType,
+				Position: i,
+			})
+		}
+	}
+
 	updated, err := h.listingService.Update(
 		c.Request.Context(),
 		listingID,
@@ -177,38 +197,13 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 			Description: c.PostForm("description"),
 			Price: price,
 		},
+		newImageBatch,
 	)
-
-	// Handle new images if provided
-	form, err := c.MultipartForm()
-	if err == nil && form.File["images"] != nil {
-		var newImages []services.CreateImageRequest
-		for i, fileHeader := range form.File["images"] {
-			data, mimeType, err := utils.ProcessImageFile(fileHeader)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			newImages = append(newImages, services.CreateImageRequest{
-				OwnerID: listingID,
-				OwnerType: "listings",
-				Data:     data,
-				MimeType: mimeType,
-				Position: i,
-			})
-		}
-		if err := h.listingService.ReplaceImages(c.Request.Context(), listing.ID, newImages); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update images"})
-			return
-		}
-	}
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	fmt.Println(updated.Images)
 
 	c.JSON(http.StatusOK, updated.GetResponse())
 }
