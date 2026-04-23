@@ -111,16 +111,18 @@ func (s *ListingService) Update(
 			return gorm.ErrRecordNotFound
 		}
 
-		imageService := NewImageService(tx)
+		if len(imageBatch) > 0 {
+			imageService := NewImageService(tx)
 
-		// Delete (permanently) old images for this listing
-		if err := imageService.DeleteAllByOwner(ctx, id); err != nil {
-			return err
-		}
+			// Delete (permanently) old images for this listing
+			if err := imageService.DeleteAllByOwner(ctx, id); err != nil {
+				return err
+			}
 
-		// Insert new images
-		if err := imageService.CreateInBatches(ctx, imageBatch); err != nil {
-			return err
+			// Insert new images
+			if err := imageService.CreateInBatches(ctx, imageBatch); err != nil {
+				return err
+			}
 		}
 
 		return nil
