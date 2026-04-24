@@ -26,12 +26,13 @@ func (s *OrderService) CreateFromListing(
 	var createdOrder *models.Order
 
 	// Use transaction to ensure both order creation and listing status update succeed together
-	err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := s.db.Transaction(func(tx *gorm.DB) error {
 		// Double-check listing is still available inside transaction to prevent race conditions
-		var currentListing models.Listing
-		if err := tx.Where("id = ?", listing.ID).First(&currentListing).Error; err != nil {
+		currentListing, err := gorm.G[models.Listing](tx).Where("id = ?", listing.ID).First(ctx)
+		if err != nil {
 			return err
 		}
+
 		if currentListing.Status != "available" {
 			return gorm.ErrRecordNotFound // Will be caught as 409 Conflict in handler
 		}
@@ -58,16 +59,17 @@ func (s *OrderService) CreateFromListing(
 			order.FirstImageID = &listing.Images[0].ID
 		}
 
-		if err := tx.Create(&order).Error; err != nil {
+		if err := gorm.G[models.Order](tx).Create(ctx, &order); err != nil {
 			return err
 		}
 
 		// Mark the listing as sold
-		result := tx.Model(&models.Listing{}).Where("id = ?", listing.ID).Update("status", "sold")
-		if result.Error != nil {
-			return result.Error
+		rowsAffected, err := gorm.G[models.Listing](tx).Where("id = ?", listing.ID).Update(ctx, "status", "sold")
+		if err != nil {
+			return err
 		}
-		if result.RowsAffected == 0 {
+
+		if rowsAffected == 0 {
 			return gorm.ErrRecordNotFound // Listing doesn't exist
 		}
 
