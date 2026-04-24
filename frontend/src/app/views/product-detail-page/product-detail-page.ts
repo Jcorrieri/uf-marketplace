@@ -69,11 +69,6 @@ export class ProductDetailPage implements OnInit {
     try {
       await this.orderService.recordPurchase({
         listing_id: this.listing.id,
-        title: this.listing.title,
-        description: this.listing.description,
-        price: this.listing.price,
-        first_image_id: this.listing.first_image_id,
-        seller_name: this.listing.seller_name,
       });
       this.router.navigate(['/orders']);
     } catch {

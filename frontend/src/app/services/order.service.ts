@@ -18,11 +18,6 @@ export interface OrderRecord {
 
 export interface PurchaseInput {
   listing_id: string;
-  title: string;
-  description: string;
-  price: number;
-  first_image_id: string | null;
-  seller_name: string;
 }
 
 @Injectable({ providedIn: 'root' })
