@@ -10,22 +10,22 @@ import (
 )
 
 type OrderHandler struct {
-	orderService *services.OrderService
+	orderService   *services.OrderService
+	listingService *services.ListingService
 }
 
-func NewOrderHandler(orderService *services.OrderService) *OrderHandler {
+func NewOrderHandler(
+	orderService *services.OrderService,
+	listingService *services.ListingService,
+) *OrderHandler {
 	return &OrderHandler{
-		orderService: orderService,
+		orderService:   orderService,
+		listingService: listingService,
 	}
 }
 
 type CreateOrderRequest struct {
-	ListingID    string  `json:"listing_id" binding:"required"`
-	Title        string  `json:"title" binding:"required"`
-	Description  string  `json:"description" binding:"required"`
-	Price        float64 `json:"price" binding:"required"`
-	FirstImageID *string `json:"first_image_id"`
-	SellerName   string  `json:"seller_name" binding:"required"`
+	ListingID string `json:"listing_id" binding:"required"`
 }
 
 // POST /api/orders
@@ -48,32 +48,23 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	if input.Price < 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid price"})
+	// Load listing from DB to ensure data integrity
+	listing, err := h.listingService.GetByID(c.Request.Context(), listingID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Listing not found"})
 		return
 	}
 
-	var firstImageID *uuid.UUID
-	if input.FirstImageID != nil && *input.FirstImageID != "" {
-		parsed, err := uuid.Parse(*input.FirstImageID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid first_image_id"})
-			return
-		}
-		firstImageID = &parsed
+	// Check if listing is still available
+	if listing.Status != "available" {
+		c.JSON(http.StatusConflict, gin.H{"error": "Listing is no longer available"})
+		return
 	}
 
-	order, err := h.orderService.CreateFromInput(
+	order, err := h.orderService.CreateFromListing(
 		c.Request.Context(),
 		userID,
-		services.CreateOrderInput{
-			ListingID:    listingID,
-			Title:        input.Title,
-			Description:  input.Description,
-			Price:        input.Price,
-			FirstImageID: firstImageID,
-			SellerName:   input.SellerName,
-		},
+		&listing,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})

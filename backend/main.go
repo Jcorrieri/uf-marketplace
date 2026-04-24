@@ -89,7 +89,7 @@ func main() {
 	userHandler := handlers.NewUserHandler(userService)
 	listingHandler := handlers.NewListingHandler(listingService)
 	imageHandler := handlers.NewImageHandler(imageService)
-	orderHandler := handlers.NewOrderHandler(orderService)
+	orderHandler := handlers.NewOrderHandler(orderService, listingService)
 
 	// Middleware
 	authMiddleware := middleware.AuthMiddleware(os.Getenv("JWT_SECRET"), sessionName)
