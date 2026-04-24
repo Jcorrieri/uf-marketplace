@@ -38,12 +38,15 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 
 	var input CreateOrderRequest
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Listing ID is required"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Invalid request body",
+			"details": err.Error(),
+		})
 		return
 	}
 
 	listingID, err := uuid.Parse(input.ListingID)
-	if err != nil {
+	if err != nil || listingID == uuid.Nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid listing ID"})
 		return
 	}
