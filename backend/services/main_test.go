@@ -3,9 +3,9 @@ package services_test
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"testing"
-	"fmt"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
 	"github.com/google/uuid"
@@ -35,6 +35,7 @@ func setupDB() {
 		&models.User{},
 		&models.Image{},
 		&models.Listing{},
+		&models.Order{},
 	)
 	if err != nil {
 		fmt.Println("Failed to automigrate")
@@ -61,8 +62,8 @@ func setupDB() {
 		OwnerID:   uuid.New(),
 		OwnerType: "listing",
 		Position:  0,
-		Data: []byte{},
-		MimeType: "jpg",
+		Data:      []byte{},
+		MimeType:  "jpg",
 	}
 	if err := gorm.G[models.Image](db).Create(ctx, &testImage); err != nil {
 		fmt.Println("Failed to create image.")
