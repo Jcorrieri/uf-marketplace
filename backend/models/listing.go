@@ -12,7 +12,7 @@ type Listing struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Price       float64   `json:"price"`
-	Status      string    `json:"status" gorm:"size:32;default:'available'"` // available or sold
+	Status      string    `json:"status" gorm:"size:32;default:'available';index"` // available or sold
 	SellerID    uuid.UUID `json:"seller_id" gorm:"type:uuid,index"`
 	Seller      User      `json:"-" gorm:"foreignKey:SellerID"`
 	Images      []Image   `json:"images" gorm:"polymorphic:Owner;constraint:OnDelete:CASCADE;"`
