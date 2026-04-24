@@ -52,7 +52,7 @@ func Connect(dbName string) *gorm.DB {
 	err = db.AutoMigrate(
 		&models.User{},
 		&models.Listing{},
-		&models.Image{},
+		&models.Image{}, &models.Order{},
 	)
 
 	if err != nil {

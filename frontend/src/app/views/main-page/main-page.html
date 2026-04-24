@@ -27,7 +27,7 @@
       <app-listing [listing]="listing"></app-listing>
     </div>
   }
-  @if (filteredListings?.length === 0) {
+  @if (filteredListings.length === 0) {
     <div class="no-results">
       <mat-icon>search_off</mat-icon>
       <p>No items found for "{{ searchQuery }}"</p>

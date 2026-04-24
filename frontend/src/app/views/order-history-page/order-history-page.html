@@ -1,0 +1,125 @@
+<header class="page-header">
+  <div class="header-left">
+    <button class="back-btn" (click)="goBack()" aria-label="Back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <img src="gator-logo.png" alt="UF Logo" class="gator-icon" />
+    <span class="brand-text">UF MarketPlace</span>
+  </div>
+  <app-avatar-dropdown></app-avatar-dropdown>
+</header>
+
+<main class="page-content">
+  <div class="title-row">
+    <div>
+      <h1 class="page-title">Order History</h1>
+      <p class="page-subtitle">A record of everything you've purchased on UF MarketPlace.</p>
+    </div>
+
+    @if (orders().length > 0) {
+      <div class="summary-card">
+        <div class="summary-item">
+          <span class="summary-label">Orders</span>
+          <span class="summary-value">{{ orders().length }}</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span class="summary-label">Total spent</span>
+          <span class="summary-value">{{ totalSpent | currency }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-icon>hourglass_empty</mat-icon>
+      <p>Loading your orders...</p>
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">receipt_long</mat-icon>
+      <h2>No orders yet</h2>
+      <p>When you buy something on the marketplace, it will appear here.</p>
+      <button class="browse-btn" (click)="goBack()">
+        <mat-icon>storefront</mat-icon>
+        Browse Marketplace
+      </button>
+    </div>
+  } @else {
+    <ul class="order-list">
+      @for (order of orders(); track order.order_id) {
+        <li class="order-card">
+          <div class="order-card-header">
+            <div class="order-meta">
+              <span class="order-label">Order placed</span>
+              <span class="order-date">{{ order.purchased_at | date: 'fullDate' }}</span>
+              <span class="order-time">{{ order.purchased_at | date: 'shortTime' }}</span>
+            </div>
+            <div class="order-meta right">
+              <span class="order-label">Total</span>
+              <span class="order-total">{{ order.price | currency }}</span>
+            </div>
+            <div class="order-meta right">
+              <span class="order-label">Order #</span>
+              <span class="order-id">{{ order.order_id.slice(0, 8) }}</span>
+            </div>
+            <span
+              class="status-badge"
+              [class.status-completed]="order.status === 'Completed'"
+              [class.status-processing]="order.status === 'Processing'"
+              [class.status-shipped]="order.status === 'Shipped'"
+            >
+              <mat-icon>
+                @if (order.status === 'Completed') {
+                  check_circle
+                } @else if (order.status === 'Shipped') {
+                  local_shipping
+                } @else {
+                  hourglass_top
+                }
+              </mat-icon>
+              {{ order.status }}
+            </span>
+          </div>
+
+          <div class="order-card-body">
+            @if (order.first_image_id) {
+              <img
+                [src]="'/api/images/' + order.first_image_id"
+                [alt]="order.title"
+                class="order-image"
+              />
+            } @else {
+              <div class="order-image-placeholder">
+                <mat-icon>image</mat-icon>
+              </div>
+            }
+
+            <div class="order-details">
+              <h3 class="order-title">{{ order.title }}</h3>
+              <p class="order-description">{{ order.description }}</p>
+              <div class="order-seller">
+                <mat-icon>person</mat-icon>
+                <span
+                  >Sold by <strong>{{ order.seller_name }}</strong></span
+                >
+              </div>
+            </div>
+
+            <div class="order-actions">
+              <button class="secondary-btn" (click)="viewListing(order)">
+                <mat-icon>visibility</mat-icon>
+                View product
+              </button>
+              <button class="secondary-btn" disabled>
+                <mat-icon>chat</mat-icon>
+                Contact seller
+              </button>
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</main>

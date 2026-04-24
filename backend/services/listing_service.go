@@ -29,6 +29,7 @@ func (s *ListingService) Search(
 		Preload("Seller", nil).
 		Preload("Images", ImageIDsOnly).
 		Where(key+" LIKE ?", "%"+query+"%").
+		Where("status = ?", "available").
 		Order("id DESC").
 		Limit(limit)
 
@@ -49,6 +50,7 @@ func (s *ListingService) GetAll(
 	queryObj := gorm.G[models.Listing](s.db).
 		Preload("Seller", nil).
 		Preload("Images", ImageIDsOnly).
+		Where("status = ?", "available").
 		Order("id DESC").
 		Limit(limit)
 
@@ -81,9 +83,9 @@ func (s *ListingService) Create(ctx context.Context, listing *models.Listing) er
 }
 
 type UpdateListingRequest struct {
-	Title string
+	Title       string
 	Description string
-	Price float64
+	Price       float64
 }
 
 func (s *ListingService) Update(

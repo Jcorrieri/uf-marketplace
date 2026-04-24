@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 import { AuthService } from '../../services/auth.service';
+import { OrderService } from '../../services/order.service';
 import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
 import { Listing } from '../../components/listing/listing';
 
@@ -24,6 +25,7 @@ export class ProductDetailPage implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private orderService: OrderService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -61,8 +63,16 @@ export class ProductDetailPage implements OnInit {
     this.router.navigate(['/main']);
   }
 
-  purchase() {
-    // TODO: Backend team will implement purchase endpoint
-    alert('Purchase functionality coming soon! Your backend team will wire this up.');
+  async purchase() {
+    if (!this.listing) return;
+
+    try {
+      await this.orderService.recordPurchase({
+        listing_id: this.listing.id,
+      });
+      this.router.navigate(['/orders']);
+    } catch {
+      // keep user on page if purchase fails
+    }
   }
 }
