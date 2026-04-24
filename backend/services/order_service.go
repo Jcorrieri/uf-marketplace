@@ -58,8 +58,12 @@ func (s *OrderService) CreateFromListing(
 		}
 
 		// Mark the listing as sold
-		if err := tx.Model(&models.Listing{}).Where("id = ?", listing.ID).Update("status", "sold").Error; err != nil {
-			return err
+		result := tx.Model(&models.Listing{}).Where("id = ?", listing.ID).Update("status", "sold")
+		if result.Error != nil {
+			return result.Error
+		}
+		if result.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound // Listing doesn't exist
 		}
 
 		createdOrder = &order

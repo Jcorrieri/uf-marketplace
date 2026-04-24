@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type OrderHandler struct {
@@ -58,6 +60,12 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
+	// Prevent buyer from purchasing their own listing
+	if listing.SellerID == userID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot purchase your own listing"})
+		return
+	}
+
 	// Check if listing is still available
 	if listing.Status != "available" {
 		c.JSON(http.StatusConflict, gin.H{"error": "Listing is no longer available"})
@@ -71,7 +79,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	)
 	if err != nil {
 		// If error is record not found (from status check in transaction), listing is no longer available
-		if err.Error() == "record not found" {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusConflict, gin.H{"error": "Listing is no longer available"})
 			return
 		}
