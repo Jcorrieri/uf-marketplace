@@ -12,6 +12,7 @@ type Listing struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Price       float64   `json:"price"`
+	Status      string    `json:"status" gorm:"size:32;default:'available';index"` // available or sold
 	SellerID    uuid.UUID `json:"seller_id" gorm:"type:uuid,index"`
 	Seller      User      `json:"-" gorm:"foreignKey:SellerID"`
 	Images      []Image   `json:"images" gorm:"polymorphic:Owner;constraint:OnDelete:CASCADE;"`
@@ -32,6 +33,7 @@ type ListingResponse struct {
 	Title        string     `json:"title"`
 	Description  string     `json:"description"`
 	Price        float64    `json:"price"`
+	Status       string     `json:"status"`
 	ImageCount   int        `json:"image_count"`
 	FirstImageID *uuid.UUID `json:"first_image_id"`
 	SellerName   string     `json:"seller_name"`
@@ -49,6 +51,7 @@ func (l *Listing) GetResponse() ListingResponse {
 		Title:        l.Title,
 		Description:  l.Description,
 		Price:        l.Price,
+		Status:       l.Status,
 		ImageCount:   len(l.Images),
 		FirstImageID: firstImageID,
 		SellerName:   l.Seller.FirstName + " " + l.Seller.LastName,
