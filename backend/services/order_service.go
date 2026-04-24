@@ -36,6 +36,11 @@ func (s *OrderService) CreateFromListing(
 			return gorm.ErrRecordNotFound // Will be caught as 409 Conflict in handler
 		}
 
+		// Verify listing.Seller is loaded (defensive check)
+		if listing.Seller.ID == uuid.Nil {
+			return gorm.ErrRecordNotFound
+		}
+
 		order := models.Order{
 			BuyerID:      buyerID,
 			ListingID:    listing.ID,

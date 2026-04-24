@@ -32,8 +32,20 @@ type CreateOrderRequest struct {
 
 // POST /api/orders
 func (h *OrderHandler) CreateOrder(c *gin.Context) {
-	userID, err := uuid.Parse(c.MustGet("userID").(string))
-	if err != nil {
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	userIDStr, ok := userIDVal.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil || userID == uuid.Nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
@@ -92,8 +104,20 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 
 // GET /api/orders/me
 func (h *OrderHandler) GetMyOrders(c *gin.Context) {
-	userID, err := uuid.Parse(c.MustGet("userID").(string))
-	if err != nil {
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	userIDStr, ok := userIDVal.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil || userID == uuid.Nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
