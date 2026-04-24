@@ -70,6 +70,11 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		&listing,
 	)
 	if err != nil {
+		// If error is record not found (from status check in transaction), listing is no longer available
+		if err.Error() == "record not found" {
+			c.JSON(http.StatusConflict, gin.H{"error": "Listing is no longer available"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})
 		return
 	}

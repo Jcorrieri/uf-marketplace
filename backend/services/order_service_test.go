@@ -119,7 +119,7 @@ func TestOrderServiceCreateFromListingMarksAsSold(t *testing.T) {
 		t.Fatalf("Failed to fetch listing: %v", err)
 	}
 
-	// Try to create second order for same listing
+	// Try to create second order for same listing - should FAIL (race condition prevention)
 	buyer2 := models.User{
 		Email:     "buyer2@ufl.edu",
 		FirstName: "Buyer",
@@ -130,13 +130,11 @@ func TestOrderServiceCreateFromListingMarksAsSold(t *testing.T) {
 	}
 
 	order2, err := orderService.CreateFromListing(ctx, buyer2.ID, &listing)
-	// The handler should prevent this, but service should still create order
-	// (validation happens at handler level)
-	if err != nil {
-		// If there's an error, it should be a transaction error, not validation
-		t.Logf("Second order creation returned error (expected at handler level): %v", err)
-	} else if order2 != nil {
-		t.Logf("Note: Second order was created (handler validation required)")
+	if err == nil && order2 != nil {
+		t.Errorf("Second order should have failed but succeeded (race condition not prevented)")
+	}
+	if err == nil {
+		t.Errorf("Expected error for second order on sold listing, got nil")
 	}
 }
 

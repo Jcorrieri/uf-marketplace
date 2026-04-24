@@ -17,15 +17,6 @@ func NewOrderService(db *gorm.DB) *OrderService {
 	return &OrderService{db: db}
 }
 
-type CreateOrderInput struct {
-	ListingID    uuid.UUID
-	Title        string
-	Description  string
-	Price        float64
-	FirstImageID *uuid.UUID
-	SellerName   string
-}
-
 // CreateFromListing creates an order from a Listing model (server-side data)
 func (s *OrderService) CreateFromListing(
 	ctx context.Context,
@@ -36,6 +27,15 @@ func (s *OrderService) CreateFromListing(
 
 	// Use transaction to ensure both order creation and listing status update succeed together
 	err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// Double-check listing is still available inside transaction to prevent race conditions
+		var currentListing models.Listing
+		if err := tx.Where("id = ?", listing.ID).First(&currentListing).Error; err != nil {
+			return err
+		}
+		if currentListing.Status != "available" {
+			return gorm.ErrRecordNotFound // Will be caught as 409 Conflict in handler
+		}
+
 		order := models.Order{
 			BuyerID:      buyerID,
 			ListingID:    listing.ID,
@@ -59,48 +59,6 @@ func (s *OrderService) CreateFromListing(
 
 		// Mark the listing as sold
 		if err := tx.Model(&models.Listing{}).Where("id = ?", listing.ID).Update("status", "sold").Error; err != nil {
-			return err
-		}
-
-		createdOrder = &order
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return createdOrder, nil
-}
-
-// CreateFromInput creates an order from client input (kept for backward compatibility)
-func (s *OrderService) CreateFromInput(
-	ctx context.Context,
-	buyerID uuid.UUID,
-	input CreateOrderInput,
-) (*models.Order, error) {
-	var createdOrder *models.Order
-
-	// Use transaction to ensure both order creation and listing status update succeed together
-	err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		order := models.Order{
-			BuyerID:      buyerID,
-			ListingID:    input.ListingID,
-			Title:        input.Title,
-			Description:  input.Description,
-			Price:        input.Price,
-			FirstImageID: input.FirstImageID,
-			SellerName:   input.SellerName,
-			Status:       "Processing",
-			PurchasedAt:  time.Now().UTC(),
-		}
-
-		if err := tx.Create(&order).Error; err != nil {
-			return err
-		}
-
-		// Mark the listing as sold
-		if err := tx.Model(&models.Listing{}).Where("id = ?", input.ListingID).Update("status", "sold").Error; err != nil {
 			return err
 		}
 
