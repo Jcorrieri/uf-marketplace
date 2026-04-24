@@ -44,7 +44,7 @@ func (s *OrderService) CreateFromListing(
 			Price:        listing.Price,
 			FirstImageID: nil, // Will be set from images if available
 			SellerName:   listing.Seller.FirstName + " " + listing.Seller.LastName,
-			Status:       "Processing",
+			Status:       "Completed",
 			PurchasedAt:  time.Now().UTC(),
 		}
 

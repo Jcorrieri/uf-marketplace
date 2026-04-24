@@ -73,8 +73,8 @@ func TestOrderServiceCreateFromListingSuccess(t *testing.T) {
 		t.Errorf("Expected price %f, got %f", orderTestListing.Price, order.Price)
 	}
 
-	if order.Status != "Processing" {
-		t.Errorf("Expected status 'Processing', got %s", order.Status)
+	if order.Status != "Completed" {
+		t.Errorf("Expected status 'Completed', got %s", order.Status)
 	}
 
 	// Verify listing is marked as sold
