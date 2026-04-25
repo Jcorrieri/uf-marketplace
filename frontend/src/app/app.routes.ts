@@ -7,12 +7,14 @@ import { CreateListingPage } from './views/create-listing-page/create-listing-pa
 import { MyListingsPage } from './views/my-listings-page/my-listings-page';
 import { ProductDetailPage } from './views/product-detail-page/product-detail-page';
 import { OrderHistoryPage } from './views/order-history-page/order-history-page';
+import { ForgotPasswordPage } from './views/forgot-password-page/forgot-password-page';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginPage },
   { path: 'sign-up', component: SignUpPage },
+  { path: 'forgot-password', component: ForgotPasswordPage },
   { path: 'main', component: MainPage, canActivate: [authGuard] },
   { path: 'product/:id', component: ProductDetailPage, canActivate: [authGuard] },
   { path: 'profile', component: UserProfilePage, canActivate: [authGuard] },
