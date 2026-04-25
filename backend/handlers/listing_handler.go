@@ -157,38 +157,35 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 		return
 	}
 
-	description := c.PostForm("description")
 	priceStr := c.PostForm("price")
 
 	var price float64
 	if priceStr != "" {
-		parsed, err := strconv.ParseFloat(priceStr, 64)
+		price, err = strconv.ParseFloat(priceStr, 64)
 		if err != nil || price < 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid price"})
 			return
 		}
-		price = parsed
 	}
 
 	// Handle new images if provided
+	var newImageBatch []services.CreateImageRequest
+
 	form, err := c.MultipartForm()
 	if err == nil && form.File["images"] != nil {
-		var newImages []models.Image
 		for i, fileHeader := range form.File["images"] {
 			data, mimeType, err := utils.ProcessImageFile(fileHeader)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			newImages = append(newImages, models.Image{
+			newImageBatch = append(newImageBatch, services.CreateImageRequest{
+				OwnerID: listingID,
+				OwnerType: "listings",
 				Data:     data,
 				MimeType: mimeType,
 				Position: i,
 			})
-		}
-		if err := h.listingService.ReplaceImages(c.Request.Context(), listing.ID, newImages); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update images"})
-			return
 		}
 	}
 
@@ -196,10 +193,11 @@ func (h *ListingHandler) UpdateListing(c *gin.Context) {
 		c.Request.Context(),
 		listingID,
 		services.UpdateListingRequest{
-			Title: "",
-			Description: description,
+			Title: c.PostForm("title"),
+			Description: c.PostForm("description"),
 			Price: price,
 		},
+		newImageBatch,
 	)
 
 	if err != nil {

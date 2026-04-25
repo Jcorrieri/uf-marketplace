@@ -40,7 +40,15 @@
         <div class="listing-body">
           @if (editingId === listing.id) {
             <!-- Edit mode -->
-            <h3 class="listing-title">{{ listing.title }}</h3>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Title</mat-label>
+              <textarea
+                matInput
+                [(ngModel)]="editState.title"
+                rows="1"
+                maxlength="50"
+              ></textarea>
+            </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Description</mat-label>

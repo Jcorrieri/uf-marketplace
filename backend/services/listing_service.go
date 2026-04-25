@@ -92,27 +92,50 @@ func (s *ListingService) Update(
 	ctx context.Context,
 	id uuid.UUID,
 	req UpdateListingRequest,
+	imageBatch []CreateImageRequest,
 ) (*models.Listing, error) {
 
-	rows, err := gorm.G[models.Listing](s.db).
-		Where("id = ?", id).
-		Omit("Images").
-		Updates(ctx, models.Listing{
-			Title:       req.Title,
-			Description: req.Description,
-			Price:       req.Price,
-		})
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		rows, err := gorm.G[models.Listing](tx).
+			Where("id = ?", id).
+			Omit("Images").
+			Updates(ctx, models.Listing{
+				Title: req.Title,
+				Description: req.Description,
+				Price: req.Price,
+			})
+
+		if err != nil {
+			return err
+		}
+
+		if rows == 0 {
+			return gorm.ErrRecordNotFound
+		}
+
+		if len(imageBatch) > 0 {
+			imageService := NewImageService(tx)
+
+			// Delete (permanently) old images for this listing
+			if err := imageService.DeleteAllByOwner(ctx, id); err != nil {
+				return err
+			}
+
+			// Insert new images
+			if err := imageService.CreateInBatches(ctx, imageBatch); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 
 	if err != nil {
-		return nil, err
-	}
-
-	if rows == 0 {
-		return nil, gorm.ErrRecordNotFound
+		return nil, err 
 	}
 
 	// Get updated listing
-	listing, err := gorm.G[models.Listing](s.db).Where("id = ?", id).First(ctx)
+	listing, err := s.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -120,29 +143,10 @@ func (s *ListingService) Update(
 	return &listing, nil
 }
 
-func (s *ListingService) ReplaceImages(ctx context.Context, listingID uuid.UUID, newImages []models.Image) error {
-	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// Delete old images for this listing
-		if err := tx.Unscoped().Where("owner_id = ? AND owner_type = ?", listingID, "listings").Delete(&models.Image{}).Error; err != nil {
-			return err
-		}
-		// Insert new images
-		if len(newImages) > 0 {
-			for i := range newImages {
-				newImages[i].OwnerID = listingID
-				newImages[i].OwnerType = "listings"
-			}
-			if err := tx.Create(&newImages).Error; err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-}
-
 func (s *ListingService) Delete(ctx context.Context, id uuid.UUID) error {
 	// Deleting a record requires some additional processing. Gorm
 	// uses soft deletion by default (see https://gorm.io/docs/delete.html#Soft-Delete).
+	// TODO: Update to delete images within transaction
 	rowsAffected, err := gorm.G[models.Listing](s.db).Where("id = ?", id).Delete(ctx)
 
 	if err != nil {
