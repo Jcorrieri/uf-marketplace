@@ -68,17 +68,25 @@ export class ProductDetailPage implements OnInit {
   }
 
   async messageSeller() {
-  if (!this.listing) return;
-  try {
-    const convo = await this.chatService.startConversation(
-      this.listing.id,
-      this.listing.seller_id,
-    );
-    this.chatWidgetService.openChat(convo);
-  } catch {
-    console.error('Failed to start conversation');
+    if (!this.listing) {
+      console.log('No listing found');
+      return;
+    }
+    console.log('listing:', this.listing);          
+    console.log('seller_id:', this.listing.seller_id); 
+    try {
+      console.log('Starting conversation for listing:', this.listing.id, 'seller:', this.listing.seller_id);
+      const convo = await this.chatService.startConversation(
+        this.listing.id,
+        this.listing.seller_id,
+      );
+      console.log('Conversation returned:', convo);
+      this.chatWidgetService.openChat(convo);
+      console.log('Widget state:', this.chatWidgetService.state);
+    } catch (e) {
+      console.error('Failed to start conversation', e);
+    }
   }
-}
 
 
   async purchase() {

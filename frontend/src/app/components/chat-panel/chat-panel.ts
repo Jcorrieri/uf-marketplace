@@ -30,6 +30,7 @@ export class ChatPanel implements OnInit, OnDestroy, AfterViewChecked {
   messages: Message[] = [];
   newMessage = '';
   currentUserId = '';
+  loading = true;   
   private shouldScroll = false;
 
   constructor(
@@ -42,6 +43,7 @@ export class ChatPanel implements OnInit, OnDestroy, AfterViewChecked {
 
     // Load message history first
     this.messages = await this.chatService.getMessages(this.conversation.id);
+    this.loading = false;
     this.shouldScroll = true;
 
     // Open WebSocket and listen for new messages
