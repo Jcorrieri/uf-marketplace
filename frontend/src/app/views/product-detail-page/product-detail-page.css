@@ -1,6 +1,6 @@
 :host {
   display: block;
-  background: #fafafa;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -14,7 +14,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px 24px;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -33,12 +33,12 @@
   justify-content: center;
   padding: 6px;
   border-radius: 50%;
-  color: #333;
+  color: var(--text-primary);
   transition: background-color 0.15s;
 }
 
 .back-btn:hover {
-  background-color: #f0f0f0;
+  background-color: var(--row-hover);
 }
 
 .gator-icon {
@@ -62,7 +62,7 @@
   align-items: center;
   justify-content: center;
   padding: 80px 24px;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
@@ -72,7 +72,7 @@
   width: 48px;
   height: 48px;
   margin-bottom: 12px;
-  color: #ccc;
+  color: var(--border-color);
 }
 
 .back-link {
@@ -106,7 +106,7 @@
   width: 100%;
   border-radius: 12px;
   overflow: hidden;
-  background: #fff;
+  background: var(--bg-card);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
@@ -153,7 +153,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f0f0f0;
+  background: var(--bg-input);
   border-radius: 12px;
   color: #ccc;
   gap: 8px;
@@ -165,6 +165,7 @@
   height: 64px;
 }
 
+
 /* ── Info section ── */
 .info-section {
   display: flex;
@@ -175,7 +176,7 @@
 .product-title {
   font-size: 1.75rem;
   font-weight: 800;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -191,7 +192,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.95rem;
-  color: #555;
+  color: var(--text-icon);
   margin-top: 8px;
 }
 
@@ -199,25 +200,25 @@
   font-size: 20px;
   width: 20px;
   height: 20px;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 .divider {
   height: 1px;
-  background: #e8e8e8;
+  background: var(--border-color);
   margin: 16px 0;
 }
 
 .section-label {
   font-size: 1rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .product-description {
   font-size: 0.95rem;
-  color: #555;
+  color: var(--text-icon);
   line-height: 1.65;
   margin: 4px 0 0;
   white-space: pre-wrap;
@@ -260,11 +261,11 @@
 
 .message-btn {
   background-color: #f0f0f0;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .message-btn:hover:not(:disabled) {
-  background-color: #e4e4e4;
+  background-color: var(--row-hover);
 }
 
 .message-btn:disabled {

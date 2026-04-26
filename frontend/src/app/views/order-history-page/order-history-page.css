@@ -1,7 +1,7 @@
 :host {
   display: block;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
 }
 
 /* ── Header ── */
@@ -13,8 +13,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 14px 32px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: var(--bg-card);
+  box-shadow: 0 2px 8px var(--shadow-header);
 }
 
 .header-left {
@@ -32,13 +32,13 @@
   border: none;
   border-radius: 50%;
   background-color: transparent;
-  color: #555;
+  color: var(--text-icon);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .back-btn:hover {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--row-hover);
 }
 
 .gator-icon {
@@ -50,7 +50,7 @@
 .brand-text {
   font-weight: 700;
   font-size: 1.05rem;
-  color: #1a1a2e;
+  color: var(--text-primary);
 }
 
 /* ── Content ── */
@@ -72,12 +72,12 @@
 .page-title {
   font-size: 1.85rem;
   font-weight: 800;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin: 0 0 4px;
 }
 
 .page-subtitle {
-  color: #666;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 0.95rem;
 }
@@ -123,7 +123,7 @@
 .empty-state {
   text-align: center;
   padding: 80px 20px;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 .loading-state mat-icon,
@@ -131,12 +131,12 @@
   font-size: 64px;
   width: 64px;
   height: 64px;
-  color: #ccc;
+  color: var(--border-color);
 }
 
 .empty-state h2 {
   margin: 16px 0 6px;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 700;
 }
 
@@ -181,11 +181,11 @@
 }
 
 .order-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-  border: 1px solid #ececec;
+  border: 1px solid var(--border-color);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease;
@@ -202,8 +202,8 @@
   align-items: center;
   gap: 36px;
   padding: 14px 20px;
-  background: #f9fafb;
-  border-bottom: 1px solid #ececec;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border-color);
   flex-wrap: wrap;
 }
 
@@ -222,19 +222,19 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #888;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .order-date {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: var(--text-primary);
 }
 
 .order-time {
   font-size: 0.8rem;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .order-total {
@@ -246,7 +246,7 @@
 .order-id {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -300,14 +300,14 @@
   height: 140px;
   border-radius: 10px;
   object-fit: cover;
-  background: #f0f0f0;
+  background: var(--bg-input);
 }
 
 .order-image-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #bbb;
+  color: var(--text-secondary);
 }
 
 .order-image-placeholder mat-icon {
@@ -327,13 +327,13 @@
   margin: 0;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: var(--text-primary);
 }
 
 .order-description {
   margin: 0;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--text-icon);
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -346,7 +346,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   margin-top: 4px;
 }
@@ -370,9 +370,9 @@
   justify-content: center;
   gap: 6px;
   padding: 9px 14px;
-  background: #fff;
-  color: #0021a5;
-  border: 1px solid #d1d5db;
+  background: var(--bg-card);
+  color: var(--brand-accent);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.85rem;
@@ -389,12 +389,12 @@
 }
 
 .secondary-btn:hover:not(:disabled) {
-  background: #eef2ff;
-  border-color: #0021a5;
+  background: var(--row-hover);
+  border-color: var(--brand-accent);
 }
 
 .secondary-btn:disabled {
-  color: #aaa;
+  color: var(--text-secondary);
   cursor: not-allowed;
 }
 

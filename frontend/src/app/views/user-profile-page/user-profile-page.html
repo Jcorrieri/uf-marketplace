@@ -34,6 +34,7 @@
       <div class="user-details">
         <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
         <span class="user-email">{{ user.email }}</span>
+        <span class="user-since">Member since {{ user.createdAt | date:'MMMM yyyy' }}</span>
       </div>
     </section>
   }
@@ -46,14 +47,38 @@
   <section class="settings-section">
     <h2 class="section-title">Profile</h2>
 
-    <!-- Name (read-only) -->
-    <div class="setting-row">
-      <mat-icon class="setting-icon">badge</mat-icon>
-      <div class="setting-info">
-        <span class="setting-label">Name</span>
-        <span class="setting-hint">{{ user?.firstName }} {{ user?.lastName }}</span>
+    
+    <!-- Name (editable) -->
+  <div class="setting-row" (click)="startEditName()">
+    <mat-icon class="setting-icon">badge</mat-icon>
+    <div class="setting-info">
+      <span class="setting-label">Name</span>
+      <span class="setting-hint">{{ user?.firstName }} {{ user?.lastName }}</span>
+    </div>
+    <mat-icon class="setting-arrow">chevron_right</mat-icon>
+  </div>
+
+  @if (editingName()) {
+    <div class="edit-panel">
+      @if (saveError()) {
+        <p class="edit-error">{{ saveError() }}</p>
+      }
+      <mat-form-field class="edit-field" appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input matInput [(ngModel)]="editFirstName" placeholder="First name" />
+      </mat-form-field>
+      <mat-form-field class="edit-field" appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input matInput [(ngModel)]="editLastName" placeholder="Last name" />
+      </mat-form-field>
+      <div class="edit-actions">
+        <button mat-button (click)="cancelEdit()">Cancel</button>
+        <button mat-flat-button class="save-btn" [disabled]="saving()" (click)="saveProfile()">
+          {{ saving() ? 'Saving…' : 'Save' }}
+        </button>
       </div>
     </div>
+  }
 
     <!-- Email (read-only) -->
     <div class="setting-row">

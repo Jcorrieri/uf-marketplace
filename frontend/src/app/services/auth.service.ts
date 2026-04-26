@@ -6,6 +6,7 @@ export interface CurrentUser {
   lastName: string;
   email: string;
   image_id?: string | null;
+  createdAt?: string; 
 }
 
 @Injectable({
@@ -25,6 +26,7 @@ export class AuthService {
           lastName: data.last_name,
           email: data.email,
           image_id: data.image_id,
+          createdAt: data.created_at, 
         };
       }
     } catch {
