@@ -1,0 +1,97 @@
+<header class="settings-header">
+  <button class="back-btn" (click)="goBack()" aria-label="Back to marketplace">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h1 class="page-title">Settings</h1>
+</header>
+
+<main class="settings-content">
+
+  <!-- Appearance -->
+  <section class="settings-section">
+    <h2 class="section-title">Appearance</h2>
+    <div class="setting-row theme-row">
+      <mat-icon class="setting-icon">palette</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label">Theme</span>
+        <span class="setting-hint">Choose your preferred display mode</span>
+      </div>
+    </div>
+    <div class="theme-options">
+      <button
+        class="theme-btn"
+        [class.active]="theme() === 'light'"
+        (click)="setTheme('light')"
+      >
+        <mat-icon>light_mode</mat-icon>
+        Light
+      </button>
+      <button
+        class="theme-btn"
+        [class.active]="theme() === 'dark'"
+        (click)="setTheme('dark')"
+      >
+        <mat-icon>dark_mode</mat-icon>
+        Dark
+      </button>
+      <button
+        class="theme-btn"
+        [class.active]="theme() === 'system'"
+        (click)="setTheme('system')"
+      >
+        <mat-icon>devices</mat-icon>
+        System
+      </button>
+    </div>
+  </section>
+
+  <!-- Notifications -->
+  <section class="settings-section">
+    <h2 class="section-title">Notifications</h2>
+
+    <div class="setting-row" (click)="toggleMessages()">
+      <mat-icon class="setting-icon">chat_bubble</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label">New Messages</span>
+        <span class="setting-hint">Get notified when someone messages you</span>
+      </div>
+      <div class="toggle" [class.on]="notifyMessages()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+
+    <div class="setting-row" (click)="toggleListings()">
+      <mat-icon class="setting-icon">storefront</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label">Listing Updates</span>
+        <span class="setting-hint">Get notified about activity on your listings</span>
+      </div>
+      <div class="toggle" [class.on]="notifyListings()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Account -->
+  <section class="settings-section">
+    <h2 class="section-title">Account</h2>
+
+    @if (deleteError()) {
+      <p class="delete-error">{{ deleteError() }}</p>
+    }
+
+    <div class="setting-row danger-row" (click)="deleteAccount()">
+      <mat-icon class="setting-icon danger-icon">delete_forever</mat-icon>
+      <div class="setting-info">
+        <span class="setting-label danger-label">Delete Account</span>
+        <span class="setting-hint">Permanently remove your account and all data</span>
+      </div>
+      @if (deleting()) {
+        <span class="deleting-text">Deleting…</span>
+      } @else {
+        <mat-icon class="setting-arrow">chevron_right</mat-icon>
+      }
+    </div>
+  </section>
+
+</main>
