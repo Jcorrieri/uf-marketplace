@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,7 @@ export class ChatWidget implements OnInit {
     private chatService: ChatService,
     private authService: AuthService,
     private router: Router,
+    private cdr: ChangeDetectorRef, 
   ) {}
 
   async ngOnInit() {
@@ -47,6 +48,7 @@ export class ChatWidget implements OnInit {
       this.conversations = [];
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 

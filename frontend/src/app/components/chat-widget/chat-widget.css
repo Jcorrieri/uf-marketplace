@@ -130,3 +130,11 @@
   font-size: 13px;
   color: #555;
 }
+
+app-chat-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}

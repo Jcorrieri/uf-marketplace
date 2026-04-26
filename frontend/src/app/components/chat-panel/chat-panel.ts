@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,7 +23,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './chat-panel.html',
   styleUrl: './chat-panel.css',
 })
-export class ChatPanel implements OnInit, OnDestroy, AfterViewChecked {
+export class ChatPanel implements OnInit, OnDestroy {
   @Input() conversation!: Conversation;
   @ViewChild('messageList') private messageList!: ElementRef;
 
@@ -31,11 +31,12 @@ export class ChatPanel implements OnInit, OnDestroy, AfterViewChecked {
   newMessage = '';
   currentUserId = '';
   loading = true;   
-  private shouldScroll = false;
+  
 
   constructor(
     private chatService: ChatService,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit() {
@@ -44,22 +45,19 @@ export class ChatPanel implements OnInit, OnDestroy, AfterViewChecked {
     // Load message history first
     this.messages = await this.chatService.getMessages(this.conversation.id);
     this.loading = false;
-    this.shouldScroll = true;
+    this.cdr.detectChanges();
+    setTimeout(() => this.scrollToBottom(), 0);
 
     // Open WebSocket and listen for new messages
     this.chatService.connect(this.conversation.id);
     this.chatService.onMessage((msg: Message) => {
       this.messages.push(msg);
-      this.shouldScroll = true;
+      this.cdr.detectChanges();
+      setTimeout(() => this.scrollToBottom(), 0);
     });
   }
 
-  ngAfterViewChecked() {
-    if (this.shouldScroll) {
-      this.scrollToBottom();
-      this.shouldScroll = false;
-    }
-  }
+  
 
   ngOnDestroy() {
     this.chatService.clearHandlers();
@@ -82,9 +80,10 @@ export class ChatPanel implements OnInit, OnDestroy, AfterViewChecked {
 
   private scrollToBottom() {
     try {
-      this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
-    } catch {}
-  }
+    const el = this.messageList.nativeElement;
+    el.scrollTop = el.scrollHeight;
+  } catch {}
+}
 
   isMine(msg: Message): boolean {
     return msg.sender_id === this.currentUserId;
