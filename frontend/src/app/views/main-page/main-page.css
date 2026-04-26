@@ -13,7 +13,7 @@
   justify-content: center;
   gap: 16px;
   padding: 12px 24px; /* Slightly tighter padding for mobile-first */
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -122,7 +122,7 @@ app-avatar-dropdown {
   text-align: center;
   padding: 60px 0;
   color: #888;
-  font-size: 1.1rem;
+  color: var(--text-secondary);
 }
 
 .no-results mat-icon {
@@ -130,7 +130,7 @@ app-avatar-dropdown {
   width: 48px;
   height: 48px;
   margin-bottom: 12px;
-  color: #ccc;
+  color: var(--border-color);
 }
 
 /* FAB Button */
@@ -176,7 +176,7 @@ app-avatar-dropdown {
   z-index: 200;
 }
 .modal-content {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   width: 100%;
   max-width: 480px;
@@ -193,7 +193,7 @@ app-avatar-dropdown {
 .modal-header h2 {
   margin: 0;
   font-size: 1.25rem;
-  color: #0021a5;
+  color: var(--brand-accent);
 }
 .modal-close {
   background: none;
@@ -218,7 +218,7 @@ app-avatar-dropdown {
   padding: 0.5rem 1.25rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  background: white;
+  background: var(--bg-card);
   cursor: pointer;
 }
 .btn-submit {

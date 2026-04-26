@@ -1,10 +1,9 @@
 :host {
   display: block;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
 }
 
-/* ── Header ── */
 .settings-header {
   position: sticky;
   top: 0;
@@ -13,8 +12,8 @@
   align-items: center;
   gap: 12px;
   padding: 18px 32px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: var(--bg-card);
+  box-shadow: 0 2px 8px var(--shadow-header);
 }
 
 .back-btn {
@@ -26,34 +25,30 @@
   border: none;
   border-radius: 50%;
   background-color: transparent;
-  color: #555;
+  color: var(--text-icon);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.back-btn:hover {
-  background-color: rgba(0, 0, 0, 0.06);
-}
+.back-btn:hover { background-color: var(--row-hover); }
 
 .page-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin: 0;
 }
 
-/* ── Content ── */
 .settings-content {
   max-width: 600px;
   margin: 28px auto;
   padding: 0 24px;
 }
 
-/* ── Sections ── */
 .settings-section {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 4px var(--shadow-card);
   margin-bottom: 16px;
   overflow: hidden;
 }
@@ -61,14 +56,13 @@
 .section-title {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #888;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 16px 20px 8px;
   margin: 0;
 }
 
-/* ── Rows ── */
 .setting-row {
   display: flex;
   align-items: center;
@@ -78,12 +72,10 @@
   transition: background-color 0.15s;
 }
 
-.setting-row:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
+.setting-row:hover { background-color: var(--row-hover); }
 
 .setting-icon {
-  color: #555;
+  color: var(--text-icon);
   font-size: 24px;
   width: 24px;
   height: 24px;
@@ -99,22 +91,21 @@
 .setting-label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1a1a2e;
+  color: var(--text-primary);
 }
 
 .setting-hint {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 .setting-arrow {
-  color: #ccc;
+  color: var(--border-color);
   font-size: 20px;
   width: 20px;
   height: 20px;
 }
 
-/* ── Theme buttons ── */
 .theme-options {
   display: flex;
   gap: 10px;
@@ -128,10 +119,10 @@
   align-items: center;
   gap: 6px;
   padding: 12px 8px;
-  border: 2px solid #eee;
+  border: 2px solid var(--border-color);
   border-radius: 10px;
-  background: #fafafa;
-  color: #555;
+  background: var(--bg-input);
+  color: var(--text-icon);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -139,36 +130,29 @@
 }
 
 .theme-btn:hover {
-  border-color: #fa4616;
-  color: #fa4616;
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
 }
 
 .theme-btn.active {
-  border-color: #fa4616;
+  border-color: var(--brand-primary);
   background-color: rgba(250, 70, 22, 0.06);
-  color: #fa4616;
+  color: var(--brand-primary);
 }
 
-.theme-btn mat-icon {
-  font-size: 22px;
-  width: 22px;
-  height: 22px;
-}
+.theme-btn mat-icon { font-size: 22px; width: 22px; height: 22px; }
 
-/* ── Toggle switch ── */
 .toggle {
   width: 44px;
   height: 24px;
   border-radius: 12px;
-  background-color: #ddd;
+  background-color: var(--border-color);
   position: relative;
   transition: background-color 0.25s;
   flex-shrink: 0;
 }
 
-.toggle.on {
-  background-color: #fa4616;
-}
+.toggle.on { background-color: var(--brand-primary); }
 
 .toggle-knob {
   position: absolute;
@@ -182,22 +166,11 @@
   transition: transform 0.25s;
 }
 
-.toggle.on .toggle-knob {
-  transform: translateX(20px);
-}
+.toggle.on .toggle-knob { transform: translateX(20px); }
 
-/* ── Danger zone ── */
-.danger-row:hover {
-  background-color: rgba(211, 47, 47, 0.04);
-}
-
-.danger-icon {
-  color: #d32f2f;
-}
-
-.danger-label {
-  color: #d32f2f;
-}
+.danger-row:hover { background-color: rgba(211, 47, 47, 0.04); }
+.danger-icon { color: #d32f2f; }
+.danger-label { color: #d32f2f; }
 
 .delete-error {
   color: #d32f2f;
@@ -206,7 +179,4 @@
   padding: 8px 20px 0;
 }
 
-.deleting-text {
-  font-size: 0.85rem;
-  color: #888;
-}
+.deleting-text { font-size: 0.85rem; color: var(--text-secondary); }
