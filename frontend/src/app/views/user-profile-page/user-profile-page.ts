@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,10 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService, CurrentUser } from '../../services/auth.service';
 
+
 @Component({
   selector: 'app-user-profile-page',
   imports: [
     CommonModule,
+    DatePipe,
     FormsModule,
     MatIconModule,
     MatFormFieldModule,
@@ -56,6 +58,7 @@ export class UserProfilePage implements OnInit {
           lastName: data.last_name,
           email: data.email,
           image_id: data.image_id,
+          createdAt: data.created_at,
         };
         this.authService.setUser(u);
         this.user = u;

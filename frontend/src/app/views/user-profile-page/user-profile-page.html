@@ -34,6 +34,7 @@
       <div class="user-details">
         <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
         <span class="user-email">{{ user.email }}</span>
+        <span class="user-since">Member since {{ user.createdAt | date:'MMMM yyyy' }}</span>
       </div>
     </section>
   }

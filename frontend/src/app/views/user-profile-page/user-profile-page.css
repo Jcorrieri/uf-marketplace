@@ -253,3 +253,8 @@
 .save-btn[disabled] {
   opacity: 0.6;
 }
+
+.user-since {
+  font-size: 0.78rem;
+  color: #aaa;
+}
