@@ -8,6 +8,8 @@ import { AuthService } from '../../services/auth.service';
 import { OrderService } from '../../services/order.service';
 import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
 import { Listing } from '../../components/listing/listing';
+import { ChatService } from '../../services/chat.service';
+import { ChatWidgetService } from '../../services/chat-widget.service';
 
 @Component({
   selector: 'app-product-detail-page',
@@ -27,6 +29,8 @@ export class ProductDetailPage implements OnInit {
     private authService: AuthService,
     private orderService: OrderService,
     private cdr: ChangeDetectorRef,
+    private chatService: ChatService,
+    private chatWidgetService: ChatWidgetService,
   ) {}
 
   async ngOnInit() {
@@ -62,6 +66,20 @@ export class ProductDetailPage implements OnInit {
   goBack() {
     this.router.navigate(['/main']);
   }
+
+  async messageSeller() {
+  if (!this.listing) return;
+  try {
+    const convo = await this.chatService.startConversation(
+      this.listing.id,
+      this.listing.seller_id,
+    );
+    this.chatWidgetService.openChat(convo);
+  } catch {
+    console.error('Failed to start conversation');
+  }
+}
+
 
   async purchase() {
     if (!this.listing) return;
