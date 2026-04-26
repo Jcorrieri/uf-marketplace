@@ -37,6 +37,12 @@ export class SettingsPage implements OnInit {
     if (savedListings !== null) this.notifyListings.set(savedListings === 'true');
 
     this.applyTheme(this.theme());
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (this.theme() === 'system') {
+            this.applyTheme('system');
+        }
+    });
   }
 
   setTheme(t: Theme) {
@@ -48,9 +54,14 @@ export class SettingsPage implements OnInit {
   private applyTheme(t: Theme) {
     const body = document.body;
     body.classList.remove('theme-light', 'theme-dark');
-    if (t === 'light') body.classList.add('theme-light');
-    if (t === 'dark') body.classList.add('theme-dark');
-  }
+
+    if (t === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        body.classList.add(prefersDark ? 'theme-dark' : 'theme-light');
+    } else {
+        body.classList.add(t === 'dark' ? 'theme-dark' : 'theme-light');
+    }
+    }
 
   toggleMessages() {
     const next = !this.notifyMessages();
