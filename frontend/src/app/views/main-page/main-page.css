@@ -108,6 +108,7 @@ app-avatar-dropdown {
   padding: 28px 24px;
   max-width: 1400px;
   margin: 0 auto;
+  grid-auto-rows: 1fr;
 }
 
 .listing-link {
