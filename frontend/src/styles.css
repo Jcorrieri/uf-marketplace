@@ -47,3 +47,55 @@ body.theme-dark {
 body {
   font-family: var(--app-font);
 }
+/* ── Angular Material dark mode overrides ── */
+body.theme-dark {
+  color-scheme: dark;
+}
+
+/* Input text color */
+body.theme-dark .mat-mdc-input-element,
+body.theme-dark .mat-mdc-floating-label,
+body.theme-dark .mdc-text-field__input {
+  color: var(--text-primary) !important;
+}
+
+/* Outlined form field border */
+body.theme-dark .mdc-notched-outline__leading,
+body.theme-dark .mdc-notched-outline__notch,
+body.theme-dark .mdc-notched-outline__trailing {
+  border-color: var(--border-color) !important;
+}
+
+/* Form field background */
+body.theme-dark .mdc-text-field--outlined:not(.mdc-text-field--disabled) {
+  background-color: var(--bg-input) !important;
+}
+
+/* Floating label color */
+body.theme-dark .mat-mdc-form-field-label,
+body.theme-dark .mdc-floating-label {
+  color: var(--text-secondary) !important;
+}
+
+/* Hint and error text */
+body.theme-dark .mat-mdc-form-field-hint,
+body.theme-dark .mat-mdc-form-field-error {
+  color: var(--text-secondary) !important;
+}
+
+/* Select panel */
+body.theme-dark .mat-mdc-select-value-text,
+body.theme-dark .mat-mdc-select-arrow {
+  color: var(--text-primary) !important;
+}
+
+/* mat-icon default color */
+body.theme-dark mat-icon {
+  color: var(--text-icon);
+}
+
+/* mat-button default text */
+body.theme-dark .mat-mdc-button:not([color]),
+body.theme-dark .mat-mdc-outlined-button:not([color]) {
+  color: var(--text-primary) !important;
+}
