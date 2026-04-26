@@ -1,0 +1,55 @@
+<header class="main-header">
+  <div class="header-left">
+    <img src="gator-logo.png" alt="UF Logo" class="gator-icon" />
+    <span class="brand-text">Messages</span>
+  </div>
+  <app-avatar-dropdown />
+</header>
+
+<div class="messages-layout">
+
+  <!-- Left: conversation list -->
+  <aside class="convo-sidebar">
+    @if (loading) {
+      <div class="sidebar-empty">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Loading...</p>
+      </div>
+    } @else if (conversations.length === 0) {
+      <div class="sidebar-empty">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <p>No conversations yet</p>
+      </div>
+    } @else {
+      @for (convo of conversations; track convo.id) {
+        <div
+          class="convo-item"
+          [class.active]="activeConversation?.id === convo.id"
+          (click)="selectConversation(convo)"
+        >
+          <div class="convo-avatar">{{ getOtherName(convo)[0] }}</div>
+          <div class="convo-info">
+            <span class="convo-name">{{ getOtherName(convo) }}</span>
+            <span class="convo-listing">{{ convo.listing_title }}</span>
+            @if (convo.last_message) {
+              <span class="convo-last">{{ convo.last_message }}</span>
+            }
+          </div>
+        </div>
+      }
+    }
+  </aside>
+
+  <!-- Right: active chat -->
+  <main class="chat-area">
+    @if (activeConversation) {
+      <app-chat-panel [conversation]="activeConversation" />
+    } @else {
+      <div class="chat-placeholder">
+        <mat-icon>chat</mat-icon>
+        <p>Select a conversation to start chatting</p>
+      </div>
+    }
+  </main>
+
+</div>

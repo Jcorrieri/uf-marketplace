@@ -3,44 +3,30 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
-import { ChatWidgetService } from '../../services/chat-widget.service';
 import { ChatService, Conversation } from '../../services/chat.service';
 import { AuthService } from '../../services/auth.service';
-import { ChatPanel } from '../chat-panel/chat-panel';
-import { Router, NavigationEnd } from '@angular/router';
+import { ChatPanel } from '../../components/chat-panel/chat-panel';
+import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
 
 @Component({
-  selector: 'app-chat-widget',
+  selector: 'app-messages-page',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, ChatPanel],
-  templateUrl: './chat-widget.html',
-  styleUrl: './chat-widget.css',
+  imports: [CommonModule, MatIconModule, MatButtonModule, ChatPanel, AvatarDropdown],
+  templateUrl: './messages-page.html',
+  styleUrl: './messages-page.css',
 })
-export class ChatWidget implements OnInit {
+export class MessagesPage implements OnInit {
   conversations: Conversation[] = [];
-  loading = false;
+  activeConversation: Conversation | null = null;
+  loading = true;
 
   constructor(
-    public widget: ChatWidgetService,
     private chatService: ChatService,
     private authService: AuthService,
-    private router: Router,
   ) {}
 
   async ngOnInit() {
-    // nothing on init — load conversations when widget opens
-  }
-
-  async toggle() {
-    this.widget.toggle();
-    if (this.widget.state === 'list') {
-      await this.loadConversations();
-    }
-  }
-
-  async loadConversations() {
-    if (!this.authService.currentUser()) return;
-    this.loading = true;
+    await this.authService.loadUser();
     try {
       this.conversations = await this.chatService.getConversations();
     } catch {
@@ -51,19 +37,9 @@ export class ChatWidget implements OnInit {
   }
 
   selectConversation(convo: Conversation) {
-    this.widget.openChat(convo);
-  }
-
-  backToList() {
     this.chatService.disconnect();
     this.chatService.clearHandlers();
-    this.widget.backToList();
-    this.loadConversations();
-  }
-
-  get isAuthPage(): boolean {
-    const url = this.router.url;
-    return url === '/login' || url === '/sign-up' || url === '/';
+    this.activeConversation = convo;
   }
 
   getOtherName(convo: Conversation): string {

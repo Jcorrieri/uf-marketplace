@@ -9,6 +9,7 @@ import { ProductDetailPage } from './views/product-detail-page/product-detail-pa
 import { OrderHistoryPage } from './views/order-history-page/order-history-page';
 import { authGuard } from './guards/auth.guard';
 import { SettingsPage } from './views/settings-page/settings-page';
+import { MessagesPage } from './views/messages-page/messages-page';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,4 +22,5 @@ export const routes: Routes = [
   { path: 'my-listings', component: MyListingsPage, canActivate: [authGuard] },
   { path: 'orders', component: OrderHistoryPage, canActivate: [authGuard] },
   { path: 'settings', component: SettingsPage, canActivate: [authGuard] },
+  { path: 'messages', component: MessagesPage, canActivate: [authGuard] },
 ];
