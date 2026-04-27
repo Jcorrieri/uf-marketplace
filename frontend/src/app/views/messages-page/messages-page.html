@@ -9,24 +9,22 @@
 </header>
 
 <div class="messages-layout">
-
-  <!-- Left: conversation list -->
   <aside class="convo-sidebar">
-    @if (loading) {
+    @if (loading()) {
       <div class="sidebar-empty">
         <mat-icon>hourglass_empty</mat-icon>
         <p>Loading...</p>
       </div>
-    } @else if (conversations.length === 0) {
+    } @else if (conversations().length === 0) {
       <div class="sidebar-empty">
         <mat-icon>chat_bubble_outline</mat-icon>
         <p>No conversations yet</p>
       </div>
     } @else {
-      @for (convo of conversations; track convo.id) {
+      @for (convo of conversations(); track convo.id) {
         <div
           class="convo-item"
-          [class.active]="activeConversation?.id === convo.id"
+          [class.active]="activeConversation()?.id === convo.id"
           (click)="selectConversation(convo)"
         >
           <div class="convo-avatar">{{ getOtherName(convo)[0] }}</div>
@@ -42,10 +40,9 @@
     }
   </aside>
 
-  <!-- Right: active chat -->
   <main class="chat-area">
-    @if (activeConversation) {
-      <app-chat-panel [conversation]="activeConversation" />
+    @if (activeConversation()) {
+      <app-chat-panel [conversation]="activeConversation()!" />
     } @else {
       <div class="chat-placeholder">
         <mat-icon>chat</mat-icon>
@@ -53,5 +50,4 @@
       </div>
     }
   </main>
-
 </div>

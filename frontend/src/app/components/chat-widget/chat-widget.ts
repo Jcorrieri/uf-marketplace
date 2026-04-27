@@ -1,13 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef,ElementRef, HostListener} from '@angular/core';
+import { Component, OnInit, effect, ElementRef, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
+import { Router } from '@angular/router';
 import { ChatWidgetService } from '../../services/chat-widget.service';
 import { ChatService, Conversation } from '../../services/chat.service';
 import { AuthService } from '../../services/auth.service';
 import { ChatPanel } from '../chat-panel/chat-panel';
-import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-chat-widget',
@@ -17,48 +16,49 @@ import { Router, NavigationEnd } from '@angular/router';
   styleUrl: './chat-widget.css',
 })
 export class ChatWidget implements OnInit {
-  conversations: Conversation[] = [];
-  loading = false;
+  conversations = signal<Conversation[]>([]);
+  loading = signal(false);
 
   constructor(
     public widget: ChatWidgetService,
     private chatService: ChatService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef, 
     private el: ElementRef,
-  ) {}
+  ) {
+    effect(() => {
+      const _ = this.chatService.refresh();
+      this.loadConversations();
+      
+    });
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    if (this.widget.state !== 'closed' && !this.el.nativeElement.contains(event.target)) {
+    if (this.widget.state() !== 'closed' && !this.el.nativeElement.contains(event.target)) {
       this.widget.close();
-      this.cdr.detectChanges();
     }
   }
 
-  async ngOnInit() {
-    // nothing on init — load conversations when widget opens
-  }
+  async ngOnInit() {}
 
   async toggle() {
     this.widget.toggle();
-    if (this.widget.state === 'list') {
+    if (this.widget.state() === 'list') {
       await this.loadConversations();
     }
-    this.cdr.detectChanges();
   }
 
   async loadConversations() {
     if (!this.authService.currentUser()) return;
-    this.loading = true;
+    this.loading.set(true);
     try {
-      this.conversations = await this.chatService.getConversations();
+      const data = await this.chatService.getConversations();
+      this.conversations.set(data ?? []);
     } catch {
-      this.conversations = [];
+      this.conversations.set([]);
     } finally {
-      this.loading = false;
-      this.cdr.detectChanges();
+      this.loading.set(false);
     }
   }
 

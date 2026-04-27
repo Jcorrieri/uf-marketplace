@@ -1,61 +1,54 @@
 @if (!isAuthPage) {
-<!-- Floating bubble button -->
-<button class="chat-fab" (click)="toggle()" matTooltip="Messages">
-  <mat-icon>{{ widget.state === 'closed' ? 'chat' : 'close' }}</mat-icon>
-</button>
+  <button class="chat-fab" (click)="toggle()">
+    <mat-icon>{{ widget.state() === 'closed' ? 'chat' : 'close' }}</mat-icon>
+  </button>
 
-<!-- Popup -->
-@if (widget.state !== 'closed') {
-  <div class="chat-popup" (click)="$event.stopPropagation()">
+  @if (widget.state() !== 'closed') {
+    <div class="chat-popup" (click)="$event.stopPropagation()">
 
-    <!-- Conversation list -->
-    @if (widget.state === 'list') {
-      <div class="chat-popup-header">
-        <span>Messages</span>
-      </div>
-
-      @if (loading) {
-        <div class="chat-popup-empty">
-          <mat-icon>hourglass_empty</mat-icon>
-          <p>Loading...</p>
+      @if (widget.state() === 'list') {
+        <div class="chat-popup-header">
+          <span>Messages</span>
         </div>
-      } @else if (conversations.length === 0) {
-        <div class="chat-popup-empty">
-          <mat-icon>chat_bubble_outline</mat-icon>
-          <p>No conversations yet</p>
-        </div>
-      } @else {
-        <div class="convo-list">
-          @for (convo of conversations; track convo.id) {
-            <div class="convo-item" (click)="selectConversation(convo)">
-              <div class="convo-avatar">
-                {{ getOtherName(convo)[0] }}
+        @if (loading()) {
+          <div class="chat-popup-empty">
+            <mat-icon>hourglass_empty</mat-icon>
+            <p>Loading...</p>
+          </div>
+        } @else if (conversations().length === 0) {
+          <div class="chat-popup-empty">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            <p>No conversations yet</p>
+          </div>
+        } @else {
+          <div class="convo-list">
+            @for (convo of conversations(); track convo.id) {
+              <div class="convo-item" (click)="selectConversation(convo)">
+                <div class="convo-avatar">{{ getOtherName(convo)[0] }}</div>
+                <div class="convo-info">
+                  <span class="convo-name">{{ getOtherName(convo) }}</span>
+                  <span class="convo-listing">{{ convo.listing_title }}</span>
+                  @if (convo.last_message) {
+                    <span class="convo-last">{{ convo.last_message }}</span>
+                  }
+                </div>
+                <mat-icon class="convo-arrow">chevron_right</mat-icon>
               </div>
-              <div class="convo-info">
-                <span class="convo-name">{{ getOtherName(convo) }}</span>
-                <span class="convo-listing">{{ convo.listing_title }}</span>
-                @if (convo.last_message) {
-                  <span class="convo-last">{{ convo.last_message }}</span>
-                }
-              </div>
-              <mat-icon class="convo-arrow">chevron_right</mat-icon>
-            </div>
-          }
-        </div>
+            }
+          </div>
+        }
       }
-    }
 
-    <!-- Active chat -->
-    @if (widget.state === 'chat' && widget.activeConversation) {
-      <div class="chat-popup-back">
-        <button mat-icon-button (click)="backToList()">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <span>Back to messages</span>
-      </div>
-      <app-chat-panel [conversation]="widget.activeConversation" />
-    }
+      @if (widget.state() === 'chat' && widget.activeConversation()) {
+        <div class="chat-popup-back">
+          <button mat-icon-button (click)="backToList()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <span>Back to messages</span>
+        </div>
+        <app-chat-panel [conversation]="widget.activeConversation()!" />
+      }
 
-  </div>
-}
+    </div>
+  }
 }

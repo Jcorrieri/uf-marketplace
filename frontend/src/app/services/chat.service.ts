@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable,signal } from '@angular/core';
 
 export interface Conversation {
   id: string;
@@ -27,6 +27,14 @@ export interface Message {
 export class ChatService {
   private socket: WebSocket | null = null;
   private messageHandlers: ((msg: Message) => void)[] = [];
+  private lastMessageSignal = signal<Message | null>(null);
+  readonly lastMessage = this.lastMessageSignal.asReadonly();
+  private refreshSignal = signal(0);
+  readonly refresh = this.refreshSignal.asReadonly();
+
+  triggerRefresh() {
+    this.refreshSignal.update(n => n + 1);
+  }
 
   async startConversation(listingId: string, sellerId: string): Promise<Conversation> {
     console.log('Sending body:', { listing_id: listingId, seller_id: sellerId });
@@ -51,7 +59,8 @@ export class ChatService {
       credentials: 'include',
     });
     if (!res.ok) throw new Error('Failed to fetch messages');
-    return res.json();
+    const data = await res.json();
+    return data ?? [];   // ← handle null from backend
   }
 
   connect(conversationId: string): void {
@@ -64,6 +73,7 @@ export class ChatService {
       try {
         const msg: Message = JSON.parse(event.data);
         this.messageHandlers.forEach(handler => handler(msg));
+        this.lastMessageSignal.set(msg);
       } catch {
         console.error('Failed to parse incoming message', event.data);
       }

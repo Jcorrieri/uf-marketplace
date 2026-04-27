@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,7 +23,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './chat-panel.html',
   styleUrl: './chat-panel.css',
 })
-export class ChatPanel implements OnInit, OnDestroy {
+export class ChatPanel implements OnInit, OnDestroy,  OnChanges {
   @Input() conversation!: Conversation;
   @ViewChild('messageList') private messageList!: ElementRef;
 
@@ -40,21 +40,30 @@ export class ChatPanel implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
-    this.currentUserId = this.authService.currentUser()?.id ?? '';
+  this.currentUserId = this.authService.currentUser()?.id ?? '';
+  this.messages = await this.chatService.getMessages(this.conversation.id);
+  this.loading = false;
+  this.cdr.detectChanges(); 
+  setTimeout(() => this.scrollToBottom(), 0);   
 
-    // Load message history first
-    this.messages = await this.chatService.getMessages(this.conversation.id);
-    this.loading = false;
+  this.chatService.connect(this.conversation.id);
+  this.chatService.onMessage((msg: Message) => {
+    this.messages.push(msg);
+    this.chatService.triggerRefresh();
     this.cdr.detectChanges();
     setTimeout(() => this.scrollToBottom(), 0);
+  });
+}
 
-    // Open WebSocket and listen for new messages
-    this.chatService.connect(this.conversation.id);
-    this.chatService.onMessage((msg: Message) => {
-      this.messages.push(msg);
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes['conversation'] && !changes['conversation'].firstChange) {
+      this.chatService.disconnect();
+      this.chatService.clearHandlers();
+      this.messages = [];
+      this.loading = true;
       this.cdr.detectChanges();
-      setTimeout(() => this.scrollToBottom(), 0);
-    });
+      await this.ngOnInit();
+    }
   }
 
   

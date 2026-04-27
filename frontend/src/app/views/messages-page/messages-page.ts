@@ -1,13 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
+import { Router } from '@angular/router';
 import { ChatService, Conversation } from '../../services/chat.service';
 import { AuthService } from '../../services/auth.service';
 import { ChatPanel } from '../../components/chat-panel/chat-panel';
 import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-messages-page',
@@ -17,41 +16,50 @@ import { Router } from '@angular/router';
   styleUrl: './messages-page.css',
 })
 export class MessagesPage implements OnInit {
-  conversations: Conversation[] = [];
-  activeConversation: Conversation | null = null;
-  loading = true;
+  conversations = signal<Conversation[]>([]);
+  activeConversation = signal<Conversation | null>(null);
+  loading = signal(true);
 
   constructor(
     private chatService: ChatService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef,
     private router: Router,
-  ) {}
+  ) {
+    // effect must be created in constructor (injection context)
+    effect(() => {
+      const _ = this.chatService.refresh();
+      this.loadConversations();
+    });
+  }
 
   async ngOnInit() {
     await this.authService.loadUser();
+    await this.loadConversations();
+    this.loading.set(false);
+  }
+
+  async loadConversations() {
     try {
-      this.conversations = await this.chatService.getConversations();
+      const data = await this.chatService.getConversations();
+      this.conversations.set(data ?? []);
     } catch {
-      this.conversations = [];
-    } finally {
-      this.loading = false;
-      this.cdr.detectChanges();
+      this.conversations.set([]);
     }
   }
 
-  goBack() {
-    this.router.navigate(['/main']);
-  }
   selectConversation(convo: Conversation) {
     this.chatService.disconnect();
     this.chatService.clearHandlers();
-    this.activeConversation = convo;
+    this.activeConversation.set(convo);
   }
 
   getOtherName(convo: Conversation): string {
     const user = this.authService.currentUser();
     if (!user) return '';
     return user.id === convo.seller_id ? convo.buyer_name : convo.seller_name;
+  }
+
+  goBack() {
+    this.router.navigate(['/main']);
   }
 }

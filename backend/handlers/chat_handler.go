@@ -82,6 +82,9 @@ func (h *ChatHandler) GetConversations(c *gin.Context) {
 		response = append(response, c.GetResponse())
 	}
 
+	if response == nil {
+		response = []models.MessageResponse{}
+	}
 	c.JSON(http.StatusOK, response)
 }
 

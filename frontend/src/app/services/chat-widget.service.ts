@@ -1,33 +1,33 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Conversation } from './chat.service';
 
 export type WidgetState = 'closed' | 'list' | 'chat';
 
 @Injectable({ providedIn: 'root' })
 export class ChatWidgetService {
-  state: WidgetState = 'closed';
-  activeConversation: Conversation | null = null;
+  state = signal<WidgetState>('closed');
+  activeConversation = signal<Conversation | null>(null);
 
   open() {
-    this.state = 'list';
+    this.state.set('list');
   }
 
   openChat(conversation: Conversation) {
-    this.activeConversation = conversation;
-    this.state = 'chat';
+    this.activeConversation.set(conversation);
+    this.state.set('chat');
   }
 
   backToList() {
-    this.activeConversation = null;
-    this.state = 'list';
+    this.activeConversation.set(null);
+    this.state.set('list');
   }
 
   close() {
-    this.state = 'closed';
-    this.activeConversation = null;
+    this.state.set('closed');
+    this.activeConversation.set(null);
   }
 
   toggle() {
-    this.state === 'closed' ? this.open() : this.close();
+    this.state() === 'closed' ? this.open() : this.close();
   }
 }
