@@ -292,10 +292,10 @@ describe('My Listings Page', () => {
     it('should pre-fill description and price in edit mode', () => {
       cy.get('.edit-btn').first().click();
 
-      cy.get('.listing-card.editing textarea').should(
-        'have.value',
-        'Calculus 2 textbook, good condition.',
-      );
+      // The edit form has two textareas (title + description); description is the 2nd.
+      cy.get('.listing-card.editing textarea')
+        .eq(1)
+        .should('have.value', 'Calculus 2 textbook, good condition.');
       cy.get('.listing-card.editing input[type="number"]').should('have.value', '25');
     });
 
@@ -325,9 +325,10 @@ describe('My Listings Page', () => {
       // Enter edit mode
       cy.get('.edit-btn').first().click();
 
-      // Modify description
-      matClear('.listing-card.editing textarea');
-      matType('.listing-card.editing textarea', 'Updated description!');
+      // Modify description (second textarea; first is the title)
+      const descSelector = '.listing-card.editing textarea:eq(1)';
+      matClear(descSelector);
+      matType(descSelector, 'Updated description!');
 
       // Modify price
       matClear('.listing-card.editing input[type="number"]');

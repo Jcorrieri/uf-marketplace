@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, type Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
@@ -5,6 +6,17 @@ import { provideHttpClient } from '@angular/common/http';
 import { OrderHistoryPage } from './order-history-page';
 import { AuthService } from '../../services/auth.service';
 import { OrderRecord, OrderService } from '../../services/order.service';
+
+type AuthServiceMock = { loadUser: Mock; currentUser: Mock; logout: Mock };
+type OrderServiceMock = { getOrders: Mock };
+
+function makeAuthMock(loadUser: Mock = vi.fn().mockResolvedValue(undefined)): AuthServiceMock {
+  return {
+    loadUser,
+    currentUser: vi.fn().mockReturnValue(null),
+    logout: vi.fn().mockResolvedValue(undefined),
+  };
+}
 
 function makeOrder(overrides: Partial<OrderRecord> = {}): OrderRecord {
   return {
@@ -25,27 +37,25 @@ describe('OrderHistoryPage', () => {
   let fixture: ComponentFixture<OrderHistoryPage>;
   let component: OrderHistoryPage;
   let router: Router;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let orderServiceSpy: jasmine.SpyObj<OrderService>;
+  let authServiceMock: AuthServiceMock;
+  let orderServiceMock: OrderServiceMock;
 
   async function setup(orders: OrderRecord[] | Error = []) {
-    authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['loadUser']);
-    orderServiceSpy = jasmine.createSpyObj<OrderService>('OrderService', ['getOrders']);
-
-    authServiceSpy.loadUser.and.resolveTo();
-    if (orders instanceof Error) {
-      orderServiceSpy.getOrders.and.rejectWith(orders);
-    } else {
-      orderServiceSpy.getOrders.and.resolveTo(orders);
-    }
+    authServiceMock = makeAuthMock();
+    orderServiceMock = {
+      getOrders:
+        orders instanceof Error
+          ? vi.fn().mockRejectedValue(orders)
+          : vi.fn().mockResolvedValue(orders),
+    };
 
     await TestBed.configureTestingModule({
       imports: [OrderHistoryPage],
       providers: [
         provideRouter([]),
         provideHttpClient(),
-        { provide: AuthService, useValue: authServiceSpy },
-        { provide: OrderService, useValue: orderServiceSpy },
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: OrderService, useValue: orderServiceMock },
       ],
     }).compileComponents();
 
@@ -70,32 +80,30 @@ describe('OrderHistoryPage', () => {
     const orders = [makeOrder()];
     await setup(orders);
 
-    expect(authServiceSpy.loadUser).toHaveBeenCalled();
-    expect(orderServiceSpy.getOrders).toHaveBeenCalled();
+    expect(authServiceMock.loadUser).toHaveBeenCalled();
+    expect(orderServiceMock.getOrders).toHaveBeenCalled();
     expect(component.orders()).toEqual(orders);
-    expect(component.loading()).toBeFalse();
+    expect(component.loading()).toBe(false);
   });
 
   it('should still render with empty orders when getOrders fails', async () => {
     await setup(new Error('network down'));
 
     expect(component.orders()).toEqual([]);
-    expect(component.loading()).toBeFalse();
+    expect(component.loading()).toBe(false);
   });
 
   it('should still load orders when loadUser rejects', async () => {
-    authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['loadUser']);
-    orderServiceSpy = jasmine.createSpyObj<OrderService>('OrderService', ['getOrders']);
-    authServiceSpy.loadUser.and.rejectWith(new Error('no user'));
-    orderServiceSpy.getOrders.and.resolveTo([makeOrder()]);
+    authServiceMock = makeAuthMock(vi.fn().mockRejectedValue(new Error('no user')));
+    orderServiceMock = { getOrders: vi.fn().mockResolvedValue([makeOrder()]) };
 
     await TestBed.configureTestingModule({
       imports: [OrderHistoryPage],
       providers: [
         provideRouter([]),
         provideHttpClient(),
-        { provide: AuthService, useValue: authServiceSpy },
-        { provide: OrderService, useValue: orderServiceSpy },
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: OrderService, useValue: orderServiceMock },
       ],
     }).compileComponents();
 
@@ -103,9 +111,11 @@ describe('OrderHistoryPage', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();
+    await fixture.whenStable();
+    fixture.detectChanges();
 
     expect(component.orders().length).toBe(1);
-    expect(component.loading()).toBeFalse();
+    expect(component.loading()).toBe(false);
   });
 
   // ---------- totalSpent ----------
@@ -165,7 +175,7 @@ describe('OrderHistoryPage', () => {
 
   it('should navigate to /main when goBack() is called', async () => {
     await setup([]);
-    const navSpy = spyOn(router, 'navigate').and.resolveTo(true);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
     component.goBack();
 
@@ -174,16 +184,16 @@ describe('OrderHistoryPage', () => {
 
   it('should navigate to the product detail page with listing state when viewListing() is called', async () => {
     await setup([]);
-    const navSpy = spyOn(router, 'navigate').and.resolveTo(true);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     const order = makeOrder({ listing_id: 'listing-42', first_image_id: 'img-7' });
 
     component.viewListing(order);
 
     expect(navSpy).toHaveBeenCalledWith(
       ['/product', 'listing-42'],
-      jasmine.objectContaining({
-        state: jasmine.objectContaining({
-          listing: jasmine.objectContaining({
+      expect.objectContaining({
+        state: expect.objectContaining({
+          listing: expect.objectContaining({
             id: 'listing-42',
             title: order.title,
             price: order.price,
@@ -198,12 +208,15 @@ describe('OrderHistoryPage', () => {
 
   it('should set image_count to 0 in viewListing state when there is no image', async () => {
     await setup([]);
-    const navSpy = spyOn(router, 'navigate').and.resolveTo(true);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     const order = makeOrder({ first_image_id: null });
 
     component.viewListing(order);
 
-    const args = navSpy.calls.mostRecent().args as [unknown[], { state: { listing: { image_count: number } } }];
+    const args = navSpy.mock.calls[navSpy.mock.calls.length - 1] as [
+      unknown[],
+      { state: { listing: { image_count: number } } },
+    ];
     expect(args[1].state.listing.image_count).toBe(0);
   });
 });
