@@ -29,8 +29,7 @@ func NewPasswordResetService(db *gorm.DB) *PasswordResetService {
 // CreatePasswordResetToken creates a one-time reset token for the user if the email exists.
 // It returns an empty token when no matching user is found.
 func (s *PasswordResetService) CreatePasswordResetToken(ctx context.Context, email string) (string, error) {
-	var user models.User
-	err := s.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
+	user, err := gorm.G[models.User](s.db).Where("email = ?", email).First(ctx)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return "", nil
 	}
@@ -39,10 +38,10 @@ func (s *PasswordResetService) CreatePasswordResetToken(ctx context.Context, ema
 	}
 
 	now := time.Now().UTC()
-	if err := s.db.WithContext(ctx).
-		Model(&models.PasswordResetToken{}).
+	if _, err := gorm.G[models.PasswordResetToken](s.db).
 		Where("user_id = ? AND used_at IS NULL AND expires_at > ?", user.ID, now).
-		Updates(map[string]any{"used_at": now}).Error; err != nil {
+		Select("UsedAt").
+		Updates(ctx, models.PasswordResetToken{UsedAt: &now}); err != nil {
 		return "", err
 	}
 
@@ -56,7 +55,7 @@ func (s *PasswordResetService) CreatePasswordResetToken(ctx context.Context, ema
 		TokenHash: tokenHash,
 		ExpiresAt: now.Add(30 * time.Minute),
 	}
-	if err := s.db.WithContext(ctx).Create(&record).Error; err != nil {
+	if err := gorm.G[models.PasswordResetToken](s.db).Create(ctx, &record); err != nil {
 		return "", err
 	}
 
@@ -71,10 +70,9 @@ func (s *PasswordResetService) ResetPassword(ctx context.Context, token string, 
 	now := time.Now().UTC()
 	tokenHash := hashResetToken(token)
 
-	var resetToken models.PasswordResetToken
-	err := s.db.WithContext(ctx).
+	resetToken, err := gorm.G[models.PasswordResetToken](s.db).
 		Where("token_hash = ? AND used_at IS NULL AND expires_at > ?", tokenHash, now).
-		First(&resetToken).Error
+		First(ctx)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return ErrInvalidOrExpiredResetToken
 	}
@@ -87,22 +85,25 @@ func (s *PasswordResetService) ResetPassword(ctx context.Context, token string, 
 		return err
 	}
 
-	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Model(&models.User{}).
+	return s.db.Transaction(func(tx *gorm.DB) error {
+		if _, err := gorm.G[models.User](tx).
 			Where("id = ?", resetToken.UserID).
-			Update("password_hash", string(passwordHash)).Error; err != nil {
+			Select("PasswordHash").
+			Updates(ctx, models.User{PasswordHash: string(passwordHash)}); err != nil {
 			return err
 		}
 
-		if err := tx.Model(&models.PasswordResetToken{}).
+		if _, err := gorm.G[models.PasswordResetToken](tx).
 			Where("id = ?", resetToken.ID).
-			Update("used_at", now).Error; err != nil {
+			Select("UsedAt").
+			Updates(ctx, models.PasswordResetToken{UsedAt: &now}); err != nil {
 			return err
 		}
 
-		if err := tx.Model(&models.PasswordResetToken{}).
+		if _, err := gorm.G[models.PasswordResetToken](tx).
 			Where("user_id = ? AND used_at IS NULL", resetToken.UserID).
-			Update("used_at", now).Error; err != nil {
+			Select("UsedAt").
+			Updates(ctx, models.PasswordResetToken{UsedAt: &now}); err != nil {
 			return err
 		}
 
