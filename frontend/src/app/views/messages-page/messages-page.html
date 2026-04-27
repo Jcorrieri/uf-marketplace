@@ -1,6 +1,8 @@
 <header class="main-header">
   <div class="header-left">
-    <img src="gator-logo.png" alt="UF Logo" class="gator-icon" />
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
     <span class="brand-text">Messages</span>
   </div>
   <app-avatar-dropdown />

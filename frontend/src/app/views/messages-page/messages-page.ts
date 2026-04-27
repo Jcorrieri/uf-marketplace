@@ -7,6 +7,7 @@ import { ChatService, Conversation } from '../../services/chat.service';
 import { AuthService } from '../../services/auth.service';
 import { ChatPanel } from '../../components/chat-panel/chat-panel';
 import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-messages-page',
@@ -24,6 +25,7 @@ export class MessagesPage implements OnInit {
     private chatService: ChatService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {}
 
   async ngOnInit() {
@@ -38,6 +40,9 @@ export class MessagesPage implements OnInit {
     }
   }
 
+  goBack() {
+    this.router.navigate(['/main']);
+  }
   selectConversation(convo: Conversation) {
     this.chatService.disconnect();
     this.chatService.clearHandlers();
