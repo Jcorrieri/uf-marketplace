@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef,ElementRef, HostListener} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,7 +26,16 @@ export class ChatWidget implements OnInit {
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef, 
+    private el: ElementRef,
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (this.widget.state !== 'closed' && !this.el.nativeElement.contains(event.target)) {
+      this.widget.close();
+      this.cdr.detectChanges();
+    }
+  }
 
   async ngOnInit() {
     // nothing on init — load conversations when widget opens
@@ -37,6 +46,7 @@ export class ChatWidget implements OnInit {
     if (this.widget.state === 'list') {
       await this.loadConversations();
     }
+    this.cdr.detectChanges();
   }
 
   async loadConversations() {

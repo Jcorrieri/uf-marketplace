@@ -6,7 +6,7 @@
 
 <!-- Popup -->
 @if (widget.state !== 'closed') {
-  <div class="chat-popup">
+  <div class="chat-popup" (click)="$event.stopPropagation()">
 
     <!-- Conversation list -->
     @if (widget.state === 'list') {
