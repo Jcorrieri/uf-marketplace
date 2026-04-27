@@ -26,7 +26,6 @@ export class ForgotPasswordPage {
   });
 
   submitting = signal(false);
-  submitted = signal(false);
   errorMsg = signal('');
 
   constructor(private router: Router) {}
@@ -40,12 +39,25 @@ export class ForgotPasswordPage {
     this.submitting.set(true);
     this.errorMsg.set('');
 
-    // Backend does not yet expose a password-reset endpoint. We simulate the
-    // request so the UX is complete; when the backend ships POST
-    // /api/auth/forgot-password, swap this block for a real fetch call.
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      this.submitted.set(true);
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: this.emailControl.value }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        this.errorMsg.set(data.error ?? 'Something went wrong. Please try again.');
+        return;
+      }
+
+      if (typeof data.reset_token === 'string') {
+        this.router.navigate(['/reset-password'], { queryParams: { token: data.reset_token } });
+        return;
+      }
+
+      this.errorMsg.set('No account found for that email.');
     } catch {
       this.errorMsg.set('Something went wrong. Please try again.');
     } finally {
