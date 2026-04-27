@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  background: var(--bg-card, white);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -20,7 +20,7 @@
 .brand-text {
   font-size: 20px;
   font-weight: 700;
-  color: #0064b4;
+  color: var(--text-primary, #0064b4);
 }
 
 .messages-layout {
@@ -30,9 +30,10 @@
 
 .convo-sidebar {
   width: 300px;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid var(--border-color, #e0e0e0);
   overflow-y: auto;
   flex-shrink: 0;
+  background: var(--bg-card, white);
 }
 
 .sidebar-empty {
@@ -51,16 +52,16 @@
   gap: 12px;
   padding: 14px 16px;
   cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color, #f0f0f0);
   transition: background 0.15s;
 }
 
 .convo-item:hover {
-  background: #f5f5f5;
+  background: var(--row-hover, #f5f5f5);
 }
 
 .convo-item.active {
-  background: #e8f0fb;
+  background: var(--row-hover, #e8f0fb);
 }
 
 .convo-avatar {
@@ -86,11 +87,12 @@
 .convo-name {
   font-weight: 600;
   font-size: 14px;
+  color: var(--text-primary, #000);
 }
 
 .convo-listing {
   font-size: 12px;
-  color: #888;
+  color: var(--text-secondary, #888);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -98,7 +100,7 @@
 
 .convo-last {
   font-size: 12px;
-  color: #aaa;
+  color: var(--text-secondary, #aaa);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -110,6 +112,7 @@
   flex-direction: column;
   overflow: hidden;
   height: 100%;
+  background: var(--bg-page, #fafafa);
 }
 
 .chat-placeholder {
@@ -118,7 +121,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #aaa;
+  color: var(--text-secondary, #aaa);
   gap: 12px;
 }
 

@@ -1,6 +1,7 @@
 :host {
   display: block;
   font-family: var(--app-font);
+  color-scheme: light;
 }
 
 .signup-wrapper {
