@@ -51,6 +51,7 @@ func Connect(dbName string) *gorm.DB {
 	// Create/update tables
 	err = db.AutoMigrate(
 		&models.User{},
+		&models.PasswordResetToken{},
 		&models.Listing{},
 		&models.Image{},
 		&models.Order{},

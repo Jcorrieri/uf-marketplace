@@ -192,6 +192,10 @@ export class UserProfilePage implements OnInit {
     this.router.navigate(['/create-listing']);
   }
 
+  goToChangePassword() {
+    this.router.navigate(['/forgot-password']);
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/']);

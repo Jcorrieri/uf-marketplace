@@ -40,16 +40,31 @@
             autocomplete="current-password"
             [formControl]="passwordControl"
           />
-          <button matIconButton matSuffix type="button" (click)="togglePassword($event)" aria-label="Toggle password">
+          <button
+            matIconButton
+            matSuffix
+            type="button"
+            (click)="togglePassword($event)"
+            aria-label="Toggle password"
+          >
             <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
         <div class="forgot-row">
-          <a href="#" class="forgot-link">Forgot password?</a>
+          <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
         </div>
       </div>
 
-      <button mat-flat-button color="primary" class="login-btn" type="button" [disabled]="loginForm.invalid" (click)="login()">Sign In</button>
+      <button
+        mat-flat-button
+        color="primary"
+        class="login-btn"
+        type="button"
+        [disabled]="loginForm.invalid"
+        (click)="login()"
+      >
+        Sign In
+      </button>
 
       <p class="signup-text">
         Don't have an account? <a routerLink="/sign-up" class="signup-link">Sign up</a>
