@@ -44,5 +44,9 @@
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
+  },
+  "overrides": {
+    "string-width": "^7.2.0",
+    "is-fullwidth-code-point": "^5.0.0"
   }
 }
