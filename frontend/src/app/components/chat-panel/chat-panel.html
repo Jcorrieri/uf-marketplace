@@ -1,0 +1,49 @@
+<div class="chat-panel">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <mat-icon>storefront</mat-icon>
+    <div class="chat-header-info">
+      <span class="chat-other-name">{{ getOtherPersonName() }}</span>
+      <span class="chat-listing-title">{{ conversation.listing_title }}</span>
+    </div>
+  </div>
+
+  <!-- Messages -->
+    <div class="chat-messages" #messageList>
+    @if (loading) {
+        <div class="chat-empty">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Loading messages...</p>
+        </div>
+    } @else if (messages.length === 0) {
+        <div class="chat-empty">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <p>No messages yet. Say hello!</p>
+        </div>
+    } @else {
+        @for (msg of messages; track msg.id) {
+        <div class="chat-message" [class.mine]="isMine(msg)" [class.theirs]="!isMine(msg)">
+            <div class="bubble">{{ msg.content }}</div>
+            <span class="timestamp">{{ msg.created_at | date:'shortTime' }}</span>
+        </div>
+        }
+    }
+    </div>
+
+  <!-- Input -->
+  <div class="chat-input-row">
+    <mat-form-field appearance="outline" class="chat-input-field">
+      <input
+        matInput
+        placeholder="Type a message..."
+        [(ngModel)]="newMessage"
+        (keydown)="onKeyDown($event)"
+      />
+    </mat-form-field>
+    <button mat-icon-button color="primary" (click)="send()" [disabled]="!newMessage.trim()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+
+</div>

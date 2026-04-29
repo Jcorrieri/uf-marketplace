@@ -4,6 +4,7 @@ import { CurrencyPipe } from '@angular/common';
 
 export interface Listing {
   id: string;
+  seller_id: string;
   image_count: number;
   first_image_id: string | null;
   title: string;

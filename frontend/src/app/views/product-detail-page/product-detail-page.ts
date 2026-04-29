@@ -8,6 +8,8 @@ import { AuthService } from '../../services/auth.service';
 import { OrderService } from '../../services/order.service';
 import { AvatarDropdown } from '../../components/avatar-dropdown/avatar-dropdown';
 import { Listing } from '../../components/listing/listing';
+import { ChatService } from '../../services/chat.service';
+import { ChatWidgetService } from '../../services/chat-widget.service';
 
 @Component({
   selector: 'app-product-detail-page',
@@ -27,6 +29,8 @@ export class ProductDetailPage implements OnInit {
     private authService: AuthService,
     private orderService: OrderService,
     private cdr: ChangeDetectorRef,
+    private chatService: ChatService,
+    private chatWidgetService: ChatWidgetService,
   ) {}
 
   async ngOnInit() {
@@ -62,6 +66,28 @@ export class ProductDetailPage implements OnInit {
   goBack() {
     this.router.navigate(['/main']);
   }
+
+  async messageSeller() {
+    if (!this.listing) {
+      console.log('No listing found');
+      return;
+    }
+    console.log('listing:', this.listing);          
+    console.log('seller_id:', this.listing.seller_id); 
+    try {
+      console.log('Starting conversation for listing:', this.listing.id, 'seller:', this.listing.seller_id);
+      const convo = await this.chatService.startConversation(
+        this.listing.id,
+        this.listing.seller_id,
+      );
+      console.log('Conversation returned:', convo);
+      this.chatWidgetService.openChat(convo);
+      console.log('Widget state:', this.chatWidgetService.state);
+    } catch (e) {
+      console.error('Failed to start conversation', e);
+    }
+  }
+
 
   async purchase() {
     if (!this.listing) return;

@@ -1,10 +1,9 @@
 :host {
   display: block;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
 }
 
-/* ── Header ── */
 .profile-header {
   position: sticky;
   top: 0;
@@ -13,8 +12,8 @@
   align-items: center;
   gap: 12px;
   padding: 18px 32px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: var(--bg-card);
+  box-shadow: 0 2px 8px var(--shadow-header);
 }
 
 .back-btn {
@@ -26,34 +25,32 @@
   border: none;
   border-radius: 50%;
   background-color: transparent;
-  color: #555;
+  color: var(--text-icon);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .back-btn:hover {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--row-hover);
 }
 
 .page-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin: 0;
 }
 
-/* ── Content ── */
 .profile-content {
   max-width: 600px;
   margin: 28px auto;
   padding: 0 24px;
 }
 
-/* ── Sections ── */
 .settings-section {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 4px var(--shadow-card);
   margin-bottom: 16px;
   overflow: hidden;
 }
@@ -61,14 +58,13 @@
 .section-title {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #888;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 16px 20px 8px;
   margin: 0;
 }
 
-/* ── Setting rows ── */
 .setting-row {
   display: flex;
   align-items: center;
@@ -79,11 +75,11 @@
 }
 
 .setting-row:hover {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: var(--row-hover);
 }
 
 .setting-icon {
-  color: #555;
+  color: var(--text-icon);
   font-size: 24px;
   width: 24px;
   height: 24px;
@@ -99,22 +95,21 @@
 .setting-label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1a1a2e;
+  color: var(--text-primary);
 }
 
 .setting-hint {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 .setting-arrow {
-  color: #ccc;
+  color: var(--border-color);
   font-size: 20px;
   width: 20px;
   height: 20px;
 }
 
-/* ── Logout button ── */
 .logout-btn {
   display: flex;
   align-items: center;
@@ -135,14 +130,13 @@
   background-color: rgba(211, 47, 47, 0.06);
 }
 
-/* ── User card ── */
 .user-card {
   display: flex;
   align-items: center;
   gap: 18px;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 4px var(--shadow-card);
   padding: 24px 20px;
   margin-bottom: 16px;
 }
@@ -164,9 +158,7 @@
   overflow: hidden;
 }
 
-.avatar-circle.clickable {
-  cursor: pointer;
-}
+.avatar-circle.clickable { cursor: pointer; }
 
 .avatar-img {
   width: 100%;
@@ -187,14 +179,9 @@
   border-radius: 50%;
 }
 
-.avatar-circle.clickable:hover .avatar-overlay {
-  opacity: 1;
-}
+.avatar-circle.clickable:hover .avatar-overlay { opacity: 1; }
 
-.avatar-overlay mat-icon {
-  color: #fff;
-  font-size: 24px;
-}
+.avatar-overlay mat-icon { color: #fff; font-size: 24px; }
 
 .upload-error {
   color: #d32f2f;
@@ -212,25 +199,26 @@
 .user-name {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: var(--text-primary);
 }
 
 .user-email {
   font-size: 0.88rem;
-  color: #888;
+  color: var(--text-secondary);
 }
 
-/* ── Edit panel ── */
+.user-since {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
 .edit-panel {
   padding: 16px 20px;
-  background: #fafafa;
-  border-top: 1px solid #eee;
+  background: var(--bg-input);
+  border-top: 1px solid var(--border-color);
 }
 
-.edit-field {
-  width: 100%;
-  margin-bottom: 4px;
-}
+.edit-field { width: 100%; margin-bottom: 4px; }
 
 .edit-error {
   color: #d32f2f;
@@ -252,4 +240,9 @@
 
 .save-btn[disabled] {
   opacity: 0.6;
+}
+
+.user-since {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
 }

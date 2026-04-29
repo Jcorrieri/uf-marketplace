@@ -39,6 +39,7 @@ type ListingResponse struct {
 	SellerName   string     `json:"seller_name"`
 	CreatedAt    time.Time  `json:"created_at"`
 	UpdatedAt    time.Time  `json:"updated_at"`
+	SellerID     uuid.UUID  `json:"seller_id"`
 }
 
 func (l *Listing) GetResponse() ListingResponse {
@@ -48,6 +49,7 @@ func (l *Listing) GetResponse() ListingResponse {
 	}
 	return ListingResponse{
 		ID:           l.ID,
+		SellerID:     l.SellerID,
 		Title:        l.Title,
 		Description:  l.Description,
 		Price:        l.Price,

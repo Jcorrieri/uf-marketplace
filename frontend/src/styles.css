@@ -1,26 +1,101 @@
-/* Global styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   height: 100%;
-  background-color: #fafafa;
+  background-color: var(--bg-page);
 }
 
-/* Brand variables and global typography */
 :root {
+  /* Brand */
   --brand-primary: #fa4616;
   --brand-accent: #0021a5;
-  --link-color: #1a73e8;
   --brand-primary-dark: #e03d12;
+  --link-color: #1a73e8;
   --app-font: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
   --navbar-height: 64px;
+
+  /* Light theme (default) */
+  --bg-page: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-input: #fafafa;
+  --text-primary: #1a1a2e;
+  --text-secondary: #888;
+  --text-icon: #555;
+  --border-color: #eee;
+  --row-hover: rgba(0, 0, 0, 0.03);
+  --shadow-card: rgba(0, 0, 0, 0.06);
+  --shadow-header: rgba(0, 0, 0, 0.08);
+}
+
+body.theme-dark {
+  --bg-page: #121212;
+  --bg-card: #1e1e1e;
+  --bg-input: #2a2a2a;
+  --text-primary: #f0f0f0;
+  --text-secondary: #aaa;
+  --text-icon: #bbb;
+  --border-color: #333;
+  --row-hover: rgba(255, 255, 255, 0.05);
+  --shadow-card: rgba(0, 0, 0, 0.3);
+  --shadow-header: rgba(0, 0, 0, 0.4);
 }
 
 body {
   font-family: var(--app-font);
+}
+/* ── Angular Material dark mode overrides ── */
+body.theme-dark {
+  color-scheme: dark;
+}
+
+/* Input text color */
+body.theme-dark .mat-mdc-input-element,
+body.theme-dark .mat-mdc-floating-label,
+body.theme-dark .mdc-text-field__input {
+  color: var(--text-primary) !important;
+}
+
+/* Outlined form field border */
+body.theme-dark .mdc-notched-outline__leading,
+body.theme-dark .mdc-notched-outline__notch,
+body.theme-dark .mdc-notched-outline__trailing {
+  border-color: var(--border-color) !important;
+}
+
+/* Form field background */
+body.theme-dark .mdc-text-field--outlined:not(.mdc-text-field--disabled) {
+  background-color: var(--bg-input) !important;
+}
+
+/* Floating label color */
+body.theme-dark .mat-mdc-form-field-label,
+body.theme-dark .mdc-floating-label {
+  color: var(--text-secondary) !important;
+}
+
+/* Hint and error text */
+body.theme-dark .mat-mdc-form-field-hint,
+body.theme-dark .mat-mdc-form-field-error {
+  color: var(--text-secondary) !important;
+}
+
+/* Select panel */
+body.theme-dark .mat-mdc-select-value-text,
+body.theme-dark .mat-mdc-select-arrow {
+  color: var(--text-primary) !important;
+}
+
+/* mat-icon default color */
+body.theme-dark mat-icon {
+  color: var(--text-icon);
+}
+
+/* mat-button default text */
+body.theme-dark .mat-mdc-button:not([color]),
+body.theme-dark .mat-mdc-outlined-button:not([color]) {
+  color: var(--text-primary) !important;
 }

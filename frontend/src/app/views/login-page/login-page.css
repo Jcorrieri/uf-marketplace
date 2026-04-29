@@ -1,6 +1,7 @@
 /* ===== Layout ===== */
 :host {
   display: block;
+  color-scheme: light;
 }
 
 .login-wrapper {

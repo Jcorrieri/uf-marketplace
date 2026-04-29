@@ -10,6 +10,8 @@ import { OrderHistoryPage } from './views/order-history-page/order-history-page'
 import { ForgotPasswordPage } from './views/forgot-password-page/forgot-password-page';
 import { ResetPasswordPage } from './views/reset-password-page/reset-password-page';
 import { authGuard } from './guards/auth.guard';
+import { SettingsPage } from './views/settings-page/settings-page';
+import { MessagesPage } from './views/messages-page/messages-page';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -23,4 +25,6 @@ export const routes: Routes = [
   { path: 'create-listing', component: CreateListingPage, canActivate: [authGuard] },
   { path: 'my-listings', component: MyListingsPage, canActivate: [authGuard] },
   { path: 'orders', component: OrderHistoryPage, canActivate: [authGuard] },
+  { path: 'settings', component: SettingsPage, canActivate: [authGuard] },
+  { path: 'messages', component: MessagesPage, canActivate: [authGuard] },
 ];
