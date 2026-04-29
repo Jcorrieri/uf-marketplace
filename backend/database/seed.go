@@ -7,59 +7,85 @@ import (
 
 	"github.com/Jcorrieri/uf-marketplace/backend/models"
 	"github.com/Jcorrieri/uf-marketplace/backend/services"
+	"github.com/Jcorrieri/uf-marketplace/backend/utils"	
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) error {
+
+func SeedListings(
+	db *gorm.DB,
+	ctx context.Context,
+	ids []uuid.UUID,
+) error {
+
+	rawImages := utils.DownloadSeedImages()
+	numImages := len(rawImages)
+
+	var images []models.Image
+	for _, image := range rawImages {
+		images = append(images, models.Image{
+			Data: image.Data,
+			MimeType: image.MimeType,
+		})
+	}
+
 	listings := []*models.Listing{
 		{
 			Title:       "Standing Desk",
 			Description: "Adjustable standing desk, great condition. Perfect for studying.",
 			Price:       85,
 			SellerID:    ids[0],
+			Images: 	 []models.Image{images[0]},
 		},
 		{
 			Title:       "Mountain Bike",
 			Description: "Trek mountain bike, barely used. Includes lock and helmet.",
 			Price:       220,
 			SellerID:    ids[3],
+			Images: 	 []models.Image{images[1 % numImages]},
 		},
 		{
 			Title:       "Organic Chemistry Textbook",
 			Description: "8th edition, no highlights. ISBN 978-0134042282.",
 			Price:       45,
 			SellerID:    ids[2],
+			Images: 	 []models.Image{images[2 % numImages]},
 		},
 		{
 			Title:       "27\" Monitor",
 			Description: "Dell 27\" 1440p IPS monitor. Comes with HDMI cable.",
 			Price:       150,
 			SellerID:    ids[3],
+			Images: 	 []models.Image{images[3 % numImages]},
 		},
 		{
 			Title:       "Futon Couch",
 			Description: "Foldable futon, dark grey. Great for dorm rooms.",
 			Price:       60,
 			SellerID:    ids[4],
+			Images: 	 []models.Image{images[4 % numImages]},
 		},
 		{
 			Title:       "Acoustic Guitar",
 			Description: "Yamaha FG800, excellent sound. Includes gig bag and tuner.",
 			Price:       130,
 			SellerID:    ids[5],
+			Images: 	 []models.Image{images[5 % numImages]},
 		},
 		{
 			Title:       "Desk Lamp",
 			Description: "LED desk lamp with USB charging port. 3 brightness levels.",
 			Price:       18,
 			SellerID:    ids[6],
+			Images: 	 []models.Image{images[6 % numImages]},
 		},
 		{
 			Title:       "North Face Backpack",
 			Description: "Black Borealis backpack, very spacious. Minor wear.",
 			Price:       40,
 			SellerID:    ids[7],
+			Images: 	 []models.Image{images[7 % numImages]},
 		},
 	}
 
@@ -74,6 +100,7 @@ func SeedListings(db *gorm.DB, ctx context.Context, ids []uuid.UUID) error {
 			Description: "This is a sample description for the item.",
 			Price:       float64((20 + i*2)),
 			SellerID:    ids[i%len(ids)],
+			Images: 	 []models.Image{images[i%numImages]},
 		})
 	}
 
